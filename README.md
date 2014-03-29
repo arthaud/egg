@@ -1,0 +1,4 @@
+egg
+===
+
+Extended Generator Generator
