@@ -1,0 +1,1016 @@
+-----------  Extended Generator Generator ------------- 
+option auto=true;
+option k=1;
+option version=5.3.1;
+inh source : IEGGCompilationUnit for S;  
+syn  type     : IType for
+    VTYPE, TYPE ;
+inh res : Resolveur for 
+    VTYPE, TYPE, TGEN, XTYPE;
+syn  pars : Vector<IType> for   
+    TGEN, XTYPE;
+syn  code     : STRING for 
+    IDENT, EXPREG, LACTION             ;
+inh  table : TDS for
+    OPTIONS, OPTION, ATTRIBUTS , ATTRIBUT , LEXICAUX , LEXICAL , AXIOME , EXTS,
+    IDENTS, PRODUCTIONS , PRODUCTION , PDROITE, EXPREG , 
+    GLOBALES, GLOBS, ACTS, 
+   -- MESSAGES, 
+    LACTION;
+inh  att      : ATTRIBUT for 
+    IDENTS        ;
+syn sorte : INTEGER for 
+    SATT;
+syn  ter      : TERMINAL for
+    LEXICAL        ;
+inh  lex      : TERMINAL for
+   ALIASES, ALIASESX         ;
+inh  reg      : REGLE for
+    PDROITE , ACTS, GLOBALES, GLOBS, LACTION            ;
+inh  vis : IVisiteurEgg for
+    ATTRIBUTS , ATTRIBUT , LEXICAUX , LEXICAL , EXPREG, AXIOME , EXTS,
+    PRODUCTIONS , PRODUCTION , PDROITE , VTYPE, TYPE , ACTS, TGEN, XTYPE,
+    GLOBALES, GLOBS, IDENT, IDENTS 
+ --, MESSAGES
+;
+inh  avis : IVisiteurAction for
+    LACTION  ;
+inh  act     : LACT for
+    LACTION ;
+syn offset : INTEGER for LACTION;
+syn length : INTEGER for LACTION;
+
+space    separateurs        is           "[ \t\n\r]+"   ;
+comment    commentaires     is           "\-\-[^\n]*\n" ;
+comment  big                is           "\-\*([^\*]|(\*+[^\*\-]))*\*+\-";
+sugar    t_inh              is           "inh"        aka $inh$  ;
+sugar    t_syn              is           "syn"        aka $syn$  ;
+sugar    t_aka              is           "aka"        aka $aka$  ;
+sugar    t_deuxpoints       is           ":"           aka $:$ ;
+sugar    t_aco              is           "\{"          aka ${$ ;
+sugar    t_acf              is            "\}"         aka $}$ ;
+sugar    t_cro              is           "\["          aka $[$ ;
+sugar    t_crf              is           "\]"          aka $]$ ;
+sugar    t_for              is           "for"         aka $for$ ;
+sugar    t_virgule          is           "\,"          aka $,$ ;
+sugar    t_pointvirgule     is           ";"           aka $;$ ;
+sugar    t_inf              is           "\<"          aka $<$ ;
+sugar    t_sup              is           "\>"          aka $>$ ;          
+sugar    t_fleche           is           "\-\>"       aka $->$  ;
+sugar    t_option           is           "option"      aka $option$ ;
+sugar    t_space            is           "space"       aka $space$ ;
+sugar    t_comm             is           "comment"    aka $comment$  ;
+sugar    t_sugar            is           "sugar"      aka $sugar$  ;
+sugar    t_term             is           "term"       aka $term$  ;
+sugar    t_external         is           "compil"     aka $compil$  ;
+sugar    t_macro            is           "macro"       aka $macro$ ;
+sugar    t_is               is           "is"          aka $is$ ;
+sugar    t_guillemet        is           "\""          aka $\"$ ;
+sugar    t_end              is           "end"        aka $end$  ;
+sugar    t_global           is           "global"      aka $global$ ;
+sugar    t_string           is           "STRING"      aka $STRING$ ;
+sugar    t_integer          is           "INTEGER"     aka $INTEGER$ ;
+sugar    t_double           is           "DOUBLE"      aka $DOUBLE$ ;
+sugar    t_char             is           "CHARACTER"   aka $CHARACTER$ ;
+
+macro    mlc                is           "[A-Za-z0-9_]"    ;
+term     t_action           is           "#{mlc}+"      ;
+term     t_ident            is           "[a-zA-Z]{mlc}*"       ;
+term 	 t_alias            is           "\$[^\$]+\$";
+compil   LACTION         ;
+compil   OPTION         ;
+compil   EXPREG         ; 
+
+
+
+S ->   #init OPTIONS ATTRIBUTS LEXICAUX EXTS AXIOME PRODUCTIONS t_end #gen ;
+global 
+  table : TDS;  
+  v : IVisiteurEgg;
+
+#init {
+local
+  attribut : ATTRIBUT ;
+  options : EGGOptions;
+  ce : INTEGER;
+  r : Resolveur;
+  lang : STRING;
+do 
+    -- creation de la table des symboles 
+    table := new TDS(S^source) ;
+    options := table.getOptions();
+    if ~table.verifierOptions() then
+      error(EGG_option_error, options.toString());
+	end
+    OPTIONS^table := table ;
+    ATTRIBUTS^table := table ;
+    EXTS^table := table ;
+    LEXICAUX^table := table ; 
+    AXIOME^table := table ;
+    PRODUCTIONS^table := table ;
+    --MESSAGES^table := table ;
+    -- le visiteur de generation de code 
+    lang := options.getLang();
+    if lang.equals("java") then
+      v := new VisiteurEggJava(table);
+      r := new LactionResolveur();
+    elseif lang.equals("egg") then
+      v := new VisiteurEggEgg(table);
+      r := new LactionResolveur();
+    elseif lang.equals("latex") then
+      v := new VisiteurEggLatex(table);
+      r := new LactionResolveur();
+    elseif lang.equals("no") then
+      v := new VisiteurEggNull(table); 
+      r := new LactionResolveur();
+    else
+      r := new LactionResolveur();
+    end
+  -- le resolveur de types
+   table.setResolveur(r); 
+  -- ajout des attributs par defaut
+  attribut := new ATTRIBUT(1 , "txt" , r.getType("STRING"), S^scanner.getCommentaire()) ;
+  -- initialise par defaut
+   attribut.set_builtin();
+   table.ajouter_att(attribut) ;
+  -- ajout des attributs par defaut (suite ...)
+  attribut := new ATTRIBUT(0, "scanner", r.getType("LEX_" @ table.getNom()),"--scanner") ;
+   attribut.set_builtin();
+   table.ajouter_att(attribut) ;
+  attribut := new ATTRIBUT(0, "eval", r.getType("BOOLEAN"),"-- eval semantic actions") ; 
+   attribut.set_builtin();
+   table.ajouter_att(attribut) ;
+  -- transmission de la table des symboles
+  LEXICAUX^vis := v ;
+  ATTRIBUTS^vis := v ;
+  EXTS^vis := v ;
+  AXIOME^vis := v ;
+  PRODUCTIONS^vis := v ;
+end
+}
+   
+#gen {
+local
+  ce : INTEGER;
+  s : SYMBOLE;
+  r : Resolveur;
+  rx : BOOLEAN;
+do
+  -- analyse de la syntaxe puis eventuelle (si pas d'exception) generation des classes
+   table.analyser_syntaxe() ;
+  -- INFERENCE DE TYPE
+  r := table.getResolveur();
+  rx :=  r.resoudre() ; 
+   r.generer() ; 
+   v.finaliser() ;
+end
+
+}
+
+OPTIONS -> ;
+OPTIONS -> t_option OPTION OPTIONS ;
+
+ATTRIBUTS -> ATTRIBUT ATTRIBUTS ;
+
+ATTRIBUTS -> ;
+
+SATT -> t_inh #sorte ;
+#sorte{ do SATT^sorte := 0; end }
+
+SATT -> t_syn #sorte ;
+#sorte{ do SATT^sorte := 1; end }
+
+--VTYPE -> #gen ;
+--#gen {
+--local
+--do
+--  --VTYPE^type := VTYPE^res.getType();
+--  VTYPE^type := null;
+--end
+--}
+
+VTYPE -> t_deuxpoints #trans TYPE #gen ;
+#trans {
+local
+do
+  TYPE^res := VTYPE^res;
+  TYPE^vis := VTYPE^vis;
+end
+}
+
+#gen {
+local
+do
+  VTYPE^type := TYPE^type;
+end
+}
+
+ATTRIBUT -> SATT #trans t_ident VTYPE t_for IDENT #add IDENTS t_pointvirgule ;
+#trans {
+do
+  VTYPE^res := ATTRIBUT^table.getResolveur();
+end
+}
+
+#add {
+local
+  symbole : SYMBOLE;
+  attribut : ATTRIBUT ;
+  attscan : ATTRIBUT ;
+  atteval : ATTRIBUT;
+  nt : NON_TERMINAL;
+do
+  attribut := 
+     new ATTRIBUT(SATT^sorte, t_ident^txt , VTYPE^type, ATTRIBUT^scanner.getCommentaire()) ;
+  if ~ATTRIBUT^table.ajouter_att(attribut)  then
+    error(EGG_attribute_yet_declared, t_ident^txt) ;
+    --error("attribut deja existant") ;
+  end
+  nt := null ;
+  symbole := ATTRIBUT^table.chercher(IDENT^code) ;
+  -- le symbole existe 
+  if symbole /= null then
+   -- l'attribut est-il deja present ?
+    match symbole 
+    with NON_TERMINAL then 
+      nt := symbole ;
+    else
+      --doit etre un non terminal ou un compil externe
+      error(EGG_no_terminal_attribute, IDENT^code);
+    end
+  else
+    -- NEW : le symbole (NON_TERMINAL) n'existe pas encore, on le cree
+    nt := new NON_TERMINAL(IDENT^code);
+     ATTRIBUT^table.inserer(nt) ;
+    -- visite
+     ATTRIBUT^vis.nt_entete(nt);
+    -- scanner ...
+    attscan := ATTRIBUT^table.attribut("scanner");
+    -- ajouter l'attribut
+     nt.add_attribut(attscan);
+   --  ATTRIBUT^table.compareAttribut(attscan);
+     ATTRIBUT^vis.nt_attribut(nt, attscan);
+    -- eval ...
+    atteval := ATTRIBUT^table.attribut("eval");
+    -- ajouter l'attribut
+     nt.add_attribut(atteval);
+     ATTRIBUT^vis.nt_attribut(nt, atteval);
+  end
+   nt.add_attribut(attribut);
+  -- ATTRIBUT^table.compareAttribut(attribut);
+   ATTRIBUT^vis.nt_attribut(nt, attribut);
+  IDENTS^att := attribut ;
+end
+}
+
+TYPE -> t_ident TGEN #gen ;
+
+
+#gen { 
+do 
+  TYPE^type := TYPE^res.getType(t_ident^txt, TGEN^pars);
+end 
+}
+
+TGEN -> #gen;
+#gen { do 
+  TGEN^pars := null ; 
+end 
+}
+
+TGEN -> t_inf TYPE  XTYPE t_sup #gen ;
+#gen { 
+do 
+    XTYPE^pars.insertElementAt(TYPE^type,0);
+  TGEN^pars := XTYPE^pars ; 
+  end 
+  }
+
+XTYPE -> t_virgule TYPE XTYPE #add ;
+#add { 
+do 
+   XTYPE1^pars.insertElementAt(TYPE^type,0);
+  XTYPE^pars := XTYPE1^pars ; 
+end 
+}
+
+XTYPE -> #gen;
+#gen {
+do 
+  XTYPE^pars := new Vector<IType>() ; 
+  end 
+  }
+
+TYPE -> t_integer #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("INTEGER"); end }
+
+TYPE -> t_double #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("DOUBLE"); end }
+
+TYPE -> t_string #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("STRING"); end }
+
+TYPE -> t_char #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("CHARACTER"); end }
+
+-- a arranger quand les types tableaux arriveront
+--TYPE -> t_cro t_crf TYPE #gen ;
+--#gen{ local do TYPE^type := TYPE^res.getType(TYPE1^nom @ "[]"); end }
+
+-- une liste d'identificateurs
+IDENTS -> t_virgule IDENT #add IDENTS ;
+#add {
+local
+  symbole : SYMBOLE;
+  nt : NON_TERMINAL;
+  attribut : ATTRIBUT;
+  atteval : ATTRIBUT;
+  a : ATTRIBUT;
+do
+  nt := null ;
+  symbole := IDENTS^table.chercher(IDENT^code) ;
+  -- le symbole existe 
+  if symbole /= null then
+    match symbole 
+    with NON_TERMINAL then 
+      nt := symbole ;
+    else
+      --doit etre un non terminal ou un compil externe
+      error(EGG_no_terminal_attribute, IDENT^code);
+    end
+  else
+    -- NEW : le symbole (NON_TERMINAL) n'existe pas encore, on le cree
+    nt := new NON_TERMINAL(IDENT^code);
+     IDENTS^table.inserer(nt) ;
+    -- visite
+     IDENTS^vis.nt_entete(nt);
+    -- scanner ...
+    attribut := IDENTS^table.attribut("scanner");
+     nt.add_attribut(attribut);
+  --   IDENTS^table.compareAttribut(attribut);
+     IDENTS^vis.nt_attribut(nt, attribut);
+     -- eval ...
+    atteval := IDENTS^table.attribut("eval");
+    -- ajouter l'attribut
+     nt.add_attribut(atteval);
+     IDENTS^vis.nt_attribut(nt, atteval);
+  end
+  -- ajout de l'attribut
+  a := nt.attribut(IDENTS^att.getNom());
+  if a = null then
+     nt.add_attribut(IDENTS^att);
+   --  IDENTS^table.compareAttribut(IDENTS^att);
+     IDENTS^vis.nt_attribut(nt, IDENTS^att);
+  else
+    warning(EGG_attribute_yet_declared, IDENTS^att.getNom(), IDENT^code);
+  end
+end
+}
+
+IDENTS -> #fin ;
+#fin{
+do
+  -- pour traiter globalement l'attribut
+   IDENTS^vis.nt_attribut(IDENTS^att);
+end
+}
+
+IDENT -> t_ident #gen ;
+#gen {
+do
+  IDENT^code := t_ident^txt ;
+end
+}
+
+ALIASES -> ;
+ALIASES -> t_aka t_alias #alias ALIASESX  ;
+#alias {
+do
+   ALIASES^lex.addName(t_alias^txt);
+end
+}
+
+ALIASESX -> ;
+ALIASESX -> t_virgule t_alias #alias ALIASESX ;
+#alias {
+do
+   ALIASESX^lex.addName(t_alias^txt);
+end
+}
+
+
+-- une liste de lexicaux
+LEXICAUX -> LEXICAL  #add LEXICAUX ;
+#add {
+do
+  -- ajout du lexical dans la table des symboles
+  if ~LEXICAUX^table.inserer_lexical(LEXICAL^ter) then 
+    error (EGG_terminal_yet_declared, LEXICAL^ter.getNom()) ;
+    --error("lexical deja existant") ;
+  end
+end
+}
+
+LEXICAUX -> #gen ;
+#gen {
+local
+do
+   LEXICAUX^vis.lexical();
+end
+}
+
+-- un separateur
+LEXICAL -> t_space t_ident  t_is t_guillemet  EXPREG #trans ALIASES t_pointvirgule #gen ;
+global
+  terminal : TERMINAL ;
+#trans {
+local
+  cu : IEGGCompilationUnit ;
+  code : STRING;
+  offset : INTEGER;
+  length : INTEGER;
+do
+  terminal := new TERMINAL(0 , t_ident^txt , EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  ALIASES^lex := terminal;
+  --write "offset = " + EXPREG^offset + " length = " + EXPREG^length + "\n";
+  cu := LEXICAL^table.getCompilationUnit();
+  --write (new String(cu.getContents(),EXPR^scanner.getOffset(),EXPR^length);
+end
+}
+
+#gen {
+do
+   -- COMP_INC : verifier si le terminal existait deja
+ --  LEXICAL^table.compareTerminal(terminal);
+  --visite
+   LEXICAL^vis.t_entete(terminal);
+  LEXICAL^ter := terminal ;
+end
+}
+
+-- un sucre syntaxique
+LEXICAL -> t_sugar t_ident t_is t_guillemet EXPREG  #trans ALIASES t_pointvirgule #gen ;
+global
+  terminal : TERMINAL ;
+#trans {
+do
+   terminal := new TERMINAL(1 , t_ident^txt , EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  ALIASES^lex := terminal;
+end
+}
+#gen {
+
+do
+ -- terminal := new TERMINAL(1 , t_ident^txt , EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  -- COMP_INC : verifier si le terminal existait deja
+ --  LEXICAL^table.compareTerminal(terminal);
+  --visite
+   LEXICAL^vis.t_entete(terminal);
+  LEXICAL^ter := terminal ;
+end
+}
+
+-- un "vrai" terminal
+LEXICAL -> t_term t_ident t_is t_guillemet EXPREG #trans  ALIASES t_pointvirgule #gen ;
+global
+  terminal : TERMINAL ;
+#trans {
+do
+   terminal := new TERMINAL(2 , t_ident^txt , EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  ALIASES^lex := terminal;
+end
+}
+#gen {
+local
+--  terminal : TERMINAL ;
+  attribut : ATTRIBUT ;
+  un_attribut : UN_ATTRIBUT ;
+  entree : ENTREE ;
+  regle : REGLE ;
+  table : TDS_ACTION ;
+do
+  --terminal := new TERMINAL(2 , t_ident^txt, EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  -- COMP_INC : verifier si le terminal existait deja
+  -- LEXICAL^table.compareTerminal(terminal);
+  -- visite
+   LEXICAL^vis.t_entete(terminal);
+  -- attributs txt et scanner par defaut 
+  attribut := LEXICAL^table.attribut("txt");
+   terminal.add_attribut(attribut);
+ --  LEXICAL^table.compareAttribut(attribut);
+ --  LEXICAL^vis.t_attribut(terminal, attribut);
+  attribut := LEXICAL^table.attribut("scanner");
+   terminal.add_attribut(attribut);
+  -- LEXICAL^table.compareAttribut(attribut);
+  -- LEXICAL^vis.t_attribut(terminal, attribut);
+  LEXICAL^ter := terminal ;
+end
+}
+
+-- une macro
+LEXICAL -> t_macro t_ident t_is t_guillemet EXPREG t_pointvirgule #gen ;
+#gen {
+local
+  terminal : TERMINAL ;
+do
+  terminal := new TERMINAL(4 , t_ident^txt, EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  -- COMP_INC : verifier si le terminal existait deja
+  -- LEXICAL^table.compareTerminal(terminal);
+  --visite
+   LEXICAL^vis.t_entete(terminal);
+  LEXICAL^ter := terminal ;
+end
+}
+
+-- un commentaire
+LEXICAL -> t_comm t_ident  t_is t_guillemet EXPREG t_pointvirgule #gen ;
+#gen {
+local
+  terminal : TERMINAL ;
+do
+  terminal := new TERMINAL(5 , t_ident^txt , EXPREG^code, LEXICAL^scanner.getCommentaire()) ;
+  -- COMP_INC : verifier si le terminal existait deja
+  -- LEXICAL^table.compareTerminal(terminal);
+  --visite
+   LEXICAL^vis.t_entete(terminal);
+  LEXICAL^ter := terminal ;
+end
+}
+
+EXTS -> ;
+
+EXTS -> t_external t_ident t_pointvirgule #gen EXTS ;
+#gen {
+local
+  symbole : SYMBOLE ;
+  nt : NON_TERMINAL ;
+  attribut : ATTRIBUT;
+  compiler : EGG;
+do
+  nt := null ;
+  symbole := EXTS^table.chercher(t_ident^txt) ;
+  if symbole /= null then
+    match symbole 
+    with NON_TERMINAL then 
+      nt := symbole ;
+    else
+      --ce n est pas un non terminal a gauche d une regle de production
+      error(EGG_not_a_non_terminal, t_ident^txt);
+    end
+  else
+    -- nouvel externe
+    nt := new NON_TERMINAL(t_ident^txt) ;
+     EXTS^table.inserer(nt) ;
+    --visite
+     EXTS^vis.ex_entete(nt);
+    -- scanner ...
+    attribut := EXTS^table.attribut("scanner");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+  --   EXTS^table.compareAttribut(attribut);
+     EXTS^vis.nt_attribut(nt, attribut);
+    -- eval ...
+    attribut := EXTS^table.attribut("eval");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+     EXTS^vis.nt_attribut(nt, attribut);
+   end
+   nt.setExterne();
+  --write "Compilation du module " + t_ident^txt + "...\n";
+  -- impose que le nom soit en majuscule ... a ameliorer
+  --compiler := new EGG(t_ident^txt.toUpperCase() + ".m");
+  -- compiler.compile();
+ --   write "terminee\n";
+  
+end
+}
+
+
+-- l'axiome de la grammaire a analyser
+AXIOME -> t_ident t_fleche #trans PDROITE t_pointvirgule #axiome ACTS ; 
+#trans {
+local
+  symbole : SYMBOLE ;
+  nt : NON_TERMINAL ;
+  regle : REGLE ;
+  attribut : ATTRIBUT ;
+  r : Resolveur;
+do
+  r := AXIOME^table.getResolveur();
+  ------------------ 
+  nt := null ;
+  symbole := null;
+  attribut := null;
+  symbole := AXIOME^table.chercher(t_ident^txt) ;
+  -- axiome existant
+  if symbole /= null then
+    match symbole 
+    with NON_TERMINAL then 
+      nt := symbole ;
+      -- COMP_INC : verifier si le non-terminal existait deja
+   --    AXIOME^table.compareNonTerminal(nt) ;
+       AXIOME^table.setAxiome(nt) ;
+    else
+      --ce n est pas un non terminal a gauche d une regle de production
+      error(EGG_not_a_non_terminal, t_ident^txt);
+    end
+  else
+    -- nouveau
+    nt := new NON_TERMINAL(t_ident^txt) ;
+     AXIOME^table.inserer(nt) ;
+     AXIOME^table.setAxiome(nt) ;
+    -- COMP_INC : verifier si le non-terminal existait deja
+    -- AXIOME^table.compareNonTerminal(nt) ;
+    -- visite
+     AXIOME^vis.nt_entete(nt);
+    -- scanner
+    attribut := AXIOME^table.attribut("scanner");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+  --   AXIOME^table.compareAttribut(attribut);
+     AXIOME^vis.nt_attribut(nt, attribut);
+     -- eval ...
+    attribut := AXIOME^table.attribut("eval");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+     AXIOME^vis.nt_attribut(nt, attribut);
+  end
+  ------------------------------------------------------------------------
+   AXIOME^table.ajouter_axiome() ;
+  ------------------------------------------------------------------------
+  -- creer la regle avec  
+  --  new SymbREGLE : gauche = s, pos = 0, regle = this, nom = t_ident
+  --    new TDS_ACTION
+  regle := new REGLE(AXIOME^table, nt, AXIOME^table.getResolveur(), AXIOME^scanner.getCommentaire()) ;
+  -- ajouter la regle a la liste des regles de la grammaire
+   AXIOME^table.add_regle(regle) ;
+  -- ajouter la regle a la liste des regles du symbole
+   nt.add_regle(regle) ;
+  ------------------------------------------------------------------------
+  -- transmission a la suite ...
+  PDROITE^reg := regle ;
+  ACTS^reg := regle ;
+  -- si option auto : ajouter l'action #auto
+  if AXIOME^table.getAutoAtt() then
+    if ~regle.add_action_inhs()  then
+     error(EGG_action_yet_declared, "#auto");
+    end
+  end
+end
+}
+
+#axiome {
+local
+do
+  -- regle 
+   AXIOME^vis.racine();
+  if ~AXIOME^table.getModule() & AXIOME^table.getMain() then
+     AXIOME^vis.racinec();
+  end
+end
+}
+
+-- une liste de regles de productions
+PRODUCTIONS -> PRODUCTION PRODUCTIONS ;
+
+PRODUCTIONS -> ;
+
+-- une regle de production
+PRODUCTION -> #init_code t_ident t_fleche #trans PDROITE t_pointvirgule  ACTS #fin_code ;
+global
+   offset : INTEGER;
+#init_code {
+do
+  offset := PRODUCTION^scanner.getOffset();
+end
+}
+#fin_code {
+local
+  length : INTEGER;
+do
+  length := PRODUCTION^scanner.getOffset() - offset;
+  -- PRODUCTION^table.setCodeSrc_REGLE(offset, length);
+end
+}
+#trans {
+local
+  attribut : ATTRIBUT ;
+  symbole : SYMBOLE ;
+  nt : NON_TERMINAL ;
+  regle : REGLE ;
+do
+  nt := null ;
+  symbole := PRODUCTION^table.chercher(t_ident^txt) ;
+  -- nouveau
+  if symbole = null then
+    nt := new NON_TERMINAL(t_ident^txt) ;
+    -- COMP_INC : verifier si le non-terminal existait deja
+  --   PRODUCTION^table.compareNonTerminal(nt) ;
+     PRODUCTION^table.inserer(nt) ;
+    -- scanner  ...
+    attribut := PRODUCTION^table.attribut("scanner");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+  --   PRODUCTION^table.compareAttribut(attribut);
+     PRODUCTION^vis.nt_attribut(nt, attribut);
+     -- eval ...
+    attribut := PRODUCTION^table.attribut("eval");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+     PRODUCTION^vis.nt_attribut(nt, attribut);
+  -- existant
+  else
+    match symbole 
+    with NON_TERMINAL then 
+      nt := symbole ;
+      -- COMP_INC : verifier si le non-terminal existait deja
+  --     PRODUCTION^table.compareNonTerminal(nt) ;
+    else
+      --ce n est pas un non terminal a gauche d une regle de production
+      error(EGG_not_a_non_terminal, t_ident^txt);
+    end
+  end
+  -- creer la regle avec  
+  --    new SymbREGLE : gauche = s, pos = 0, regle = this, nom = t_ident
+  --    new TDS_ACTION
+  regle := new REGLE(PRODUCTION^table, nt, PRODUCTION^table.getResolveur(), PRODUCTION^scanner.getCommentaire()) ;
+  -- ajouter la regle a la liste des regles de la grammaire
+   PRODUCTION^table.add_regle(regle) ;
+  -- ajouter la regle a la liste des regles du symbole
+   nt.add_regle(regle) ;
+  PDROITE^reg := regle ;
+  ACTS^reg := regle ;
+    -- visite
+   PRODUCTION^vis.nt_entete(nt);
+  -- le visiteur
+  -- si option auto : ajouter l'action #auto
+  if PRODUCTION^table.getAutoAtt() then
+    if ~regle.add_action_inhs()  then
+     error(EGG_action_yet_declared, "#auto");
+    end
+  end
+end
+}
+
+PDROITE -> t_ident #add PDROITE ;
+#add {
+local
+  attribut : ATTRIBUT ;
+  symbole : SYMBOLE ;
+  nt : NON_TERMINAL ;
+  t : TERMINAL ;
+  table : TDS;
+do
+  nt := null;
+  -- on cherche dans la table des symboles de la grammaire
+  symbole := PDROITE^table.chercher(t_ident^txt);
+  if symbole = null then
+    -- creation du non terminal (les terminaux sont deja declares ...)
+    nt := new NON_TERMINAL(t_ident^txt, PDROITE^scanner.getCommentaire()) ;
+    -- ajouter le nt a la grammaire 
+     PDROITE^table.inserer(nt) ;
+    -- scanner ...
+    attribut := PDROITE^table.attribut("scanner"); 
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+  --   PDROITE^table.compareAttribut(attribut); 
+     PDROITE^vis.nt_attribut(nt, attribut);
+     -- eval ...
+    attribut := PDROITE^table.attribut("eval");
+    -- ajouter l'attribut
+     nt.add_attribut(attribut);
+     PDROITE^vis.nt_attribut(nt, attribut);
+    symbole := nt ;
+  else
+    -- le symbole existe deja
+    match symbole
+    with TERMINAL then
+      t := symbole ;
+      if t.get_type() = 0 then
+        -- "separateur dans la partie droite d une regle de production !"
+        error( EGG_space_illegal_here, t_ident^txt);
+      end
+    with NON_TERMINAL then
+      nt := symbole ;
+      -- sauf si axiome...
+      if PDROITE^table.est_axiome(nt) then
+        if ~PDROITE^table.getModule() then
+          --error("pas d axiome a droite d une regle de production") ;
+          error(EGG_axiom_illegal_here, t_ident^txt);
+        end
+      end
+    else
+    end
+  end 
+  -- ajouter a la regle
+  --    new SymbREGLE :  pos = pos + 1, regle = this, nom = t_ident, nt
+   PDROITE^reg.add_droite(symbole) ;
+end
+}
+
+PDROITE -> t_action #add PDROITE ;
+#add {
+local
+do
+  -- ????  PDROITE^tab.ajouter(t_action^txt) ;
+  if ~PDROITE^reg.add_action(t_action^txt)  then
+    error(EGG_action_yet_declared, t_action^txt);
+  end
+end
+}
+
+PDROITE -> #init ;
+#init {
+local
+do
+  -- La regle est terminee, creation de tous les attributs 
+  -- de tous les symboles de la regle
+  -- initialisation des attributs herites de gauche
+  -- initialisation des attributs synthetises de droite
+  -- appel (integre) a contDecl pour chaque attribut cree ...
+  -- PDROITE^table.compareDroite(PDROITE^reg) ;
+   PDROITE^reg.init();
+  -- COMP_INC : verifier si la regle existait deja
+   PDROITE^vis.regle(PDROITE^reg);
+end
+}
+
+-- une liste de variables globales a la regle
+GLOBALES -> t_global GLOBS ;
+
+GLOBALES -> ;
+
+GLOBS -> #trans t_ident VTYPE  t_pointvirgule #add GLOBS ;
+#trans{
+local
+  t : TDS_ACTION;
+do
+  t := GLOBS^reg.getTable();
+  VTYPE^res := t.getResolveur();
+end
+}
+
+#add {
+local
+  g : GLOB;
+  e : ENTREE;
+  t : TDS_ACTION;
+  sr : SymbREGLE;
+  nt : NON_TERMINAL;
+  s : SYMBOLE;
+  r : Resolveur;
+do
+  t := GLOBS^reg.getTable();
+  -- COMP_INC : verifier si la globale existait deja
+  e := t.chercher(t_ident^txt);
+  if e /= null then
+    error (EGG_global_var_yet_declared,t_ident^txt) ;
+  else
+    --g := new GLOB( t_ident^txt, VTYPE^type);
+    g := new GLOB(GLOBS^reg, t_ident^txt, VTYPE^type);
+     t.ajouter_globale(g);
+     GLOBS^reg.ajouter_globale(g);
+  --   GLOBS^table.compareGlobale(g, GLOBS^reg) ;
+    -- ajouter le type de la globale dans le resolveur
+    r := t.getResolveur();
+    -- r.contDecl(g,VTYPE^type); 
+     r.contDecl(g); 
+    --
+     GLOBS^vis.globale(GLOBS^reg, g);
+    --sr := GLOBS^reg.getGauche();
+    --s := sr.getSymbole();
+    --match s with NON_TERMINAL then
+      --nt := s;
+      -- GLOBS^vis.nt_globale(nt, g);
+    --else
+    --end
+  end
+end
+}
+
+GLOBS -> ;
+
+-- une liste d'actions
+ACTS -> GLOBALES t_action t_aco #trans LACTION t_acf #add ACTS ;
+global
+  a : ActREGLE ;
+
+#trans {
+local
+  c : STRING;
+  lact : LACT;
+do
+  a := ACTS^reg.action(t_action^txt);
+  if a /= null then
+    -- action utilisee : 
+    c:= a.getCode();
+    if c /= null then
+      -- deja definie
+      error(EGG_action_yet_declared, t_action^txt);
+    else
+      -- table et position
+      lact := new LACT(ACTS^reg.getTable(), a.getPos());
+      LACTION^act := lact;
+      LACTION^table := ACTS^table;
+      -- un VisiteruAction
+      LACTION^avis := ACTS^vis.getVisAction();
+    end
+  else
+    error(EGG_action_useless, t_action^txt, ACTS^reg.toStringSyntaxAction());
+  end
+end
+}
+
+#add {
+local
+do
+  if a /= null then
+   -- write "offset = " + LACTION^offset + " length = " + LACTION^length + "\n";
+     a.setCodeSrc(ACTS^table, LACTION^offset, LACTION^length);
+    ----------------- POUR OBTENIR LE CODE DE l ACTION EN CHAINE DE CARACTERES ----------------------
+    --write "src : " + a.getCodeSrc() + "\n";
+------------------------------------------------------------------------------------
+     a.setCode(LACTION^code);
+    -- visiter
+     ACTS^vis.nt_action(a);
+  else
+    -- action non utilisee
+  end
+end
+}
+
+ACTS -> #regle ;   
+#regle {
+local
+  t : TDS_ACTION;
+  atts : STRING;
+  lact : LACT;
+  a : ActREGLE ;
+  l : LACTION;
+  lc : LEX_CONTEXTE;
+  s : LEX_LACTION;
+  acts : STRING;
+do
+  -- engendrer le code de l'action auto
+  -- TODO si en mode auto
+  if ACTS^table.getAutoAtt() = true then
+    -- recuperer l'action auto s'il y a des attributs herites !
+ --   if ~ACTS^reg.add_action_inhs()  then
+ --     error(EGG_action_yet_declared, "#auto");
+ --   end
+    a := ACTS^reg.action("#auto_inh");
+    if a /= null then
+      lact := new LACT(ACTS^reg.getTable(), a.getPos());
+       ACTS^reg.autos(lact);
+      -- l'action est correctement engendree mais
+      -- non encore traduite.
+      -- il faut un meta-appel a LACTION sur la chaine de caracteres
+      -- correspondant au code
+      -- table et position
+      --write "src : " + a.getCodeSrc() + "\n";
+      -- si du code source a ete engendre
+      if a.getCodeSrc() /= null then
+        -- creer un reader avec le code source de l'action auto
+        lc := new LEX_CONTEXTE(a.getCodeSrc());
+        --write lc + "\n";
+        -- un compilateur pour le reader du code source
+        l := new LACTION(ACTS^scanner.getReporter(), lc);
+        -- avec son LACT
+         l.set_act(lact);
+         l.set_table(ACTS^table);
+        -- et son visiteur
+         l.set_avis(ACTS^vis.getVisAction());
+        s := l.get_scanner();
+         s.setReader(s);
+         l.set_eval(true);
+         l.compile();
+        -- transferer le code comple dans le code de l'ar
+         a.setCode(l.get_code());
+        -- visiter
+         ACTS^vis.nt_action(a);
+      end
+    end
+  end
+  -- engendrer la regle ici plutot que dans PDROITE
+  -- permet de virer l'appel aux actions non definies
+  -- engendrer le code des actions autos
+   ACTS^vis.nt_regle(ACTS^reg);
+  -- verifier que les atributs sont bien initialises ...
+   if ACTS^table.syntaxOnly() /= true then
+     t := ACTS^reg.getTable();
+     -- creer un message d'erreur pour ca
+     atts := t.verifier_initialisations();
+     if atts /= null then
+       error(EGG_attributes_non_initialized, atts,ACTS^reg.toStringSyntaxAction());
+     end
+     -- verifier les actions non definies
+     acts := ACTS^reg.verifierActions();
+     if acts/= null then
+       error(EGG_undefined_actions, acts,ACTS^reg.toStringSyntaxAction());
+    end
+  end
+ end
+}
+
+
+end

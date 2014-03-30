@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Config file for EGG Grammar  -->
+
+  <egg
+      module="false"
+      lang="java"
+      scanner="jlex"
+      gen="java"
+      prefix="mg.egg.eggc.compiler.egg"
+      so="false"
+      dst="true"
+      main="false"
+  >
+    <import    lib="mg.egg.eggc.runtime.libjava.*"/>
+    <import    lib="mg.egg.eggc.compiler.libegg.base.*"/>
+    <import    lib="mg.egg.eggc.compiler.libegg.java.*"/>
+    <import    lib="mg.egg.eggc.compiler.libegg.egg.*"/>
+    <import    lib="mg.egg.eggc.compiler.libegg.latex.*"/>
+    <import    lib="mg.egg.eggc.compiler.libegg.type.*"/>
+    <import    lib="mg.egg.eggc.runtime.libjava.lex.*"/>
+    <import    lib="java.util.*"/>
+  </egg>

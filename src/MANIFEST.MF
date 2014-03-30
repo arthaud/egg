@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Main-Class: mg.egg.eggc.compiler.EGGC
+Bundle-Version: 5.3.1
+Bundle-SymbolicName: mg.egg.eggc-cmd
+Bundle-Name: EGG runtime
+Bundle-Vendor: MG
+Export-Package: mg.egg.eggc.compiler,
+ mg.egg.eggc.compiler.egg.java,
+ mg.egg.eggc.compiler.libegg.base,
+ mg.egg.eggc.compiler.libegg.egg,
+ mg.egg.eggc.compiler.libegg.java,
+ mg.egg.eggc.compiler.libegg.jlex,
+ mg.egg.eggc.compiler.libegg.latex,
+ mg.egg.eggc.compiler.libegg.type,
+ mg.egg.eggc.internal.dst,
+ mg.egg.eggc.runtime.libjava,
+ mg.egg.eggc.runtime.libjava.lex,
+ mg.egg.eggc.runtime.libjava.messages,
+ mg.egg.eggc.runtime.libjava.problem

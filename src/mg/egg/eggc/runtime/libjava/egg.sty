@@ -1,0 +1,497 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fichier de style LaTeX pour le formatage des sources egg %
+% Auteur : Lucas Satabin                                   %
+% Version : 0.1                                            %
+% Date : juillet 2007                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                ------------------------                  %
+%                utilisation et commandes                  %
+%                ------------------------                  %
+%                                                          %
+% se placer dans l'environnement egg avec :                %
+%   \begin{egg}                                            %
+%     ...                                                  %
+%   \end{egg}                                              %
+%                                                          %
+% 1/ la grammaire                                          %
+% ---------------                                          %
+%                                                          %
+% * \eggcomment{commentaire}  :	insère un commentaire      %
+% * \eggrule{gauche}{droite}  :	ajoute une règle           %
+% * \eggaction{nom}	      :	formate un action dans une %
+%				règle de production        %
+% * \eggt{terminal}	      :	formate un symbole terminal%
+%				dans une règle             %
+% * \eggnt{non terminal}      :	formate un symbole non     %
+%				terminal dans une règle    %
+% * \eggglobals{globales}     :	bloc de déclarations des   %
+%				variables globales         %
+% * \eggglobal{nom}{type}     :	déclaration d'une variable %
+%				globale                    %
+% * \eggoption{nom}{valeur}   :	déclare une option pour le %
+%				compilateur généré         %
+% * \egginh{nom}{type}{liste} :	déclare l'attribut hérité  %
+%				pour la liste de non       %
+%				terminaux donnée           %
+% * \eggsyn{nom}{type}{lisat} :	déclare l'attribut         %
+%				synthétisé pour la liste de%
+%				non terminaux donnée       %
+% * \eggcom{nom}{valeur}                                   %
+%   \eggsugar{nom}{valeur}                                 %
+%   \eggspace{nom}{valeur}                                 %
+%   \eggmacro{nom}{valeur}                                 %
+%   \eggterm{nom}{valeur}     :	déclaration des différents %
+%				types de terminaux         %
+% * \eggext{nom}	      :	déclaration d'un           %
+%				compilateur externe        %
+% * \eggvar{nom}	      :	formate une variable       %
+% * \egglaction{nom}{code}    :	insère le code d'une       %
+%				action sémantique          %
+% * \STRING                                                %
+%   \INTEGER                                               %
+%   \DOUBLE                                                %
+%   \CHARACTER		      :	types                      %
+% * \true                                                  %
+%   \false                                                 %
+%   \nil		      :	constantes                 %
+%                                                          %
+% 2/ Les actions                                           %
+% --------------                                           %
+%                                                          %
+% * \actlocals{locales}	      :	bloc de déclaration des    %
+%				variables locales          %
+% * \actlocal{nom}{type}      :	déclaration d'une variable %
+%				locale                     %
+% * \actinsts{insts}	      :	bloc des instructions      %
+% * \actaffect{gauche}{droite}:	affectation de variable    %
+% * \actcall{meth}{args}      :	appel d'une procédure      %
+% * \actnew{type}{args}	      :	instanciation d'un objet   %
+% * \actwrite{chaine}	      :	écrire une chaine          %
+% * \acterror{id}{args}	      :	erreur                     %
+% * \actwarning{id}{args}     :	avertissement              %
+% * \actif{expr}{insts}{else} :	bloc si                    %
+% * \actelseif{expr}{insts}{else}: bloc sinon si           %
+% * \actelse{insts}	      :	bloc sinon                 %
+% * \actmatch{expr}{withs}    :	bloc match                 %
+% * \actwith{type}{insts}     :	bloc with                  %
+% * \actfct{nom}{args}	      :	appel d'une fonction       %
+%                                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{egg}[2007/07/06 v0.1 Package permettant le formatage des sources egg en LaTeX]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inclusions                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% les mots clé de egg et leur style                        %
+% juste en gras à la base                                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Grammaire EGG                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\@EGGCOMMENT}{-- }
+\newcommand{\@INH}{\textbf{inh }}
+\newcommand{\@SYN}{\textbf{syn }}
+\newcommand{\@AKA}{\textbf{aka }}
+\newcommand{\@FOR}{\textbf{for}}
+\newcommand{\@FLECHE}{ $\rightarrow$ }
+\newcommand{\@OPTION}{\textbf{option }}
+\newcommand{\@SPACE}{\textbf{space }}
+\newcommand{\@COMMENT}{\textbf{comment }}
+\newcommand{\@SUGAR}{\textbf{sugar }}
+\newcommand{\@TERM}{\textbf{term }}
+\newcommand{\@EXT}{\textbf{compil }}
+\newcommand{\@MACRO}{\textbf{macro }}
+\newcommand{\@IS}{\textbf{is }} % sert aussi dans le langage LACTION pour le moment
+\newcommand{\@END}{\textbf{end}} % sert aussi dans le langage LACTION pour le moment
+\newcommand{\@GLOBAL}{\textbf{global}}
+\newcommand{\@STRING}{\textbf{STRING}}   % les buitl-in types servent aussi
+\newcommand{\@INTEGER}{\textbf{INTEGER}} % dans le langage LACTION
+\newcommand{\@DOUBLE}{\textbf{DOUBLE}}
+\newcommand{\@CHARACTER}{\textbf{CHARACTER}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Grammaire LACTION                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\@DO}{\textbf{do}}
+\newcommand{\@LOCAL}{\textbf{local}}
+\newcommand{\@AFFECT}{\textbf{:= }}
+\newcommand{\@DIFF}{\textbf{/= }}
+\newcommand{\@CALL}{\textbf{call }}
+\newcommand{\@WHEN}{\textbf{when }}
+\newcommand{\@ERROR}{\textbf{error}}
+\newcommand{\@WARNING}{\textbf{warning}}
+\newcommand{\@WRITE}{\textbf{write}}
+\newcommand{\@NEW}{\textbf{new }}
+\newcommand{\@IF}{\textbf{if }}
+\newcommand{\@ELSEIF}{\textbf{elseif }}
+\newcommand{\@ELSE}{\textbf{else}}
+\newcommand{\@MATCH}{\textbf{match }}
+\newcommand{\@WITH}{\textbf{with }}
+\newcommand{\@THEN}{\textbf{then}}
+\newcommand{\@BEGIN}{\textbf{begin}}
+\newcommand{\@NIL}{\textbf{nil}}
+\newcommand{\@TRUE}{\textbf{true}}
+\newcommand{\@FALSE}{\textbf{false}}
+\newcommand{\@EXCEPTION}{\textbf{exception}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Définition des commandes                                 %
+% Formate les différentes structures du code               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Définition de l'environnement egg, qui contient les 
+% commandes relatives à l'expression de la grammaire
+\newenvironment{egg}
+{
+  % formate un commentaire
+  \newcommand{\@eggcomment}[1] {
+    \begin{minipage}[t]{\linewidth}
+    \@EGGCOMMENT
+    ##1
+    \end{minipage}
+    \\
+  }
+
+  % formate une règle de production
+  \newcommand{\@eggrule}[2]{
+    \begin{minipage}[t]{\linewidth}
+    \eggnt{##1}
+    \@FLECHE
+    ##2 ;
+    \end{minipage}
+    \\
+  }
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % formatage dans la partie droite d'une règle            %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % formate un non terminal
+  \newcommand{\@eggnt}[1]{
+    \textbf{##1}
+  }
+
+  % formate un terminal
+  \newcommand{\@eggt}[1]{
+    \textit{##1}
+  }
+
+  % formate une action
+  \newcommand{\@eggaction}[1]{
+    \textit{##1}
+  }
+
+  % formate les déclarations des variables globales
+  \newcommand{\@eggglobals}[1]{
+    \begin{minipage}[t]{\linewidth}
+    \@GLOBAL \\
+    \hspace*{1em}
+    \begin{tabular}{l} ##1 \\ \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % déclaration d'une variable globale
+  \newcommand{\@eggglobal}[2]{
+    \begin{minipage}[t]{\linewidth}
+    \textit{##1} : \textbf{##2} ;
+    \end{minipage}
+    \\
+  }
+
+  % les options
+  \newcommand{\@eggoption}[2]{
+    \begin{minipage}[t]{\linewidth}
+    \textbf{##1} = ##2 ;
+    \end{minipage}
+    \\
+  }
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Les attributs sémantiques                              %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % attribut hérité
+  \newcommand{\@egginh}[3]{
+    \begin{minipage}[t]{\linewidth}
+    \@INH ##1 : ##2 \@FOR \\
+    \hspace*{1em}
+    \begin{tabular}{l} ##3 ;\\ \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % attribut synthétisé
+  \newcommand{\@eggsyn}[3]{
+    \begin{minipage}[t]{\linewidth}
+    \@SYN ##1 : ##2 \@FOR \\
+    \hspace*{1em}
+    \begin{tabular}{l} ##3 ;\\ \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % compilateur extérieur
+  \newcommand{\@eggext}[1]{
+    \begin{minipage}[t]{\linewidth}
+      \@EXT ##1 ;
+    \end{minipage}
+    \\
+  }
+
+  % commentaire
+  \newcommand{\@eggcom}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@COMMENT ##1 \@IS ##2;
+    \end{minipage}
+    \\
+  }
+  
+  % space
+  \newcommand{\@eggspace}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@SPACE ##1 \@IS ##2;
+    \end{minipage}
+    \\
+  }
+
+  % sugar
+  \newcommand{\@eggsugar}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@SUGAR ##1 \@IS ##2;
+    \end{minipage}
+    \\
+  }
+
+  % macro
+  \newcommand{\@eggmacro}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@MACRO ##1 \@IS ##2;
+    \end{minipage}
+    \\
+  }
+
+  % term
+  \newcommand{\@eggterm}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@TERM ##1 \@IS ##2;
+    \end{minipage}
+    \\
+  }
+
+  % corps d'une action sémantique
+  \newcommand{\@egglaction}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \textit{##1} \{
+      \\
+      ##2
+      \@END
+      \\
+      \}
+    \end{minipage}
+    \\
+  }
+
+  % une variable
+  \newcommand{\@eggvar}[1]{
+    \textit{##1}
+  }
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % commandes du corps des actions sémantiques             %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % débute les déclarations des variables locales
+  \newcommand{\@actlocals}[1]{
+    \begin{minipage}[t]{\linewidth}
+    \@LOCAL
+    \\
+    \hspace*{1em}
+    \begin{tabular}{l} ##1 \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % déclaration d'un variable locale
+  \newcommand{\@actlocal}[2]{
+    \begin{minipage}[t]{\linewidth}
+    \textit{##1} : \textbf{##2} ;
+    \end{minipage}
+    \\
+  }
+
+  % bloc contenant les instructions
+  \newcommand{\@actinsts}[1]{
+    \begin{minipage}[t]{\linewidth}
+    \@DO
+    \\
+    \hspace*{1em}
+    \begin{tabular}{l} ##1 \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % une affectation
+  \newcommand{\@actaffect}[2]{
+    \begin{minipage}[t]{\linewidth}
+    ##1 \@AFFECT ##2;
+    \end{minipage}
+    \\
+  }
+
+  % un call
+  \newcommand{\@actcall}[2]{
+    \begin{minipage}[t]{\linewidth}
+    \@CALL ##1(##2);
+    \end{minipage}
+    \\
+  }
+
+  % un new
+  \newcommand{\@actnew}[2]{
+    \@NEW ##1(##2)
+  }
+
+  % un write
+  \newcommand{\@actwrite}[1]{
+    \begin{minipage}[t]{\linewidth}
+      \@WRITE(##1);
+    \end{minipage}
+    \\
+  }
+
+  % un error
+  \newcommand{\@acterror}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@ERROR(##1##2);
+    \end{minipage}
+    \\
+  }
+
+  % un warning
+  \newcommand{\@actwarning}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@WARNING(##1##2);
+    \end{minipage}
+    \\
+  }
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % les structures de contrôle                             %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % le if
+  \newcommand{\@actif}[3]{
+    \begin{minipage}[t]{\linewidth}
+      \@IF ##1 \@THEN
+      \\
+      \hspace*{1em}
+      \begin{tabular}{l} ##2 \end{tabular}
+      ##3
+      \@END
+    \end{minipage}
+    \\
+  }
+
+  % le elseif
+  \newcommand{\@actelseif}[3]{
+    \begin{minipage}[t]{\linewidth}
+      \@ELSEIF ##1 \@THEN
+      \\
+      \hspace*{1em}
+      \begin{tabular}{l} ##2 \end{tabular}
+      ##3
+    \end{minipage}
+    \\
+  }
+
+  % le else
+  \newcommand{\@actelse}[1]{
+    \begin{minipage}[t]{\linewidth}
+      \@ELSE
+      \\
+      \hspace*{1em}
+      \begin{tabular}{l} ##1 \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % le match
+  \newcommand{\@actmatch}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@MATCH ##1
+      \\
+      ##2
+      \@END
+    \end{minipage}
+    \\
+  }
+
+  % le with
+  \newcommand{\@actwith}[2]{
+    \begin{minipage}[t]{\linewidth}
+      \@WITH ##1 \@THEN
+      \\
+      \hspace*{1em}
+      \begin{tabular}{l} ##2 \end{tabular}
+    \end{minipage}
+    \\
+  }
+
+  % une fonction
+  \newcommand{\@actfct}[2]{
+    ##1(##2)
+  }
+
+  % les commandes pour l'utilisateur
+  \def\eggcomment{\@eggcomment}
+  \def\eggrule{\@eggrule}
+  \def\eggaction{\@eggaction}
+  \def\eggglobals{\@eggglobals}
+  \def\eggglobal{\@eggglobal}
+  \def\eggnt{\@eggnt}
+  \def\eggt{\@eggt}
+  \def\eggoption{\@eggoption}
+  \def\egginh{\@egginh}
+  \def\eggsyn{\@eggsyn}
+  \def\eggext{\@eggext}
+  \def\eggcom{\@eggcom}
+  \def\eggspace{\@eggspace}
+  \def\eggsugar{\@eggsugar}
+  \def\eggmacro{\@eggmacro}
+  \def\eggterm{\@eggterm}
+  \def\eggvar{\@eggvar}
+  \def\STRING{\@STRING}
+  \def\INTEGER{\@INTEGER}
+  \def\DOUBLE{\@DOUBLE}
+  \def\CHARACTER{\@CHARACTER}
+  \def\true{\@TRUE}
+  \def\false{\@FALSE}
+  \def\nil{\@NIL}
+  \def\egglaction{\@egglaction}
+  \def\actlocals{\@actlocals}
+  \def\actlocal{\@actlocal}
+  \def\actinsts{\@actinsts}
+  \def\actaffect{\@actaffect}
+  \def\actcall{\@actcall}
+  \def\actnew{\@actnew}
+  \def\actwrite{\@actwrite}
+  \def\acterror{\@acterror}
+  \def\actwarning{\@actwarning}
+  \def\actif{\@actif}
+  \def\actelseif{\@actelseif}
+  \def\actelse{\@actelse}
+  \def\actmatch{\@actmatch}
+  \def\actwith{\@actwith}
+  \def\actfct{\@actfct}
+
+}
+{
+}
+

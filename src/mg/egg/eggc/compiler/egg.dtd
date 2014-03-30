@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT egg (  import*)>
+<!ELEMENT import EMPTY>
+<!ATTLIST egg 
+        scanner (jlex | ext) #IMPLIED 
+        module (true |false) #IMPLIED 
+        lang (java | egg |cpp |latex)  #IMPLIED
+        gen CDATA #IMPLIED
+        dst (true |false) #IMPLIED
+        so (true |false) #IMPLIED
+        typage (true |false) #IMPLIED
+        clean (true |false) #IMPLIED
+        main (true |false) #IMPLIED
+         >
+<!ATTLIST import 
+        lib CDATA #REQUIRED 
+        >
+   

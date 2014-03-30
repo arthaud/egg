@@ -1,0 +1,1179 @@
+option auto=true;
+option k=2;  
+option version=5.2.8; 
+
+inh table : TDS for 
+     LACTION,
+     INSTS, INST, INST2, ELSIF, WITH, WITHS, VAR, 
+     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, APP2,  
+     ARGS, ARGSX, EARGS, EXCEPTION;
+inh  reg : REGLE for
+     LACTION;
+inh  avis : IVisiteurAction for
+     LACTION,
+     LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS, 
+     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP,
+     ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP2; 
+inh  act : LACT for
+     LACTION,
+     LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS, VAR, 
+     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
+     APP, EARGS , EXCEPTION, INST2, APP2;
+syn nom : STRING for
+    WITH, OPADD, OPMUL;
+syn  entree : ENTREE for 
+    VAR;
+inh  hentree : ENTREE for 
+    INST2, APP, APP2, WITH, WITHS;
+syn  code : STRING for 
+    LACTION, 
+    LOCALES, LOCS, INSTS, INST,INST2, ELSIF, WITH, WITHS,
+    EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, APP2,EXCEPTION;
+inh  hcode : STRING for 
+    EXPRTERME, EXPRFACTEUR;
+syn  args : Vector<STRING> for 
+    ARGS, EARGS, ARGSX;
+inh  hargs : Vector<STRING> for 
+    ARGS, EARGS, ARGSX;
+syn  type     : IType for
+    VTYPE, TYPE, WITH, EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, APP2;
+inh  htype     : IType for
+    EXPRTERME, EXPRFACTEUR;
+syn  types : Vector<IType> for 
+    ARGS, EARGS, ARGSX;
+inh  htypes : Vector<IType> for 
+    ARGS, EARGS, ARGSX;
+inh res : Resolveur for 
+    VTYPE, TYPE, TGEN, XTYPE ;
+syn  pars : Vector<IType> for 
+    TGEN, XTYPE;
+    
+syn offset : INTEGER for LACTION;
+syn length : INTEGER for LACTION;
+
+---------------------------------------------------------------
+
+space      separateur       is    "[\r\n\t ]+"                ;
+comment    commentaires     is    "\-\-[^\n]*\n"              ;
+comment    big              is "\-\*([^\*]|(\*+[^\*\-]))*\*+\-";
+sugar      t_point    is    "\."         aka $.$         ;
+sugar      t_chapeau  is    "\^"          aka $^$         ;
+sugar      t_virgule  is    "\,"           aka $,$        ;
+sugar      t_pointvirgule   is    ";"      aka $;$              ;
+sugar      t_deuxpoints     is    ":"        aka $:$            ;
+sugar      t_affectation    is    "(:=)"       aka $:=$            ;
+sugar      t_inf     is    "\<"            aka $<$       ;
+sugar      t_sup     is    "\>"            aka $>$       ;
+sugar      t_paro     is    "\("           aka $($        ;
+sugar      t_parf     is    "\)"            aka $)$       ;
+sugar      t_is       is    "is"            aka $is$       ;
+sugar      t_do       is    "do"            aka $do$       ;
+sugar      t_local    is    "local"          aka $local$            ;
+sugar      t_end      is    "end"            aka $end$      ;
+sugar      t_call     is    "call"           aka $call$      ;
+sugar      t_when     is    "when"           aka $when$      ;
+sugar      t_error   is    "error"           aka $error$           ;
+sugar      t_attention  is    "warning"       aka $warning$               ;
+sugar      t_write    is    "write"           aka $write$           ;
+sugar      t_new      is    "new"             aka $new$     ;
+sugar      t_plus     is    "\+"              aka $+$     ;
+sugar      t_moins    is    "\-"             aka $-$      ;
+sugar      t_mult     is    "\*"              aka $*$     ;
+sugar      t_div      is    "\/"              aka $/$     ;
+sugar      t_d_plus   is    "\+\."            aka $+.$     ;
+sugar      t_d_moins  is    "\-\."            aka $-.$     ;
+sugar      t_d_mult   is    "\*\."            aka $*.$     ;
+sugar      t_d_div    is    "\/\."            aka $/.$     ;
+sugar      t_et       is    "(\&|(\&\&))"              aka $&$, $&&$    ;
+sugar      t_ou       is    "(\||(\|\|))"               aka $|$ ,$||$   ;
+sugar      t_not      is    "(\~|\!)"          aka $~$ ,$!$        ;
+sugar      t_append   is    "\@"                aka $@$   ;
+--sugar      t_aco      is    "\{"                  ;
+--sugar      t_acf      is    "\}"                  ;
+sugar      t_if       is    "if"               aka $if$    ;
+sugar      t_elseif   is    "elseif"           aka $elseif$          ;
+sugar      t_else     is    "else"             aka $else$    ;
+sugar      t_match    is    "match"            aka $match$          ;
+sugar      t_with     is    "with"             aka $with$    ;
+sugar      t_then     is    "then"             aka $then$    ;
+sugar      t_begin    is    "begin"            aka $begin$          ;
+sugar      t_egal     is    "(=)"                 aka $=$   ;
+sugar      t_different      is    "((\/=)|(\!=))"          aka $/=$,$!=$        ;
+sugar      t_nil      is    "((nil)|(null))"               aka $nil$,$null$  ;
+sugar      t_true     is    "true"              aka $true$   ;
+sugar      t_false    is    "false"             aka $false$         ;
+--sugar      t_chaine   is    "\""                  ;
+sugar      t_cro      is    "\["                aka $[$   ;
+sugar      t_crf      is    "\]"                aka $]$   ;
+sugar      t_string   is    "STRING"           aka $STRING$  ;
+sugar      t_integer  is    "INTEGER"           aka $INTEGER$  ;
+sugar      t_double   is    "DOUBLE"            aka $DOUBLE$ ;
+sugar      t_char     is    "CHARACTER"        aka $CHARACTER$     ;
+sugar      t_exception is "exception" aka $exception$ ;               
+term       t_entier   is    "[0-9]+"                 ;
+term       t_flottant is    "[0-9]*\.[0-9]+(e[\+\-]?[0-9]+)?"          ;
+-- chars
+macro    hex   is "[0-9a-fA-F]";
+macro    uni   is "\\u{hex}{hex}{hex}{hex}";
+macro    oct   is "\\[0-3][0-7][0-7]";
+-- je laisse %N et %N pour la compatibilite, 
+-- le visiteur java les remplace par \n et \t
+macro    esc is "({uni}|{oct}|\\[nrtfb]|\%[NT])";
+macro    scar is "[^\\\"]";
+term     t_chaine   is    "\"({esc}|\\[\\\"]|{scar})*\"" ;
+
+macro    ccar is "[^\\\']";
+term       t_car      is    "\'({esc}|\\[\\\']|{ccar})\'";
+term       t_ident    is    "[a-zA-Z_][a-zA-Z_0-9]*" ;
+
+
+--LACTION -> t_aco #res LOCALES t_do #inc INSTS t_end t_acf #gen ;
+LACTION ->  #res LOCALES t_do #inc INSTS EXCEPTION t_end #gen ;
+global
+   offset : INTEGER;
+   length : INTEGER;
+#res{
+do
+  offset := LACTION^scanner.getOffset();
+   LACTION^avis.resetIndent();
+end
+}
+
+#inc{
+do
+   LACTION^avis.incIndent();
+end
+}
+
+#gen {
+local
+  c : STRING;
+do
+  -- met a jour le code de l'action
+  LACTION^code := LOCALES^code @ LACTION^avis.insts() @ INSTS^code + EXCEPTION^code;
+   LACTION^avis.decIndent();
+  length := LACTION^scanner.getOffset() + LACTION^scanner.getLength()- offset;
+  LACTION^offset := offset;
+  LACTION^length := length;
+end
+}
+
+LOCALES -> t_local #inc LOCS #gen ;
+#inc{
+do
+   LOCALES^avis.incIndent();
+end
+}
+
+#gen{
+local
+do
+  LOCALES^code := LOCALES^avis.locales() @ LOCS^code;
+   LOCALES^avis.decIndent();
+end
+}
+
+LOCALES -> #gen ;
+#gen {
+local
+do
+  LOCALES^code := "";
+end
+}
+
+--VTYPE -> #gen ;
+--#gen {
+--local
+--do
+ -- --VTYPE^type := VTYPE^res.getType();
+ -- VTYPE^type := null;
+--end
+--}
+
+VTYPE -> t_deuxpoints #trans TYPE #gen ;
+#trans {
+local
+do
+  TYPE^res := VTYPE^res;
+end
+}
+
+#gen {
+local
+do
+  VTYPE^type := TYPE^type;
+end
+}
+
+LOCS -> t_ident #trans VTYPE t_pointvirgule #add LOCS #gen ;
+--LOCS -> t_ident t_deuxpoints #trans TYPE t_pointvirgule #add LOCS #gen ;
+global
+  r : Resolveur;
+#trans {
+local
+do
+  r := LOCS^act.getResolveur();
+  VTYPE^res := r;
+end
+}
+
+#add {
+local
+  v : VAR;
+  l : TDS_ACTION;
+  e : ENTREE;
+  b : BLOC;
+do
+  b:= LOCS^act.getBloc();
+  l := b.getLocs();
+  e := l.chercher(t_ident^txt);
+  if e /= null then
+    error (LACTION_local_yet_declared,t_ident^txt) ;
+  else
+    v := new VAR(t_ident^txt, VTYPE^type);
+     l.ajouter_locale(v);
+    -- inference de type
+     r.contDecl(v); 
+  end
+end
+}
+
+#gen{ 
+local 
+  l : TDS_ACTION;
+  e : ENTREE;
+  b : BLOC;
+do 
+  b:= LOCS^act.getBloc();
+  l := b.getLocs();
+  e := l.chercher(t_ident^txt);
+  LOCS^code := LOCS^avis.indent() @ LOCS^avis.decl(e) @ "%N" @ LOCS1^code;
+end 
+}
+
+LOCS -> #gen ;
+#gen {
+local
+do
+  LOCS^code := "";
+end
+}
+
+TYPE -> t_ident #trans TGEN #gen ;
+#trans { do 
+end 
+}
+
+#gen { 
+do 
+  TYPE^type := TYPE^res.getType(t_ident^txt, TGEN^pars);
+end 
+}
+
+TGEN -> #gen;
+#gen { do 
+  TGEN^pars := null ; 
+end 
+}
+
+TGEN -> t_inf TYPE XTYPE t_sup #gen ;
+#gen { 
+do 
+    XTYPE^pars.insertElementAt(TYPE^type,0);
+  TGEN^pars := XTYPE^pars ; 
+  end 
+  }
+
+XTYPE -> t_virgule TYPE XTYPE #add ;
+#add { 
+do 
+   XTYPE1^pars.insertElementAt(TYPE^type,0);
+  XTYPE^pars := XTYPE1^pars ; 
+end 
+}
+
+XTYPE -> #gen;
+#gen {
+do 
+  XTYPE^pars := new Vector<IType>() ; 
+  end 
+  }
+
+TYPE -> t_integer #gen ;
+#gen{ local do 
+TYPE^type := TYPE^res.getType("INTEGER");
+ end }
+
+TYPE -> t_double #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("DOUBLE"); end }
+
+TYPE -> t_string #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("STRING"); end }
+
+TYPE -> t_char #gen ;
+#gen{ local do TYPE^type := TYPE^res.getType("CHARACTER"); end }
+
+INSTS -> #gen ;
+#gen{ 
+local 
+do 
+  INSTS^code := "";
+end 
+}
+
+INSTS -> INST INSTS #gen ;
+#gen{ 
+local 
+do 
+  INSTS^code := INSTS^avis.indent() @ INST^code @ "%N" @ INSTS1^code;
+end 
+}
+
+EXCEPTION -> #gen ;
+#gen{ 
+local 
+do 
+  EXCEPTION^code := "";
+end 
+}
+
+
+EXCEPTION -> t_exception t_ident #add INSTS #gen;
+global
+  v : VAR;
+#add {
+local
+
+  l : TDS_ACTION;
+  e : ENTREE;
+  b : BLOC;
+do
+  b:= EXCEPTION^act.getBloc();
+  l := b.getLocs();
+  e := l.chercher(t_ident^txt);
+  if e /= null then
+    error (LACTION_local_yet_declared,t_ident^txt) ;
+  else
+    v := new VAR(t_ident^txt, null);
+     l.ajouter_locale(v);
+     v.setEtat(true);
+    -- inference de type
+  --  r.contDecl(v); 
+  end
+end
+}
+#gen{ 
+local 
+do 
+--EXCEPTION^code := "";
+  EXCEPTION^code := EXCEPTION^avis.exc(t_ident^txt, INSTS^code);
+end 
+}
+INST -> VAR #trans INST2  t_pointvirgule  #gen;
+#trans {
+do
+INST2^hentree := VAR^entree;
+end
+}
+#gen {
+do
+  INST^code := INST2^code;
+end
+}
+
+INST2 ->  t_affectation EXPR #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  if ~INST2^hentree.affectable(INST2^act.getPos()) then
+     error(LACTION_var_illegal_access, INST2^hentree.getNom());
+  else
+     INST2^hentree.setEtat(true);
+    -- expr est un triplet (nom, type, val)
+    INST2^code := INST2^avis.aff(INST2^hentree, EXPR^code);
+    -- inference
+    r := INST2^act.getResolveur();
+     r.contAff(INST2^hentree, EXPR^type);
+  end
+end
+}
+
+INST2 -> APP2  #gen ;
+#gen {
+do
+INST2^code := APP2^code + ";";
+end
+}
+
+
+INST  -> t_call #trans VAR #check t_point t_ident t_paro ARGS t_parf t_pointvirgule #gen ;
+#trans {
+local
+  a : Vector<STRING>;
+  ts : Vector<IType>;
+do 
+  a := new Vector<STRING>();
+  ARGS^hargs := a;
+  --
+  ts := new Vector<IType>();
+  ARGS^htypes := ts;
+end
+}
+
+#check {
+local
+do 
+   if ~VAR^entree.getEtat() then
+     error(LACTION_var_non_initialized, VAR^entree.getNom());
+  elseif ~VAR^entree.utilisable(INST^act.getPos()) then
+     error(LACTION_var_illegal_access, VAR^entree.getNom());
+  end
+end
+}
+
+#gen {
+local
+  r : Resolveur;
+do 
+   VAR^entree.setEtat(true);
+  --
+  r := INST^act.getResolveur();
+   r.contProc(VAR^entree, t_ident^txt, ARGS^types);
+  -- args: liste de expr
+  INST^code := INST^avis.appel(VAR^entree, t_ident^txt, ARGS^args);
+end
+}
+
+INST -> t_new #trans VAR t_point t_ident t_paro ARGS t_parf t_pointvirgule #gen ;
+#trans {
+local
+  a : Vector<STRING>;
+  ts : Vector<IType>;
+do 
+  a := new Vector<STRING>();
+  ARGS^hargs := a;
+  --
+  ts := new Vector<IType>();
+  ARGS^htypes := ts;
+end
+}
+
+#gen {
+local
+  r : Resolveur;
+do 
+  if ~VAR^entree.affectable(INST^act.getPos()) then
+     error(LACTION_var_illegal_access, VAR^entree.getNom());
+  else
+     VAR^entree.setEtat(true);
+    INST^code := INST^avis.nouveau(VAR^entree, ARGS^args);
+    r := INST^act.getResolveur();
+     r.contProc(VAR^entree, t_ident^txt, ARGS^types);
+  end
+end
+}
+
+INST -> t_write EXPR t_pointvirgule #gen ;
+#gen {
+local
+do 
+  INST^code := INST^avis.ecrire(EXPR^code);
+end
+}
+
+
+INST -> t_error t_paro t_ident #trans EARGS t_parf t_pointvirgule #gen ;
+#trans {
+local
+  a : Vector<STRING>;
+  ts : Vector<IType>;
+do 
+  -- les arguments
+  a := new Vector<STRING>();
+  EARGS^hargs := a;
+  ts := new Vector<IType>();
+  EARGS^htypes := ts;
+end
+}
+
+#gen {
+local
+  r : Resolveur;
+do 
+   INST^table.addProperty(t_ident^txt, EARGS^args.size());
+  INST^code := INST^avis.fatal(t_ident^txt, EARGS^args);
+  r := INST^act.getResolveur();
+   r.contErr(EARGS^types);
+end
+}
+
+
+INST -> t_attention t_paro t_ident #trans EARGS t_parf t_pointvirgule #gen ;
+#trans {
+local
+  a : Vector<STRING>;
+  ts : Vector<IType>;
+do 
+  a := new Vector<STRING>();
+  EARGS^hargs := a;
+  ts := new Vector<IType>();
+  EARGS^htypes := ts;
+end
+}
+
+#gen {
+local
+  r : Resolveur;
+do 
+   INST^table.addProperty(t_ident^txt, EARGS^args.size());
+  INST^code := INST^avis.signaler(t_ident^txt, EARGS^args);
+  r := INST^act.getResolveur();
+   r.contErr(EARGS^types);
+end
+}
+
+
+EARGS -> #gen ;
+#gen {
+local
+do 
+  EARGS^args := EARGS^hargs;
+  EARGS^types := EARGS^htypes;
+end
+}
+
+
+EARGS -> t_virgule EXPR #add EARGS #gen ;
+#add {
+local
+do 
+   EARGS^hargs.add(EXPR^code);
+   EARGS^htypes.add(EXPR^type);
+  EARGS1^htypes := EARGS^htypes;
+end
+}
+
+#gen {
+local
+do 
+  EARGS^args := EARGS1^args;
+  EARGS^types := EARGS1^types;
+end
+}
+
+INST -> t_if EXPR t_then #inc INSTS #dec ELSIF t_end #gen ;
+#inc {
+do
+   INST^avis.incIndent();
+end
+}
+
+#dec {
+do
+   INST^avis.decIndent();
+end
+}
+
+#gen {
+local
+  a: STRING;
+  b: STRING;
+do 
+  a := INSTS^code;
+  b := ELSIF^code;
+  INST^code := INST^avis.ifExpr(EXPR^code, a, b);
+end
+}
+
+
+ELSIF -> t_elseif EXPR t_then #inc INSTS #dec ELSIF #gen ;
+#inc {
+do
+   ELSIF^avis.incIndent();
+end
+}
+
+#dec {
+do
+   ELSIF^avis.decIndent();
+end
+}
+
+#gen {
+local
+  a: STRING;
+  b: STRING;
+do 
+  a := INSTS^code;
+  b := ELSIF1^code;
+  ELSIF^code := ELSIF^avis.indent() @ ELSIF^avis.ifSinonSi(EXPR^code, a, b);
+end
+}
+
+ELSIF -> t_else #inc INSTS #gen ;
+#inc {
+do
+   ELSIF^avis.incIndent();
+end
+}
+
+#gen {
+local
+  a: STRING;
+do 
+  a := INSTS^code;
+   ELSIF^avis.decIndent();
+  ELSIF^code := ELSIF^avis.indent() @ ELSIF^avis.ifSinon(a) @
+                ELSIF^avis.indent() @ ELSIF^avis.ifFin();
+end
+}
+
+ELSIF -> #gen ;
+#gen {
+local
+do 
+  ELSIF^code := ELSIF^avis.indent() @ ELSIF^avis.ifFin();
+end
+}
+
+VAR -> t_ident #gen ;
+#gen {
+  local
+    l : TDS_ACTION;
+    e : ENTREE;
+    b : BLOC;
+    r : Resolveur;
+  do
+   -- write "VAR " @ t_ident^txt @ "%N";
+    b:= VAR^act.getBloc();
+    l := b.getLocs();
+    e := l.chercher(t_ident^txt);
+    if e = null then
+       error (LACTION_not_a_var,t_ident^txt) ;
+    else
+       VAR^entree := e;
+    end
+  end
+}
+
+VAR -> t_ident t_chapeau t_ident #gen ;
+#gen {
+  local
+    l : TDS_ACTION;
+    e : ENTREE;
+    s: STRING;
+    b : BLOC;
+    symb : SYMBOLE;
+    r : Resolveur;
+  do
+ --   -- Chercher si t_ident est un symbole ...
+    --  write "VAR attribut " @ t_ident^txt @ "^" @ t_ident1^txt @ "%N";
+    b:= VAR^act.getBloc();
+    l := b.getLocs();
+    s := t_ident^txt @ "^" @ t_ident1^txt;
+    e := l.chercher(s);
+    if e = null then
+      error (LACTION_not_an_attribute,t_ident1^txt,t_ident^txt) ;
+    else
+      VAR^entree := e;
+    end
+  end
+}
+
+INST -> t_match VAR #check WITH WITHS t_end #gen ;
+#check {
+local
+do 
+  if ~VAR^entree.getEtat() then
+     error(LACTION_var_non_initialized, VAR^entree.getNom());
+  elseif ~VAR^entree.utilisable(INST^act.getPos()) then
+     error(LACTION_var_illegal_access, VAR^entree.getNom());
+  end
+  WITH^hentree := VAR^entree;
+  WITHS^hentree := VAR^entree;
+end
+}
+
+#gen {
+local
+do 
+  INST^code := 
+    --INST^avis.matchVarAvec(VAR^entree, WITH^nom, WITH^code, WITHS^code) @
+    INST^avis.matchVarAvec(VAR^entree, WITH^type, WITH^code, WITHS^code) @ 
+    INST^avis.indent() @ 
+    --INST^avis.matchSi(VAR^entree, WITH^nom, WITH^code, WITHS^code);
+    INST^avis.matchSi(VAR^entree, WITH^type, WITH^code, WITHS^code);
+end
+}
+
+WITH  -> t_with #res TYPE #trans t_then INSTS #gen ;
+#res {
+local
+  r : Resolveur;
+do
+  r := WITH^act.getResolveur();
+  TYPE^res := r;
+end
+}
+
+#trans {
+local
+do 
+   WITH^avis.incIndent();
+  -- on transtype la variable du match
+  -- pendant le temps de INSTS
+  --WITH^hentree.setTypeReel(TYPE^type);
+   WITH^avis.transtyper(WITH^hentree, TYPE^type);
+end
+}
+
+#gen {
+local
+do 
+  WITH^type := TYPE^type;
+  WITH^nom := TYPE^type.getNom();
+  WITH^code := INSTS^code;
+   WITH^avis.decIndent();
+  -- on retablit le type original
+  --WITH^hentree.resetTypeReel();
+   WITH^avis.detranstyper(WITH^hentree);
+end
+}
+
+WITHS -> WITH WITHS #gen ;
+#gen {
+local
+do 
+  WITHS^code := WITHS^avis.indent() @ 
+      -- WITHS^avis.matchSinonSi(WITHS^hentree, WITH^nom, WITH^code, WITHS1^code);
+       WITHS^avis.matchSinonSi(WITHS^hentree, WITH^type, WITH^code, WITHS1^code);
+end
+}
+
+WITHS -> t_else #inc INSTS #gen ;
+#inc {
+do
+   WITHS^avis.incIndent();
+end
+}
+
+#gen {
+local
+  a : STRING;
+do 
+  a := INSTS^code;
+   WITHS^avis.decIndent();
+  WITHS^code :=  WITHS^avis.indent() @ WITHS^avis.matchSinon(a) @
+                 WITHS^avis.indent() @ WITHS^avis.matchFin();
+end
+}
+
+WITHS -> #gen ;
+
+#gen {
+local
+do 
+  WITHS^code := WITHS^avis.indent() @ WITHS^avis.matchFin();
+end
+}
+
+EXPR ->  TERME #code EXPRTERME #gen ;
+#code {
+local
+do 
+  EXPRTERME^hcode := TERME^code;
+  EXPRTERME^htype := TERME^type;
+end
+}
+
+#gen {
+local
+do 
+  EXPR^type := EXPRTERME^type;
+  EXPR^code := EXPRTERME^code;
+end
+}
+
+EXPRTERME ->  OPADD TERME #code EXPRTERME #gen ;
+#code {
+local
+  r: Resolveur;
+do 
+  r:= EXPRTERME^act.getResolveur();
+  EXPRTERME1^htype := r.contOp(EXPRTERME^htype, OPADD^nom, TERME^type);
+  EXPRTERME1^hcode := EXPRTERME^avis.opAdd(EXPRTERME^hcode, OPADD^nom, TERME^code);
+end
+}
+
+#gen {
+local
+do 
+  EXPRTERME^type := EXPRTERME1^type;
+  EXPRTERME^code := EXPRTERME1^code;
+end
+}
+
+OPADD -> t_egal #gen ;
+#gen { local do OPADD^nom := "="; end } 
+
+OPADD -> t_different #gen ;
+#gen { local do OPADD^nom := "/="; end } 
+
+OPADD -> t_append #gen ;
+#gen { local do OPADD^nom := "@"; end } 
+
+OPADD -> t_plus #gen ;
+#gen { local do OPADD^nom := "+"; end } 
+
+OPADD -> t_moins #gen ;
+#gen { local do OPADD^nom := "-"; end } 
+
+OPADD -> t_d_plus #gen ;
+#gen { local do OPADD^nom := "+."; end } 
+
+OPADD -> t_d_moins #gen ;
+#gen { local do OPADD^nom := "-."; end } 
+
+OPADD -> t_ou #gen ;
+#gen { local do OPADD^nom := "or"; end } 
+
+EXPRTERME -> #gen ;
+#gen {
+local
+do 
+  EXPRTERME^type := EXPRTERME^htype;
+  EXPRTERME^code := EXPRTERME^hcode;
+end
+}
+
+TERME ->  FACTEUR #code EXPRFACTEUR #gen ;
+#code {
+local
+do 
+  EXPRFACTEUR^htype := FACTEUR^type;
+  EXPRFACTEUR^hcode := FACTEUR^code;
+end
+}
+
+#gen {
+local
+do 
+  TERME^type := EXPRFACTEUR^type;
+  TERME^code := EXPRFACTEUR^code;
+end
+}
+
+FACTEUR -> t_nil #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("VOID");
+  FACTEUR^code := FACTEUR^avis.vide();
+end
+}
+
+
+FACTEUR -> t_true #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("BOOLEAN");
+  FACTEUR^code := FACTEUR^avis.vrai();
+end
+}
+
+
+FACTEUR -> t_false #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("BOOLEAN");
+  FACTEUR^code := FACTEUR^avis.faux();
+end
+}
+
+
+FACTEUR -> t_entier #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("INTEGER");
+  FACTEUR^code := FACTEUR^avis.entier(t_entier^txt);
+end
+}
+
+
+FACTEUR -> t_moins FACTEUR #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("INTEGER");
+  FACTEUR^code := FACTEUR^avis.moins(FACTEUR1^code);
+end
+}
+
+
+FACTEUR -> t_flottant #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("DOUBLE");
+  FACTEUR^code := FACTEUR^avis.reel(t_flottant^txt);
+end
+}
+
+
+FACTEUR -> t_car #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("CHARACTER");
+  FACTEUR^code := FACTEUR^avis.car(t_car^txt);
+end
+}
+
+
+FACTEUR -> t_chaine #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.getType("STRING");
+  FACTEUR^code := FACTEUR^avis.chaine(t_chaine^txt);
+end
+}
+
+
+FACTEUR ->  VAR #check APP #gen ;
+#check {
+local
+do 
+  --write "expr : " @ VAR^entree;
+  if ~VAR^entree.getEtat() then
+    error(LACTION_var_non_initialized, VAR^entree.getNom());
+  elseif ~VAR^entree.utilisable(FACTEUR^act.getPos()) then
+    error(LACTION_var_illegal_access, VAR^entree.getNom());
+  else 
+    APP^hentree := VAR^entree;
+  end
+ --   APP^hentree := VAR^entree;
+end
+}
+
+#gen {
+local
+do 
+  FACTEUR^code := APP^code;
+  FACTEUR^type := APP^type;
+end
+}
+
+APP -> #gen ;
+#gen {
+local
+do 
+  APP^code := APP^avis.var(APP^hentree);
+  -- une variable on renvoie le type
+   -- write APP^scanner.ligneDepart() + " " + APP^hentree  + "\n";
+  
+  APP^type := APP^hentree.getType();
+end
+}
+APP -> APP2 #gen  ;
+
+#gen {
+do
+    APP^code := APP2^code;
+    APP^type := APP2^type;
+end
+}
+
+APP2 -> t_point t_ident #trans t_paro ARGS t_parf #gen ;
+#trans {
+local
+  a : Vector<STRING>;
+  ts : Vector<IType>;
+do 
+  a := new Vector<STRING>();
+  ARGS^hargs := a;
+  --
+  ts := new Vector<IType>();
+  ARGS^htypes := ts;
+end
+}
+
+#gen {
+local
+ r: Resolveur;
+do 
+  r := APP2^act.getResolveur();
+  APP2^type := r.contFct(APP2^hentree, t_ident^txt, ARGS^types);
+  APP2^code := APP2^avis.fct(APP2^hentree, t_ident^txt, ARGS^args);
+end
+}
+
+FACTEUR -> t_not FACTEUR #gen ;
+#gen {
+local
+  r : Resolveur;
+do 
+  r := FACTEUR^act.getResolveur();
+  FACTEUR^type := r.contOpNon(FACTEUR1^type);
+  FACTEUR^code := FACTEUR^avis.non(FACTEUR1^code);
+end
+}
+
+FACTEUR -> t_paro EXPR t_parf #gen ;
+#gen {
+local
+do 
+  FACTEUR^type := EXPR^type;
+  FACTEUR^code := "(" + EXPR^code + ")";
+end
+}
+
+FACTEUR -> t_new #trans TYPE t_paro ARGS t_parf #gen ;
+global
+  r: Resolveur;
+#trans {
+local
+
+  a : Vector<STRING>; 
+  ts : Vector<IType>;
+
+do
+  r := FACTEUR^act.getResolveur();
+  TYPE^res := r;
+  a := new Vector<STRING>();
+  ARGS^hargs := a;
+  ts := new Vector<IType>();
+  ARGS^htypes := ts;
+end
+}
+
+#gen {
+  local
+  do
+  FACTEUR^code := FACTEUR^avis.nouveau(TYPE^type, ARGS^args);
+  --FACTEUR^type := TYPE^type;
+  FACTEUR^type := r.contConst(TYPE^type,ARGS^types);
+  end
+}
+
+EXPRFACTEUR ->  OPMUL  FACTEUR #code EXPRFACTEUR #gen ;
+#code {
+local
+  r : Resolveur;
+do 
+  r := EXPRFACTEUR^act.getResolveur();
+  EXPRFACTEUR1^htype := r.contOp(EXPRFACTEUR^htype, OPMUL^nom, FACTEUR^type);
+  EXPRFACTEUR1^hcode := EXPRFACTEUR^avis.opMul(EXPRFACTEUR^hcode, OPMUL^nom, FACTEUR^code);
+end
+}
+
+#gen {
+local
+do 
+  EXPRFACTEUR^type := EXPRFACTEUR1^type;
+  EXPRFACTEUR^code := EXPRFACTEUR1^code;
+end
+}
+
+OPMUL -> t_et #gen ;
+#gen { local do OPMUL^nom := "and"; end } 
+
+OPMUL -> t_mult #gen ;
+#gen { local do OPMUL^nom := "*"; end } 
+
+OPMUL -> t_div #gen ;
+#gen { local do OPMUL^nom := "/"; end } 
+
+OPMUL -> t_d_mult #gen ;
+#gen { local do OPMUL^nom := "*."; end }
+
+OPMUL -> t_d_div #gen ;
+#gen { local do OPMUL^nom := "/."; end } 
+
+EXPRFACTEUR -> #gen ;
+#gen {
+local
+do 
+  EXPRFACTEUR^type := EXPRFACTEUR^htype;
+  EXPRFACTEUR^code := EXPRFACTEUR^hcode;
+end
+}
+
+
+ARGS -> #gen ;
+#gen {
+local
+do 
+  ARGS^args := ARGS^hargs;
+  ARGS^types := ARGS^htypes;
+end
+}
+
+
+ARGS -> EXPR #expr ARGSX #gen ;
+#expr {
+local
+do 
+   ARGS^hargs.add(EXPR^code);
+   ARGS^htypes.add(EXPR^type);
+  ARGSX^htypes := ARGS^htypes;
+end
+}
+
+#gen {
+local
+do 
+  ARGS^args := ARGSX^args;
+  ARGS^types := ARGSX^types;
+end
+}
+
+ARGSX -> #gen ;
+#gen {
+local
+do 
+  ARGSX^args := ARGSX^hargs;
+  ARGSX^types := ARGSX^htypes;
+end
+}
+
+
+ARGSX -> t_virgule EXPR #expr ARGSX #gen ;
+#expr {
+local
+do 
+   ARGSX^hargs.add(EXPR^code);
+   ARGSX^htypes.add(EXPR^type);
+  ARGSX1^htypes := ARGSX^htypes;
+end
+}
+
+#gen {
+local
+do 
+  ARGSX^args := ARGSX1^args;
+  ARGSX^types := ARGSX1^types;
+end
+}
+
+end

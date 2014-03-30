@@ -1,12 +1,12 @@
 *.class
+*.swp
+*~
+.DS_Store
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Eclipse
+.classpath
+.project
+.settings
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+src/mg/egg/eggc/compiler/egg/java
+src/eggc.jar
