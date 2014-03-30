@@ -60,10 +60,10 @@ public class MJava implements Serializable {
 		table = t;
 		nom = t.getNom() + "Messages";
 		properties = t.getProperties();
-		properties.put(t.getNom() + "_expected_token", "Terminal attendu {1} au lieu de {0}.");
+		properties.put(t.getNom() + "_expected_token", "Terminal {1} attendu au lieu de {0}.");
 		properties.put(t.getNom() + "_unexpected_token",
-				"Terminal inattendu {0}.");
-		properties.put(t.getNom() + "_expected_eof", "Fin de source attendue pres de {0}.");
+				"Terminal {0} inattendu.");
+		properties.put(t.getNom() + "_expected_eof", "Fin de source attendue près de {0}.");
 	}
 
 	public void finaliser(String pack) throws EGGException {
