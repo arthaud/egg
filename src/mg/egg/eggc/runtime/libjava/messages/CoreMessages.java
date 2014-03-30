@@ -57,8 +57,11 @@ public class CoreMessages extends NLS {
 	public static String EGG_config_file_error;
 
 	public static String EGG_runtime_error;
-// public static String EGG_file_creation_error;
-	//
+
+	public static String EGG_missing_property_error;
+
+	// public static String EGG_file_creation_error;
+
 	// public static String EGG_file_read_error;
 
 	// public static String EGG_file_write_error;
