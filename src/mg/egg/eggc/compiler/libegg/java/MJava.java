@@ -79,6 +79,6 @@ public class MJava implements Serializable {
 		table.getCompilationUnit().createFile(nom + ".java", entete.toString());
 		table.getCompilationUnit().createFile("I" + nom + ".java",
 				ientete.toString());
-		table.getCompilationUnit().checkPropFile(properties);
+		table.getCompilationUnit().updatePropFile(properties);
 	}
 }

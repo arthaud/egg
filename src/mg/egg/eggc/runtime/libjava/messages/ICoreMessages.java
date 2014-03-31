@@ -32,6 +32,5 @@ public interface ICoreMessages {
 	public static final int id_EGG_not_a_folder_error = 19;
 	public static final int id_EGG_config_file_error = 20;
 	public static final int id_EGG_runtime_error = 21;
-	public static final int id_EGG_missing_property_error = 22;
 
 }

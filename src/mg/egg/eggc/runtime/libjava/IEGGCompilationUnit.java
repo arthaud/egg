@@ -21,10 +21,12 @@ public interface IEGGCompilationUnit extends ISourceUnit {
 
 	public void createFile(String name, String contents) throws EGGException;
 
-	public void checkPropFile(String filename, Properties contents)
+	public void updatePropFile(String name, Properties contents)
 			throws EGGException;
 
-	public void checkPropFile(Properties contents) throws EGGException;
+	public void updatePropFile(Properties contents) throws EGGException;
 
 	public void deleteFile(String name) throws EGGException;
+
+
 }
