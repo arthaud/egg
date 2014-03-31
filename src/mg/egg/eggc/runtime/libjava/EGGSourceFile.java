@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -126,71 +125,38 @@ public class EGGSourceFile implements IEGGCompilationUnit {
 			}
 		}
 
-		public void updatePropFile(String name, Properties contents)
+		public void updatePropFile(String filename, Properties contents)
 				throws EGGException {
 
-			// String filename = options.getDirectory() + File.separatorChar
-			// + name;
-			String filename = "properties" + File.separatorChar + name;
-			System.err
-					.println("Maj ou Creation de properties file " + filename);
+			System.err.println("Vérification du fichier de properties " + filename);
 			Properties old = new Properties();
+
 			try {
-				old.load(new FileReader(filename));
+				old.load(new FileInputStream(filename));
 			} catch (FileNotFoundException e1) {
 			} catch (IOException e1) {
 			}
+
 			try {
-				PrintWriter pw = new PrintWriter(new FileOutputStream(filename));
-				for (Object m : contents.keySet()) {
-					Object om = old.get(m);
+				PrintWriter pw = new PrintWriter(filename, "ISO-8859-1");
+				for (String m : contents.stringPropertyNames()) {
+					String om = old.getProperty(m);
 					if (om != null) {
 						pw.println(m + "=" + om);
 					} else {
-						pw.println(m + "=" + contents.get(m));
+						pw.println(m + "=" + contents.getProperty(m));
 					}
 				}
 				pw.close();
 			} catch (IOException e) {
-				// e.printStackTrace();
 				throw new EGGException(IProblem.Internal,
 						ICoreMessages.id_EGG_file_creation_error,
 						CoreMessages.EGG_file_creation_error, filename);
-				// throw new EGGException(IEGGErrors.file_creation_error,
-				// filename);
 			}
 		}
 
 		public void updatePropFile(Properties contents) throws EGGException {
-
-			String filename = lang + ".properties";
-			// System.err
-			// .println("Maj ou Creation de properties file " + filename);
-			Properties old = new Properties();
-			try {
-				old.load(new FileReader(filename));
-			} catch (FileNotFoundException e1) {
-			} catch (IOException e1) {
-			}
-			try {
-				PrintWriter pw = new PrintWriter(new FileOutputStream(filename));
-				for (Object m : contents.keySet()) {
-					Object om = old.get(m);
-					if (om != null) {
-						pw.println(m + "=" + om);
-					} else {
-						pw.println(m + "=" + contents.get(m));
-					}
-				}
-				pw.close();
-			} catch (IOException e) {
-				// e.printStackTrace();
-				throw new EGGException(IProblem.Internal,
-						ICoreMessages.id_EGG_file_creation_error,
-						CoreMessages.EGG_file_creation_error, filename);
-				// throw new EGGException(IEGGErrors.file_creation_error,
-				// filename);
-			}
+			updatePropFile(lang + ".properties", contents);
 		}
 
 		public void deleteFile(String name) throws EGGException {
@@ -385,9 +351,9 @@ public class EGGSourceFile implements IEGGCompilationUnit {
 		// }
 	}
 
-	public void updatePropFile(String name, Properties contents)
+	public void updatePropFile(String filename, Properties contents)
 			throws EGGException {
-		fState.updatePropFile(name, contents);
+		fState.updatePropFile(filename, contents);
 	}
 
 	public void updatePropFile(Properties contents) throws EGGException {
