@@ -23,6 +23,14 @@ Un fichier **.ecf** au format *xml* permet de configurer la génération de code
 
 `java -jar eggc.jar ma_grammaire.egg` va engendrer les fichiers demandés.
 
+Tests
+-----
+
+EGG dispose d'une suite de tests.
+
+Pour les lancer, vous devez avoir compilé un eggc.jar dans *src*.
+Ensuite, rendez-vous dans le dossier *tests* et lancez `make`.
+
 Auteurs
 -------
 

@@ -1,0 +1,17 @@
+xxx {
+  type POINT = struct { int x; int y; };
+  type PPOINT = * POINT;
+  POINT p = {7, 42};
+  int c = 0;
+  PPOINT pp = new POINT();
+  pp*.x = 8;
+
+  while(true)
+  {
+    c = p.x;
+    p.x = p.y;
+    p.y = c;
+  }
+
+  pp* = p ;
+}

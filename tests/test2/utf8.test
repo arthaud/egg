@@ -1,0 +1,6 @@
+xxx {
+  type POINT = struct { int é ; int è; };
+  POINT p = {1, 2};
+  int c = p.é;
+  p.é = p.è;
+}

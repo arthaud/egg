@@ -1,0 +1,430 @@
+option auto = true;
+option version = 0.0.1;
+option k = 2;
+
+
+inh source : SourceUnit for PROG ; 
+inh tds    : TDS     for BLOC, INST, INSTS, TERME, FACTEUR, TYPE, CHAMPS, TERMES;
+syn type   : DTYPE   for TYPE, TERME, FACTEUR;
+
+syn syn_type : DTYPE for FX;
+inh her_type : DTYPE for FX;
+
+syn syn_champs : LCHAMPS for CHAMPS;
+inh her_champs : LCHAMPS for CHAMPS;
+
+syn syn_types : LTYPES for TERMES;
+inh her_types : LTYPES for TERMES;
+
+space  separateur  is    "[\n\r\t ]+";
+space  comments    is    "\/\/.*[\n\r]";
+sugar  aco         is    "\{";
+sugar  acf         is    "\}";
+sugar  paro        is    "\(";
+sugar  parf        is    "\)";
+sugar  pv          is    ";";
+sugar  aff         is    "=";
+sugar  struct      is    "struct";
+sugar  pt          is    "\.";
+sugar  v           is    ",";
+sugar  etoile      is    "\*" ;
+sugar  new         is    "new" ;
+sugar  type        is    "type" ;
+sugar  vrai        is    "true";
+sugar  faux        is    "false";
+sugar  si          is    "if";
+sugar  sinon       is    "else";
+sugar  print       is    "print";
+sugar  tantque     is    "while";
+sugar  int         is    "int";
+sugar  bool        is    "bool";
+term   entier      is    "[0-9]+";
+term   ident       is    "[a-zA-Z_éèàçÉÈÀÇ]+";
+
+
+PROG -> ident #tds BLOC ;
+#tds {
+do
+    BLOC^tds := null;
+end
+}
+
+BLOC -> aco #tds INSTS acf #tds2 ;
+global        -- globale aux actions de cette règle
+    t : TDS;    -- pour voir la TDS du bloc
+
+#tds {
+do
+    t := new TDS(BLOC^tds);
+    INSTS^tds := t;
+end
+}
+
+#tds2 {
+do
+    write "TDS:\n" + t;
+end
+}
+
+-------------------------------------------------------
+-- les types
+-------------------------------------------------------
+TYPE -> bool #type ;
+#type {
+do
+    TYPE^type := new DTYPE("booleen", 1);
+end
+}
+
+TYPE -> int  #type ;
+#type {
+do
+    TYPE^type := new DTYPE("entier", 4);
+end
+}
+
+-------------------------------------------------------
+-- les noms de types 
+-------------------------------------------------------
+TYPE -> ident  #a ;
+#a {
+local
+    i : INFO;
+    it : INFOTYPE;
+do
+    i := TYPE^tds.chercherGlobalement(ident^txt);
+    if i = null then
+        error(B_undefined_type, ident^txt);
+    else
+        match i with INFOTYPE then
+            it := i;
+            TYPE^type := it.getType();
+        else
+            error(B_not_type, ident^txt);
+        end
+    end
+end
+}
+
+-------------------------------------------------------
+-- instructions (et declarations)
+-------------------------------------------------------
+INSTS ->      ;
+
+INSTS -> INST INSTS ;
+
+-----------------------------------------------------------
+-- On ajoute le nom du type dans la TDS avec sa definition
+-----------------------------------------------------------
+INST -> type ident aff TYPE  #tds pv  ;
+#tds {
+local
+    i : INFO ;
+do
+    i := INST^tds.chercherGlobalement(ident^txt);
+    if i /= null then
+        error(B_var_already_defined, ident^txt);
+    else    
+        i := new INFOTYPE(TYPE^type);
+        INST^tds.inserer(ident^txt, i);
+end
+end
+}
+
+-------------------------------------------------------
+-- les variables 
+-------------------------------------------------------
+INST -> TYPE ident aff TERME #tdstype pv ;
+#tdstype {
+local
+    i : INFO ;
+do
+    i := INST^tds.chercherLocalement(ident^txt);
+    if i /= null then
+        error(B_var_already_defined, ident^txt);
+    elseif ~TYPE^type.compareTo(TERME^type) then
+        error(B_not_compatible, TYPE^type, TERME^type);
+    else
+        i := new INFOVAR(TYPE^type);
+        INST^tds.inserer(ident^txt,  i);
+    end
+end
+}
+
+-------------------------------------------------------
+-- affectations
+-------------------------------------------------------
+INST -> ident #a1 FX aff TERME pv #a2 ;
+#a1 {
+local
+    var : INFO;
+do
+    var := INST^tds.chercherGlobalement(ident^txt);
+    if var = null then
+        error(B_undefined_var, ident^txt);
+    else
+        FX^her_type := var.getType();
+    end
+end
+}
+
+#a2 {
+local
+    t : DTYPE;
+do
+    t := TERME^type;
+    if ! t.compareTo(FX^syn_type) then
+        error(B_not_compatible, t, FX^syn_type);
+    end
+end
+}
+
+-------------------------------------------------------
+-- Conditionnelle
+-------------------------------------------------------
+INST -> si paro TERME #type parf BLOC sinon BLOC ;
+#type {
+do
+    if ~TERME^type.compareTo(new DTYPE("booleen", 1)) then
+        error(B_not_bool, TERME^type);
+    end
+end
+}
+
+INST -> tantque paro TERME #type parf BLOC ;
+#type {
+do
+    if ~TERME^type.compareTo(new DTYPE("booleen", 1)) then
+        error(B_not_bool, TERME^type);
+    end
+end
+}
+
+TERME -> FACTEUR #type ;
+
+#type {
+do
+    TERME^type := FACTEUR^type;
+end
+}
+
+-------------------------------------------------------
+-- variable eventuellement qualifiée
+-------------------------------------------------------
+FACTEUR -> ident #a1 FX #a2;
+#a1 {
+local
+    i : INFO;
+do
+    i := FACTEUR^tds.chercherGlobalement(ident^txt);
+    if i = null then
+        error(B_undefined_var, ident^txt);
+    else
+        FX^her_type := i.getType();
+    end
+end
+}
+
+#a2 {
+do
+    FACTEUR^type := FX^syn_type;
+end
+}
+
+-------------------------------------------------------
+-- qualificateur
+-------------------------------------------------------
+FX -> #a ;
+#a {
+do
+    FX^syn_type := FX^her_type;
+end
+}
+
+---------------------------------------------------------------
+FX -> etoile #a1 FX #a2;
+#a1 {
+local
+    p : POINTEUR;
+do
+    match FX^her_type with POINTEUR then
+        p := FX^her_type;
+        FX1^her_type := p.getType();
+    else
+        error(B_not_pointeur, FX^her_type);
+    end
+end
+}
+
+#a2 {
+do
+    FX^syn_type := FX1^syn_type;
+end
+}
+
+-------------------------------------------------------
+-- Constante entiere
+-------------------------------------------------------
+FACTEUR -> entier #type;
+#type {
+do
+    FACTEUR^type := new DTYPE("entier", 4);
+end
+}
+
+-------------------------------------------------------
+-- constantes booleennes
+-------------------------------------------------------
+FACTEUR -> vrai #type;
+#type {
+do
+    FACTEUR^type := new DTYPE("booleen", 1);
+end
+}
+
+FACTEUR -> faux #type;
+#type {
+do
+    FACTEUR^type := new DTYPE("booleen", 1);
+end
+}
+
+-------------------------------------------------------
+-------------------------------------------------------
+FACTEUR -> paro TERME parf #type;
+#type {
+do
+    FACTEUR^type := TERME^type;
+end
+}
+
+-------------------------------------------------------
+-- Les pointeurs
+-------------------------------------------------------
+TYPE -> etoile TYPE  #a ;
+#a {
+do
+    TYPE^type := new POINTEUR(TYPE1^type);
+end
+}
+
+-------------------------------------------------------
+-- init pointeur
+-------------------------------------------------------
+FACTEUR -> new TYPE paro parf #a;
+#a {
+do
+    FACTEUR^type := new POINTEUR(TYPE^type);
+end
+}
+
+-------------------------------------------------------
+-- pour les structures
+-------------------------------------------------------
+TYPE -> struct aco #a CHAMPS acf #b ;
+#a {
+do
+    CHAMPS^her_champs := new LCHAMPS();
+end
+}
+
+#b {
+do
+    TYPE^type := new STRUCT(CHAMPS^syn_champs);
+end
+}
+
+CHAMPS -> #a ;
+#a {
+do
+    CHAMPS^syn_champs := CHAMPS^her_champs;
+end
+}
+
+CHAMPS -> TYPE ident pv #a CHAMPS #b ;
+#a {
+do
+    if CHAMPS^her_champs.chercher(ident^txt) != null then
+        error(B_field_already_defined, ident^txt);
+    else
+        CHAMPS^her_champs.inserer(new CHAMP(ident^txt, TYPE^type));
+    end
+
+    CHAMPS1^her_champs := CHAMPS^her_champs;
+end
+}
+
+#b {
+do
+    CHAMPS^syn_champs := CHAMPS1^syn_champs;
+end
+}
+
+FX -> pt ident #a1 FX #a2 ;
+#a1 {
+local
+    p : STRUCT;
+    liste_champs : LCHAMPS;
+    champ : CHAMP;
+do
+    match FX^her_type with STRUCT then
+        p := FX^her_type;
+        liste_champs := p.getChamps();
+        champ := liste_champs.chercher(ident^txt);
+
+        if champ = null then
+            error(B_undefined_field, ident^txt, p);
+        end
+
+        FX1^her_type := champ.getType();
+    else
+        error(B_not_struct, FX^her_type);
+    end
+end
+}
+
+#a2 {
+do
+    FX^syn_type := FX1^syn_type;
+end
+}
+
+FACTEUR -> aco TERME #a1 TERMES #a2 acf ;
+#a1 {
+local
+    l : LTYPES;
+do
+    l := new LTYPES();
+    l.inserer(TERME^type);
+    TERMES^her_types := l;
+end
+}
+
+#a2 {
+do
+    FACTEUR^type := new TUPLE(TERMES^syn_types);
+end
+}
+
+TERMES -> #a ;
+#a {
+do
+    TERMES^syn_types := TERMES^her_types;
+end
+}
+
+TERMES -> v TERME #a1 TERMES #a2;
+#a1 {
+do
+    TERMES^her_types.inserer(TERME^type);
+    TERMES1^her_types := TERMES^her_types;
+end
+}
+
+#a2 {
+do
+    TERMES^syn_types := TERMES1^syn_types;
+end
+}
+
+end

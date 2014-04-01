@@ -10,3 +10,4 @@
 
 src/mg/egg/eggc/compiler/egg/java
 src/eggc.jar
+tests/*/compiled

@@ -1,0 +1,70 @@
+option auto = false;
+option version = 0.0.1 ;
+option k = 1;
+
+inh source : SourceUnit for S ; 
+syn val : Integer for V, U ;
+
+space  separateur  is    "[\n\r\t ]+";
+sugar  paro        is    "\(";
+sugar  parf        is    "\)";
+sugar  plus        is    "\+";
+sugar  moins       is    "\-";
+sugar  fois        is    "\*";
+sugar  divise      is    "\/";
+term   entier      is    "[0-9]+";
+
+S -> V #a ;
+#a {
+do
+    write "resultat : " + V^val + "\n";
+end
+}
+
+V -> entier #a ;
+#a {
+local
+    i : Integer;
+do
+    -- hack, on ne peut pas utiliser de méthodes statiques..
+    i := new Integer(0);
+    V^val := i.parseInt(entier^txt);
+end
+}
+
+V -> paro U #a ;
+#a {
+do
+    V^val := U^val;
+end
+}
+
+U -> plus V V parf #a ;
+#a {
+do
+    U^val := V^val + V1^val;
+end
+}
+
+U -> moins V V parf #a ;
+#a {
+do
+    U^val := V^val - V1^val;
+end
+}
+
+U -> fois V V parf #a ;
+#a {
+do
+    U^val := V^val * V1^val;
+end
+}
+
+U -> divise V V parf #a ;
+#a {
+do
+    U^val := V^val / V1^val;
+end
+}
+
+end

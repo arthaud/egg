@@ -1,0 +1,173 @@
+#!/bin/bash
+
+EGGJAR=$(pwd)/../src/eggc.jar
+JDIR=/usr/bin
+JAVAC=$JDIR/javac
+JAVA=$JDIR/java
+USE_COLOR=y
+
+# Gestion des couleurs
+unset ALL_OFF BOLD BLUE GREEN RED YELLOW
+if [[ -t 2 && ! $USE_COLOR = "n" ]] ; then
+    if tput setaf 0 &>/dev/null; then
+        ALL_OFF="$(tput sgr0)"
+        BOLD="$(tput bold)"
+        BLUE="${BOLD}$(tput setaf 4)"
+        GREEN="${BOLD}$(tput setaf 2)"
+        RED="${BOLD}$(tput setaf 1)"
+        YELLOW="${BOLD}$(tput setaf 3)"
+    else
+        ALL_OFF="\e[1;0m"
+        BOLD="\e[1;1m"
+        BLUE="${BOLD}\e[1;34m"
+        GREEN="${BOLD}\e[1;32m"
+        RED="${BOLD}\e[1;31m"
+        YELLOW="${BOLD}\e[1;33m"
+    fi
+fi
+readonly ALL_OFF BOLD BLUE GREEN RED YELLOW
+
+# Fonctions d'affichage
+title() {
+    local mesg=$1; shift
+    printf "${BOLD}${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+msg() {
+    local mesg=$1; shift
+    printf "  ${mesg}\n" "$@" >&2
+}
+
+warning() {
+    local mesg=$1; shift
+    printf "${YELLOW}==> WARNING:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+error() {
+    local mesg=$1; shift
+    printf "${RED}==> ERROR:${ALL_OFF}${BOLD} ${mesg}${ALL_OFF}\n" "$@" >&2
+}
+
+# Fonction de tests
+tests=0
+errors=0
+
+check() {
+    local ret=$?
+    local message=$1; shift
+
+    let "tests = $tests + 1"
+    if [[ $ret > 0 ]]; then
+        let "errors = $errors + 1"
+        printf "  $message ... ${RED}error${ALL_OFF}\n" >&2
+    else
+        printf "  $message ... ok\n" >&2
+    fi
+}
+
+# Fonctions de EGG
+compile_egg() {
+    local dir=$1; shift
+    pushd "$dir" &>/dev/null
+    $JAVA -jar "$EGGJAR" TEST.egg 
+    local ret=$?
+    popd &>/dev/null
+    return $ret
+}
+
+compile_java() {
+    local dir=$1; shift
+    $JAVAC -classpath "$EGGJAR:$dir" "$dir/Main.java" 
+}
+
+execute() {
+    local dir=$1; shift
+    local file=$1; shift
+    $JAVA -classpath "$EGGJAR:$dir" Main "$dir/$file"
+}
+
+compile_and_check() {
+    local dir=$1; shift
+
+    out=$(compile_egg "$dir" 2>&1)
+    if [[ $? > 0 ]] || [[ "$out" = *"Error"* ]]; then
+        error "erreur en compilant avec egg $dir :"
+        echo "$out"
+        exit 1
+    fi
+
+    out=$(compile_java "$dir" 2>&1)
+    if [[ $? > 0 ]]; then
+        error "erreur en compilant avec javac $dir :"
+        echo "$out"
+        exit 1
+    fi
+}
+
+# Lancement des tests
+title "Nettoyage des tests.."
+make -q clean
+
+title "Lancement des tests.."
+
+# test1
+compile_and_check test1
+
+out=$(execute test1 simple.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"resultat : 42"* ]]
+check "langage simple"
+
+out=$(execute test1 complexe.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"resultat : 42"* ]]
+check "langage complexe"
+
+out=$(execute test1 syntax-erreur.test 2>&1)
+[[ $? > 0 ]] && [[ "$out" = *"Error(Syntax)"* ]]
+check "vérification syntaxique simple"
+
+out=$(execute test1 syntax-erreur2.test 2>&1)
+[[ $? > 0 ]] && [[ "$out" = *"Error(Syntax)"* ]]
+check "vérification syntaxique complexe"
+
+# fichier egg contenant des erreurs
+
+out=$(compile_egg bad-egg-rules 2>&1)
+[[ "$out" = *"Error(Syntax)"*"Terminal [;]"* ]]
+check "vérification de la syntaxe des règles de production"
+
+out=$(compile_egg bad-egg-global-already-defined 2>&1)
+[[ "$out" = *"Error(Semantics)"*"x est déjà déclarée"* ]]
+check "vérification des variables globales déjà déclarées"
+
+out=$(compile_egg bad-egg-missing-action 2>&1)
+[[ "$out" = *"Error(Semantics)"*"#a non définie(s)"* ]]
+check "vérification de la présence des actions"
+
+out=$(compile_egg bad-egg-var-undefined 2>&1)
+[[ "$out" = *"Error(Semantics)"*"j n'est pas une variable"* ]]
+check "vérification des variables non déclarées"
+
+# test2
+compile_and_check test2
+
+out=$(execute test2 simple.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"champs=[x: entier(4), y: entier(4), ]"*"POINT : ALIAS"* ]]
+check "langage typé simple"
+
+out=$(execute test2 complexe.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"champs=[x: entier(4), y: entier(4), ]"*"POINT : ALIAS"*"pp : VAR : type=pointeur(4)"* ]]
+check "langage typé complexe"
+
+out=$(execute test2 utf8.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"champs=[é: entier(4), è: entier(4), ]"* ]]
+check "gestion de l'UTF-8"
+
+# Resultats
+title "Resultats :"
+msg "tests : $tests"
+
+if [[ $errors = 0 ]]; then
+    printf "  ${GREEN}Tous les tests sont passés avec succès !${ALL_OFF}\n"
+else
+    printf "  erreurs : ${RED}${errors}${ALL_OFF}\n"
+fi
