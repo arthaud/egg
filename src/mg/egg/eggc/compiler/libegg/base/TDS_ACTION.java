@@ -7,9 +7,6 @@ import mg.egg.eggc.compiler.libegg.type.Resolveur;
 
 public class TDS_ACTION extends Vector<ENTREE> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	protected boolean unreachable;
@@ -31,8 +28,10 @@ public class TDS_ACTION extends Vector<ENTREE> {
 	public TDS_ACTION(TDS_ACTION m) {
 		super(3, 3);
 		mere = m;
+
 		if (mere != null)
 			resolveur = mere.getResolveur();
+
 		unreachable = false;
 	}
 
@@ -45,39 +44,41 @@ public class TDS_ACTION extends Vector<ENTREE> {
 
 	public String verifier_initialisations() {
 		StringBuffer atts = new StringBuffer();
+
 		for (Enumeration<ENTREE> e = elements(); e.hasMoreElements();) {
 			ENTREE en = (ENTREE) e.nextElement();
 			if (!en.getEtat()) {
 				atts.append(en.getNom() + " ");
-				// System.err.println("erreur init " + en.getNom());
 			}
 		}
+
 		if (atts.length() != 0) {
 			return atts.toString();
 		}
+
 		return null;
 	}
 
 	/**
 	 * Recherche le symbole de nom nom.
-	 * 
-	 * @param nom
-	 *            le nom du symbole
+	 *
+	 * @param nom le nom du symbole
 	 * @return le symbole, null sinon
 	 */
 	public ENTREE chercher(String nom) {
 		ENTREE res = chercher_loc(nom);
+
 		if (res == null && mere != null) {
 			return mere.chercher(nom);
-		} else
+		} else {
 			return res;
+	    }
 	}
 
 	/**
 	 * Recherche localement l'entr&eacute;e de nom nom.
-	 * 
-	 * @param nom
-	 *            le nom de l'entr&eacute;e
+	 *
+	 * @param nom le nom de l'entr&eacute;e
 	 * @return l'entr&eacute;e de nom nom, null sinon
 	 */
 	public ENTREE chercher_loc(String nom) {
@@ -87,6 +88,7 @@ public class TDS_ACTION extends Vector<ENTREE> {
 				return en;
 			}
 		}
+
 		return null;
 	}
 
@@ -124,8 +126,10 @@ public class TDS_ACTION extends Vector<ENTREE> {
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);
 		sb.append("TDS_ACTION :\n");
+
 		for (Enumeration e = elements(); e.hasMoreElements();)
 			sb.append("\t" + e.nextElement() + "\n");
+
 		return sb.toString();
 	}
 

@@ -132,19 +132,19 @@ check "vérification syntaxique complexe"
 # fichier egg contenant des erreurs
 
 out=$(compile_egg bad-egg-rules 2>&1)
-[[ "$out" = *"Error(Syntax)"*"Terminal [;]"* ]]
+[[ $? > 0 ]] && [[ "$out" = *"Error(Syntax)"*"Terminal [;]"* ]]
 check "vérification de la syntaxe des règles de production"
 
 out=$(compile_egg bad-egg-global-already-defined 2>&1)
-[[ "$out" = *"Error(Semantics)"*"x est déjà déclarée"* ]]
+[[ $? > 0 ]] && [[ "$out" = *"Error(Semantics)"*"x est déjà déclarée"* ]]
 check "vérification des variables globales déjà déclarées"
 
 out=$(compile_egg bad-egg-missing-action 2>&1)
-[[ "$out" = *"Error(Semantics)"*"#a non définie(s)"* ]]
+[[ $? > 0 ]] && [[ "$out" = *"Error(Semantics)"*"#a non définie(s)"* ]]
 check "vérification de la présence des actions"
 
 out=$(compile_egg bad-egg-var-undefined 2>&1)
-[[ "$out" = *"Error(Semantics)"*"j n'est pas une variable"* ]]
+[[ $? > 0 ]] && [[ "$out" = *"Error(Semantics)"*"j n'est pas une variable"* ]]
 check "vérification des variables non déclarées"
 
 # test2

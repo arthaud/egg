@@ -98,19 +98,16 @@ public abstract class LEXICAL4 {
 
 	private UL suivant() throws EGGException {
 		try {
-
-			loop: do {
+			do {
 				prevToken = token;
 				token = analyseur.yylex();
-				// System.err.println(" UL(" + token.index + "): '" + token.text
-				// + "'");
 				contexte.consommes += token.text.length();
 				if (estUnSeparateur(token.index)) {
-					continue loop;
+					continue;
 				}
 				if (estUnCommentaire(token.index)) {
 					setCommentaire(token.text);
-					continue loop;
+					continue;
 				}
 				return new UL(token.index, token.text, token.line,
 						token.charBegin);
@@ -119,16 +116,9 @@ public abstract class LEXICAL4 {
 			throw new EGGException(IProblem.Syntax,
 					ICoreMessages.id_EGG_scanner_error,
 					CoreMessages.EGG_scanner_error, "IOException dans suivant");
-			// throw new EGGException(IEGGErrors.scanner_error,
-			// "IOException dans suivant");
 		}
 	}
 
-	/**
-	 * 
-	 * @param n
-	 * @return
-	 */
 	private boolean estUnSeparateur(int n) {
 		int seps[] = getSeparateurs();
 		for (int i = 0; i < seps.length; i++) {
@@ -139,15 +129,7 @@ public abstract class LEXICAL4 {
 		return false;
 	}
 
-	/**
-	 * 
-	 */
 	protected void decaler() {
-		// System.err.println("decaler()");
-		// if (recovery) {
-		// lus++;
-		// return;
-		// }
 		if (!recovery) {
 			for (int i = 1; i < lus; i++)
 				fenetre[i - 1] = fenetre[i];
@@ -168,19 +150,14 @@ public abstract class LEXICAL4 {
 		return contexte.errors > 0;
 	}
 
-	/**
-	 * 
-	 * @param n
-	 * @throws EGGException
-	 */
 	public void lit(int n) throws EGGException {
 		if (n > k)
 			n = k;
+
 		for (int i = lus; i < n; i++) {
 			fenetre[i] = suivant();
-//			System.err.println("fenetre [" + i + "]=" + fenetre[i]);
 		}
-		// System.err.println("fenetre " + fenetre[0]);
+
 		if (n > lus)
 			lus = n;
 	}
@@ -190,65 +167,32 @@ public abstract class LEXICAL4 {
 			if (i == t)
 				return true;
 		}
+
 		return false;
 	}
 
-	/**
-	 * @param n
-	 * @param synchro
-	 * @throws EGGException
-	 */
 	public void synchronise(int n, int[] sync) throws EGGException {
 		if (sync.length == 0){
 			recovery = false;
 			decaler();
 			return;
 		}
-//		// for (int i : sync)
-//		// System.err.println("ul = " + i);
-//		// rechercher une synchro
-//		while (!contains(sync, fenetre[0].code)) {
-//			// consommer
-//			decaler();
-//			// remplir
-//			lit(n);
-//		}
-//		recovery = false;
-//		lit(n);
 
 		System.err.println("synchro sur " + fenetre[0]);
 	}
 
-	/**
-	 * 
-	 */
 	private String comment = null;
 
-	/**
-	 * 
-	 * @param c
-	 */
 	public void setCommentaire(String c) {
-		// System.err.println("setComm : " + c);
 		comment = c;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public String getCommentaire() {
-		// System.err.println("getComm : ");
 		String c = comment;
 		comment = null;
 		return c;
 	}
 
-	/**
-	 * 
-	 * @param n
-	 * @return
-	 */
 	private boolean estUnCommentaire(int n) {
 		int seps[] = getComments();
 		for (int i = 0; i < seps.length; i++) {
@@ -259,7 +203,7 @@ public abstract class LEXICAL4 {
 		return false;
 	}
 
-	// les abstract ...
+	/* méthodes abstraites */
 
 	protected abstract int[] getSeparateurs();
 

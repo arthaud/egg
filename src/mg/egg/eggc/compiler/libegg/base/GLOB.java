@@ -6,9 +6,6 @@ import mg.egg.eggc.compiler.libegg.type.IType;
 
 public class GLOB extends ENTREE implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private REGLE regle;
 
@@ -60,15 +57,13 @@ public class GLOB extends ENTREE implements Serializable {
 	}
 
 	/**
-	 * la globale a-t-elle change depuis la derniere compil ?
-	 * 
+	 * la globale a-t-elle changé depuis la dernière compilation ?
+	 *
 	 * @param old
 	 */
 	public void compare(GLOB old) {
 		nomChange = !nom.equals(old.nom);
 		typeChange = !type.getNom().equals(old.type.getNom());
-		// System.err.println("compare Globale " + getNom() + " avec " +
-		// old.getNom() + " : " + (nomChange || typeChange));
 	}
 
 	public REGLE getRegle() {

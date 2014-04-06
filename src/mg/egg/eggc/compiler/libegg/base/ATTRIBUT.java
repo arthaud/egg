@@ -8,9 +8,6 @@ import mg.egg.eggc.compiler.libegg.type.IType;
 
 public class ATTRIBUT implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private boolean builtin;
@@ -41,7 +38,7 @@ public class ATTRIBUT implements Serializable {
 	/**
 	 * La sorte de l'attribut. <BR>
 	 * peut valoir HER ou SYN
-	 * 
+	 *
 	 * @see ATTRIBUT#HER
 	 * @see ATTRIBUT#SYN
 	 */
@@ -94,15 +91,15 @@ public class ATTRIBUT implements Serializable {
 
 	/**
 	 * Construit un attribut.
-	 * 
+	 *
 	 * @param numero
-	 *            le num&eacute;ro
+	 *	        le num&eacute;ro
 	 * @param sorte
-	 *            la sorte de l'attribut
+	 *	        la sorte de l'attribut
 	 * @param nom
-	 *            le nom de l'attribut
+	 *	        le nom de l'attribut
 	 * @param type
-	 *            le type de l'attribut
+	 *	        le type de l'attribut
 	 */
 	public ATTRIBUT(int sorte, String nom, IType type, String c) {
 		this.builtin = false;
@@ -116,7 +113,7 @@ public class ATTRIBUT implements Serializable {
 
 	/**
 	 * Renvoie une cha&icirc;ne repr&eacute;sentant l'attribut.
-	 * 
+	 *
 	 * @return la cha&icirc;ne repr&eacute;sentant l'attribut.
 	 */
 	public String toString() {
@@ -142,9 +139,9 @@ public class ATTRIBUT implements Serializable {
 	/**
 	 * Ajoute un nouvel &eacute;l&eacute;ment &agrave; la liste des
 	 * symb&ocirc;les dont il est un attribut.
-	 * 
+	 *
 	 * @param nom
-	 *            le nom du symb&ocirc;le
+	 *	        le nom du symb&ocirc;le
 	 */
 	public void ajouter_ident(String nom) {
 		idents.addElement(nom);
@@ -166,9 +163,9 @@ public class ATTRIBUT implements Serializable {
 	/**
 	 * Retourne l'attribut courant si nom est un symb&ocirc;le ayant l'attribut
 	 * courant comme attribut.
-	 * 
+	 *
 	 * @param nom
-	 *            le nom du symb&ocirc;le
+	 *	        le nom du symb&ocirc;le
 	 */
 	public ATTRIBUT renvoie_attribut(String nom) {
 		for (Enumeration<String> e = idents.elements(); e.hasMoreElements();) {
@@ -232,7 +229,7 @@ public class ATTRIBUT implements Serializable {
 
 	/**
 	 * l'attribut a-t-il change depuis la derniere compil ?
-	 * 
+	 *
 	 * @param old
 	 */
 	public void compare(ATTRIBUT old) {
@@ -241,9 +238,6 @@ public class ATTRIBUT implements Serializable {
 		typeChange = !type.getNom().equals(old.type.getNom());
 		if (comm != null)
 			commChange = !comm.equals(old.comm);
-		// System.err.println("compare Attribut " + getNom() + " avec " +
-		// old.getNom() + " : " + (nomChange || sorteChange || typeChange||
-		// commChange));
 	}
 
 }

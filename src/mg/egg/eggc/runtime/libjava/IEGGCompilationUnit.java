@@ -27,6 +27,4 @@ public interface IEGGCompilationUnit extends ISourceUnit {
 	public void updatePropFile(Properties contents) throws EGGException;
 
 	public void deleteFile(String name) throws EGGException;
-
-
 }

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import mg.egg.eggc.compiler.libegg.type.Resolveur;
 
 public class LACT implements IAction {
-	// la position dans la regle
+	// la position dans la règle
 	private int pos;
 
 	public int getPos() {
@@ -32,31 +32,22 @@ public class LACT implements IAction {
 		code = c;
 	}
 
-	// private String code_src ;
-	// public String getCode_src(){
-	// return code_src;
-	// }
-
 	public void maj_code(String code) {
 		this.code = code;
 	}
-
-	// public void maj_code_src ( String src ) {
-	// this.code_src = src ;
-	// }
 
 	public LACT(TDS_ACTION m, int p) {
 		pos = p;
 		bloc = new BLOC(m);
 		code = null;
-		// code_src = null;
 	}
 
 	public LACT() {
 	}
 
-	// meta fonctions ... pour generer du code
-	// au format LACTION
+	/*
+	 * meta fonctions pour générer du code au format LACTION
+	 */
 
 	// debut d'action
 	public String mkStart() {
@@ -73,7 +64,7 @@ public class LACT implements IAction {
 		return "local";
 	}
 
-	// declaration d'une locale
+	// déclaration d'une locale
 	public String mkLoc(ENTREE e) {
 		return e.getNom() + " : " + e.getType().getNom() + ";";
 	}
@@ -138,12 +129,20 @@ public class LACT implements IAction {
 		return "end";
 	}
 
-	// acces a un attribut de la premiere occurence //@author : ettelcar
+	/**
+	 * accès à un attribut de la premiere occurence
+	 *
+	 * @author ettelcar
+	 */
 	public ENTREE mkAtt(String non_terminal, ATTRIBUT att) {
 		return new ENTREE(non_terminal + "^" + att.getNom(), att.getType());
 	}
 
-	// acces a un attribut de la i+1eme occurence //@author : ettelcar
+	/**
+	 * accès à un attribut de la i+1eme occurence
+	 *
+	 * @author ettelcar
+	 */
 	public ENTREE mkAtt(String non_terminal, int i, ATTRIBUT att) {
 		if (i == 0)
 			return new ENTREE(non_terminal + "^" + att.getNom(), att.getType());
@@ -152,14 +151,20 @@ public class LACT implements IAction {
 					.getType());
 	}
 
-	// acces a un attribut de la premiere occurence (sans specification du type)
-	// //@author : ettelcar
+	/**
+	 * accès à un attribut de la premiere occurence (sans specification du type)
+	 *
+	 * @author ettelcar
+	 */
 	public ENTREE mkAtt(String non_terminal, String att) {
 		return new ENTREE(non_terminal + "^" + att);
 	}
 
-	// acces a un attribut de la i+1eme occurence (sans specification du type)
-	// //@author : ettelcar
+	/**
+	 * accès à un attribut de la i+1eme occurence (sans specification du type)
+	 *
+	 * @author ettelcar
+	 */
 	public ENTREE mkAtt(String non_terminal, int i, String att) {
 		if (i == 0)
 			return new ENTREE(non_terminal + "^" + att);
@@ -167,34 +172,53 @@ public class LACT implements IAction {
 			return new ENTREE(non_terminal + i + "^" + att);
 	}
 
-	// l'expression reguliere pour retrouver une variable globale //@author
-	// ettelcar
+	/**
+	 * l'expression réguliere pour retrouver une variable globale
+	 *
+	 * @author ettelcar
+	 */
 	public String mkPatternGlob_1var2(String var) {
 		return "([^a-zA-Z0-9\\^])" + Pattern.quote(var) + "([^a-zA-Z0-9])";
 	}
 
-	// l'expression reguliere pour retrouver si un attribut du non terminal est
-	// present //@author : ettelcar
+	/**
+	 * l'expression réguliere pour retrouver si un attribut du non terminal est
+	 * présent
+	 *
+	 * @author ettelcar
+	 */
 	public String mkPatternAttribut_1nt2att(String non_terminal) {
 		return "([^a-zA-Z0-9])" + Pattern.quote(non_terminal) + "([1-9][0-9]*)"
 				+ Pattern.quote("^");
 	}
 
-	// l'expression reguliere pour retrouver si un attribut du non terminal
-	// d'indice i est present //@author : ettelcar
+	/**
+	 * l'expression réguliere pour retrouver si un attribut du non terminal
+	 * d'indice i est présent
+	 *
+	 * @author ettelcar
+	 */
 	public String mkPatternAttribut_1ntiatt(String non_terminal, int i) {
 		return "([^a-zA-Z0-9])" + Pattern.quote(non_terminal + i + "^");
 	}
 
-	// l'expression reguliere pour retrouver si un attribut du non terminal est
-	// present //@author : ettelcar
+	/**
+	 * l'expression réguliere pour retrouver si un attribut du non terminal est
+	 * présent
+	 *
+	 * @author ettelcar
+	 */
 	public String mkPatternAttribut_1nt2att3(String non_terminal, String att) {
 		return "([^a-zA-Z0-9])" + Pattern.quote(non_terminal) + "([1-9][0-9]*)"
 				+ Pattern.quote("^" + att) + "([^a-zA-Z0-9])";
 	}
 
-	// l'expression reguliere pour retrouver si un attribut du non terminal
-	// d'indice i est present //@author : ettelcar
+	/**
+	 * l'expression réguliere pour retrouver si un attribut du non terminal
+	 * d'indice i est présent
+	 *
+	 * @author ettelcar
+	 */
 	public String mkPatternAttribut_1ntiatt2(String non_terminal, int i,
 			String att) {
 		if (i == 0)

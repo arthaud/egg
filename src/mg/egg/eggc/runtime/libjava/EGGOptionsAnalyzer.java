@@ -24,7 +24,6 @@ public class EGGOptionsAnalyzer {
 	public EGGOptionsAnalyzer(IEGGCompilationUnit unit) throws EGGException {
 		cu = unit;
 		options = cu.getOptions();
-		// in = cu.getFileName();
 	}
 
 	public class PrintError implements ErrorHandler {
@@ -50,9 +49,7 @@ public class EGGOptionsAnalyzer {
 
 		public void startElement(String namespaceURI, String localName,
 				String qName, Attributes atts) {
-			// System.err.println("start element : " + qName);
 			if (qName.equals("egg")) {
-				// System.err.println("egg : ");
 				for (int i = 0; i < atts.getLength(); i++) {
 					String aname = atts.getQName(i);
 					String avalue = atts.getValue(i);
@@ -77,7 +74,6 @@ public class EGGOptionsAnalyzer {
 					}
 				}
 			} else if (qName.equals("import")) {
-				// System.err.println("import : ");
 				for (int i = 0; i < atts.getLength(); i++) {
 					String aname = atts.getQName(i);
 					String avalue = atts.getValue(i);
@@ -90,7 +86,6 @@ public class EGGOptionsAnalyzer {
 
 		public void endElement(String namespaceURI, String localName,
 				String qName) {
-
 		}
 
 		public void characters(char[] ch, int start, int length) {
@@ -101,22 +96,22 @@ public class EGGOptionsAnalyzer {
 
 	public void analyse(InputSource is) throws ParserConfigurationException,
 			SAXException, IOException {
-		// System.err.println("Analyse_xml ");
-		// try {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
+
 		// activation de la validation (egg.dtd)
 		// factory.setValidating(true);
 		factory.setValidating(false);
+
 		SAXParser parser = factory.newSAXParser();
 		BasketHandler handler = new BasketHandler();
 		XMLReader reader = parser.getXMLReader();
 		reader.setEntityResolver(handler);
 		reader.setContentHandler(handler);
+
 		// mise en place du gestionnaire d'erreur
 		reader.setErrorHandler(new PrintError());
 		reader.parse(is);
-		// System.err.println("Options = " + options);
 //		cu.setState();
 	}
 

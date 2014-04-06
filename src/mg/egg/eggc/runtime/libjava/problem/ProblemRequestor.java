@@ -2,9 +2,6 @@ package mg.egg.eggc.runtime.libjava.problem;
 
 import java.util.Vector;
 
-/*
- * basic implementation of ProblemRequestor
- */
 public class ProblemRequestor implements IProblemRequestor {
 	protected Vector<IProblem> problems;
 	private int fatal = 0;
@@ -40,21 +37,7 @@ public class ProblemRequestor implements IProblemRequestor {
 		}
 	}
 
-	public boolean isActive() {
-		return true;
-	}
-
 	public int getFatal() {
 		return fatal;
 	}
-
-//	private boolean exists(String msg, int line) {
-//		for (IProblem p : problems) {
-//			// System.out.println("P = " + p);
-//			if (p.getMessage().equals(msg) && p.getSourceLineNumber() == line)
-//				return true;
-//		}
-//		return false;
-//	}
-
 }

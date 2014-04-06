@@ -1,79 +1,79 @@
 ----------------------------------
--- les expressions regulieres de gen6 
--- sous-ensemble de JFLEX/JLEX compatible (posix ?) 
+-- les expressions regulières de gen6
+-- sous-ensemble de JFLEX/JLEX compatible (posix ?)
 ------------------------------------
-option auto=true;
-option k=2;
-option version=5.0.0;
+option auto = true;
+option k = 2;
+option version = 5.0.0;
 
-inh    vis : IVisiteurEgg for
-          EXPREG, REG, TERME, APRTERME,FACTEUR, APRFACTEUR, 
-          ELT, ELTS, APRCAR ;
-inh   table : TDS for 
-          EXPREG, REG, TERME, FACTEUR, APRFACTEUR, APRTERME ;
-syn     code    : STRING    for 
-          EXPREG, SER, EER, REG, TERME, APRTERME, OP, 
+inh vis : IVisiteurEgg for
+          EXPREG, REG, TERME, APRTERME,FACTEUR, APRFACTEUR,
+          ELT, ELTS, APRCAR;
+inh table : TDS for
+          EXPREG, REG, TERME, FACTEUR, APRFACTEUR, APRTERME;
+syn code : STRING for
+          EXPREG, SER, EER, REG, TERME, APRTERME, OP,
 --          OPX,
-          FACTEUR, APRFACTEUR, ELT, ELTS, APRCAR ;   
+          FACTEUR, APRFACTEUR, ELT, ELTS, APRCAR;
 
-sugar   croco       is          "\["  ; 
-sugar   crocf       is          "\]"  ;
-sugar   paro        is          "\("  ;
-sugar   parf        is          "\)"  ;
-sugar   ou          is          "\|"  ;
-sugar   moins       is          "\-"  ;
-sugar   etoile      is          "\*"  ;
-sugar   plus        is          "\+"  ;
-sugar   interro     is          "\?"  ;
-sugar   neg         is          "\[\^";
-sugar   ser         is          "\^"  ;
-sugar   eer         is          "\$"  ;
-sugar   guillemet   is          "\""  ;
-sugar   aco         is          "\{"  ;
-sugar   acf         is          "\}"  ;
---sugar   virgule     is          "\,"   ;
-sugar   point     is          "\."   ;
+sugar   croco       is          "\[" ;
+sugar   crocf       is          "\]" ;
+sugar   paro        is          "\(" ;
+sugar   parf        is          "\)" ;
+sugar   ou          is          "\|" ;
+sugar   moins       is          "\-" ;
+sugar   etoile      is          "\*" ;
+sugar   plus        is          "\+" ;
+sugar   interro     is          "\?" ;
+sugar   neg         is          "\[\^" ;
+sugar   ser         is          "\^" ;
+sugar   eer         is          "\$" ;
+sugar   guillemet   is          "\"" ;
+sugar   aco         is          "\{" ;
+sugar   acf         is          "\}" ;
+--sugar   virgule     is          "\," ;
+sugar   point       is          "\." ;
 
 -- chars
---macro    hex   is "[0-9a-fA-F]";
-macro    uni   is "\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]";
-macro    oct   is "\\[0-3][0-7][0-7]";
-macro    esc is "({uni}|{oct}|\\.)";
+--macro    hex   is "[0-9a-fA-F]" ;
+macro    uni   is "\\u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]" ;
+macro    oct   is "\\[0-3][0-7][0-7]" ;
+macro    esc   is "({uni}|{oct}|\\.)" ;
 
-macro    ccar is "[^\'\|\(\)\{\}\[\]\<\>\\\.\*\+\?\^\$\"\~\!]";
+macro    ccar  is "[^\'\|\(\)\{\}\[\]\<\>\\\.\*\+\?\^\$\"\~\!]" ;
 
 
 --term       entier      is    "[0-9]+";
-term       car      is    "({esc}|{ccar})";
-term       t_def      is    "\{[a-zA-Z][a-zA-Z0-9_]*\}";
+term       car        is    "({esc}|{ccar})" ;
+term       t_def      is    "\{[a-zA-Z][a-zA-Z0-9_]*\}" ;
 
 EXPREG -> SER REG EER #gen guillemet ;
 #gen {
-   do
-      EXPREG^code := SER^code @ REG^code @ EER^code;
-   end
+do
+  EXPREG^code := SER^code @ REG^code @ EER^code;
+end
 }
 
-SER -> #gen;
+SER -> #gen ;
 #gen { do SER^code := ""; end }
 
-SER -> ser #gen;
+SER -> ser #gen ;
 #gen { do SER^code := "^"; end }
 
-EER -> #gen;
+EER -> #gen ;
 #gen { do EER^code := ""; end }
 
-EER -> eer #gen;
+EER -> eer #gen ;
 #gen { do EER^code := "$"; end }
 
--- si on veut ne rien preciser ( analyseur exterieur)
+-- si on veut ne rien préciser (analyseur exterieur)
 REG -> #gen ;
 #gen { do REG^code := "" ; end }
 
 REG -> TERME APRTERME #gen ;
-#gen { do REG^code := TERME^code @ APRTERME^code ; end } 
+#gen { do REG^code := TERME^code @ APRTERME^code ; end }
 
-TERME ->  FACTEUR OP APRFACTEUR #gen ;
+TERME -> FACTEUR OP APRFACTEUR #gen ;
 #gen { do TERME^code := FACTEUR^code @ OP^code @ APRFACTEUR^code ; end }
 
 APRTERME -> ou TERME APRTERME #gen ;
@@ -108,31 +108,29 @@ local
 do
   er := "";
   m := t_def^txt.substring(1, t_def^txt.length() -1);
---  write "acces macro " @ m @ " ... " ;
   table := FACTEUR^table;
   s := table.chercher ( m);
+
   if s = null then
     error(EXPREG_symbol_unknown, m);
-    --error ( "symbole inconnu" ) ;
   else
-    match s 
+    match s
     with TERMINAL then
       t := s;
+
       -- tester si macro
       if s.get_type() = 4 then
         er := s.get_expreg();
-      --    write er @"%N" ;
       else
         er := "";
         error(EXPREG_not_a_macro, s.getNom());
-        --error ( "macro inconnue" ); 
       end
     else
       er := "";
       error(EXPREG_not_a_macro, s.getNom());
-      --error ( "pas une macro" ) ;
     end
   end
+
   FACTEUR^code := er;
 end
 }
@@ -147,7 +145,7 @@ OP -> interro #gen ;
 #gen { do OP^code := "?" ; end }
 
 OP -> #gen ;
-#gen { do OP^code := "" ; end } 
+#gen { do OP^code := "" ; end }
 
 APRFACTEUR -> FACTEUR OP APRFACTEUR #gen ;
 #gen { do APRFACTEUR^code := FACTEUR^code @ OP^code @ APRFACTEUR1^code ; end }
@@ -157,19 +155,18 @@ APRFACTEUR -> #gen ;
 
 ELT -> car APRCAR #gen ;
 
-#gen { do ELT^code := ELT^vis.car(car^txt) @ APRCAR^code ; end } 
+#gen { do ELT^code := ELT^vis.car(car^txt) @ APRCAR^code ; end }
 
 ELTS -> ELT ELTS #gen ;
 #gen { do ELTS^code := ELT^code @ ELTS1^code ; end }
 
 ELTS -> #gen ;
-#gen { do ELTS^code := "" ; end } 
+#gen { do ELTS^code := "" ; end }
 
 APRCAR -> moins car #gen ;
 #gen { do APRCAR^code := "-" @ APRCAR^vis.car(car^txt); end }
 
 APRCAR -> #gen ;
 #gen { do APRCAR^code := "" ; end }
-
 
 end

@@ -2,10 +2,10 @@ package mg.egg.eggc.runtime.libjava;
 
 public interface IEGGException {
 
-    public int getCode();
+	public int getCode();
 
-    public Object[] getArgs();
+	public Object[] getArgs();
 
-    public Object getArg(int i);
+	public Object getArg(int i);
 
 }

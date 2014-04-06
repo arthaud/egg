@@ -10,7 +10,7 @@ import mg.egg.eggc.runtime.libjava.problem.IProblem;
 
 /**
  * Composant d'une règle de production
- * 
+ *
  * @author MG2005
  * @version
  */
@@ -55,7 +55,7 @@ public class ActREGLE extends EltREGLE implements Serializable {
 		code = c;
 	}
 
-	// utilse pour la fabrication automatique de code
+	// utilisé pour la fabrication automatique de code
 	private String code_src;
 
 	public String getCodeSrc() {
@@ -76,7 +76,6 @@ public class ActREGLE extends EltREGLE implements Serializable {
 					ICoreMessages.id_EGG_source_read_error,
 					CoreMessages.EGG_source_read_error, cu.getFileName());
 		}
-		// System.err.println(code_src);
 	}
 
 	public ActREGLE(REGLE r, String n, int p) {
@@ -96,7 +95,6 @@ public class ActREGLE extends EltREGLE implements Serializable {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(sorte + ":" + getNom() + "\n" + getCode());
-		// sb.append("\n" + getCodeSrc());
 		return sb.toString();
 	}
 
@@ -138,12 +136,11 @@ public class ActREGLE extends EltREGLE implements Serializable {
 	}
 
 	/**
-	 * l'actregle a-t-il change depuis la derniere compil ?
-	 * 
+	 * l'actregle a-t-il changé depuis la dernière compilation ?
+	 *
 	 * @param old
 	 */
 	public void compare(ActREGLE old) {
-		// System.err.println("Compare action " + this + " avec\n" + old);
 		nomChange = !nom.equals(old.nom);
 		if (code != null)
 			codeChange = !code.equals(old.code);

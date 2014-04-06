@@ -1,18 +1,18 @@
 option auto = false;
-option version = 0.0.1 ;
+option version = 0.0.1;
 option k = 1;
 
-inh source : SourceUnit for S ; 
-syn val : Integer for V, U ;
+inh source : SourceUnit for S;
+syn val : Integer for V, U;
 
-space  separateur  is    "[\n\r\t ]+";
-sugar  paro        is    "\(";
-sugar  parf        is    "\)";
-sugar  plus        is    "\+";
-sugar  moins       is    "\-";
-sugar  fois        is    "\*";
-sugar  divise      is    "\/";
-term   entier      is    "[0-9]+";
+space  separateur  is    "[\n\r\t ]+" ;
+sugar  paro        is    "\(" ;
+sugar  parf        is    "\)" ;
+sugar  plus        is    "\+" ;
+sugar  moins       is    "\-" ;
+sugar  fois        is    "\*" ;
+sugar  divise      is    "\/" ;
+term   entier      is    "[0-9]+" ;
 
 
 S -> V #a ;

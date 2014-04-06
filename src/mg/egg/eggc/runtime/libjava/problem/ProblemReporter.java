@@ -26,15 +26,15 @@ public class ProblemReporter implements IProblemReporter {
 	public IProblem createProblem(int cat, int id, int line, String message,
 			int start, int end, int severity, Object[] args) {
 		switch (cat) {
-		case DefaultProblem.Internal:
-			return createInternal(cat, id, line, message, start, end, severity,
-					args);
-		case DefaultProblem.Syntax:
-			return createSyntax(cat, id, line, message, start, end, severity,
-					args);
-		case DefaultProblem.Semantic:
-			return createSemantic(cat, id, line, message, start, end, severity,
-					args);
+			case DefaultProblem.Internal:
+				return createInternal(cat, id, line, message, start, end, severity,
+						args);
+			case DefaultProblem.Syntax:
+				return createSyntax(cat, id, line, message, start, end, severity,
+						args);
+			case DefaultProblem.Semantic:
+				return createSemantic(cat, id, line, message, start, end, severity,
+						args);
 		}
 		return new DefaultProblem(cu.getFileName(), message, cat, id, severity,
 				start, end, line, args);
@@ -54,7 +54,6 @@ public class ProblemReporter implements IProblemReporter {
 
 	private DefaultProblem createInternal(int cat, int id, int line,
 			String message, int start, int end, int severity, Object[] args) {
-		
 		return new DefaultProblem(cu.getFileName(), message, cat, id, severity,
 				start, end, line, args);
 	}
@@ -66,7 +65,6 @@ public class ProblemReporter implements IProblemReporter {
 
 	private boolean exists(String msg, int line) {
 		for (IProblem p : problems) {
-			// System.out.println("P = " + p);
 			if (p.getMessage().equals(msg) && p.getSourceLineNumber() == line)
 				return true;
 		}
@@ -79,9 +77,9 @@ public class ProblemReporter implements IProblemReporter {
 
 	public void handle(int cat, int id, int line, String message, int start,
 			int end, int severity, Object[] args) {
-		// discard similar message
-		if (exists(message, line))
+		if (exists(message, line)) // discard similar message
 			return;
+
 		IProblem pb = createProblem(cat, id, line, message, start, end,
 				severity, args);
 		record(pb);

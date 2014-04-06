@@ -28,17 +28,12 @@ public abstract class EltREGLE implements Serializable {
 	}
 
 	public void shiftLeft() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void shiftRight() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void remove() {
-
 	}
 
 }

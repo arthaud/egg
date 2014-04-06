@@ -3,7 +3,7 @@ option version = 0.0.1;
 option k = 2;
 
 
-inh source : SourceUnit for PROG ; 
+inh source : SourceUnit for PROG;
 inh tds    : TDS     for BLOC, INST, INSTS, TERME, FACTEUR, TYPE, CHAMPS, TERMES;
 syn type   : DTYPE   for TYPE, TERME, FACTEUR;
 
@@ -16,30 +16,30 @@ inh her_champs : LCHAMPS for CHAMPS;
 syn syn_types : LTYPES for TERMES;
 inh her_types : LTYPES for TERMES;
 
-space  separateur  is    "[\n\r\t ]+";
-space  comments    is    "\/\/.*[\n\r]";
-sugar  aco         is    "\{";
-sugar  acf         is    "\}";
-sugar  paro        is    "\(";
-sugar  parf        is    "\)";
-sugar  pv          is    ";";
-sugar  aff         is    "=";
-sugar  struct      is    "struct";
-sugar  pt          is    "\.";
-sugar  v           is    ",";
+space  separateur  is    "[\n\r\t ]+" ;
+space  comments    is    "\/\/.*[\n\r]" ;
+sugar  aco         is    "\{" ;
+sugar  acf         is    "\}" ;
+sugar  paro        is    "\(" ;
+sugar  parf        is    "\)" ;
+sugar  pv          is    ";" ;
+sugar  aff         is    "=" ;
+sugar  struct      is    "struct" ;
+sugar  pt          is    "\." ;
+sugar  v           is    "," ;
 sugar  etoile      is    "\*" ;
 sugar  new         is    "new" ;
 sugar  type        is    "type" ;
-sugar  vrai        is    "true";
-sugar  faux        is    "false";
-sugar  si          is    "if";
-sugar  sinon       is    "else";
-sugar  print       is    "print";
-sugar  tantque     is    "while";
-sugar  int         is    "int";
-sugar  bool        is    "bool";
-term   entier      is    "[0-9]+";
-term   ident       is    "[a-zA-Z_éèàçÉÈÀÇ]+";
+sugar  vrai        is    "true" ;
+sugar  faux        is    "false" ;
+sugar  si          is    "if" ;
+sugar  sinon       is    "else" ;
+sugar  print       is    "print" ;
+sugar  tantque     is    "while" ;
+sugar  int         is    "int" ;
+sugar  bool        is    "bool" ;
+term   entier      is    "[0-9]+" ;
+term   ident       is    "[a-zA-Z_éèàçÉÈÀÇ]+" ;
 
 
 PROG -> ident #tds BLOC ;
@@ -84,7 +84,7 @@ end
 }
 
 -------------------------------------------------------
--- les noms de types 
+-- les noms de types
 -------------------------------------------------------
 TYPE -> ident  #a ;
 #a {
@@ -124,15 +124,15 @@ do
     i := INST^tds.chercherGlobalement(ident^txt);
     if i /= null then
         error(B_var_already_defined, ident^txt);
-    else    
+    else
         i := new INFOTYPE(TYPE^type);
         INST^tds.inserer(ident^txt, i);
-end
+    end
 end
 }
 
 -------------------------------------------------------
--- les variables 
+-- les variables
 -------------------------------------------------------
 INST -> TYPE ident aff TERME #tdstype pv ;
 #tdstype {
@@ -201,7 +201,6 @@ end
 }
 
 TERME -> FACTEUR #type ;
-
 #type {
 do
     TERME^type := FACTEUR^type;
@@ -211,7 +210,7 @@ end
 -------------------------------------------------------
 -- variable eventuellement qualifiée
 -------------------------------------------------------
-FACTEUR -> ident #a1 FX #a2;
+FACTEUR -> ident #a1 FX #a2 ;
 #a1 {
 local
     i : INFO;
@@ -242,7 +241,7 @@ end
 }
 
 ---------------------------------------------------------------
-FX -> etoile #a1 FX #a2;
+FX -> etoile #a1 FX #a2 ;
 #a1 {
 local
     p : POINTEUR;
@@ -265,7 +264,7 @@ end
 -------------------------------------------------------
 -- Constante entiere
 -------------------------------------------------------
-FACTEUR -> entier #type;
+FACTEUR -> entier #type ;
 #type {
 do
     FACTEUR^type := new DTYPE("entier", 4);
@@ -275,14 +274,14 @@ end
 -------------------------------------------------------
 -- constantes booleennes
 -------------------------------------------------------
-FACTEUR -> vrai #type;
+FACTEUR -> vrai #type ;
 #type {
 do
     FACTEUR^type := new DTYPE("booleen", 1);
 end
 }
 
-FACTEUR -> faux #type;
+FACTEUR -> faux #type ;
 #type {
 do
     FACTEUR^type := new DTYPE("booleen", 1);
@@ -290,8 +289,7 @@ end
 }
 
 -------------------------------------------------------
--------------------------------------------------------
-FACTEUR -> paro TERME parf #type;
+FACTEUR -> paro TERME parf #type ;
 #type {
 do
     FACTEUR^type := TERME^type;
@@ -311,7 +309,7 @@ end
 -------------------------------------------------------
 -- init pointeur
 -------------------------------------------------------
-FACTEUR -> new TYPE paro parf #a;
+FACTEUR -> new TYPE paro parf #a ;
 #a {
 do
     FACTEUR^type := new POINTEUR(TYPE^type);
@@ -413,7 +411,7 @@ do
 end
 }
 
-TERMES -> v TERME #a1 TERMES #a2;
+TERMES -> v TERME #a1 TERMES #a2 ;
 #a1 {
 do
     TERMES^her_types.inserer(TERME^type);

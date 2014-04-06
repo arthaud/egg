@@ -29,22 +29,25 @@ public class LEGG implements IEgg {
 	public LEGG() {
 	}
 
-	// meta fonctions ... pour generer du code
-	// au format LEGG
+	/*
+	 * meta fonctions pour générer du code au format LEGG
+	 */
 
 	/**
-	 * generer la ligne de code pour la declaration d'un attribut
-	 * 
+	 * générer la ligne de code pour la déclaration d'un attribut
+	 *
 	 * @param att
-	 *            attribut a declarer
+	 *	        attribut a déclarer
 	 * @return
 	 */
 	public String mkAttribut(ATTRIBUT att) {
 		String sorte = "";
+
 		if (att.getSorte() == 0)
 			sorte = "inh";
 		else
 			sorte = "syn";
+
 		Vector<String> idents = (Vector<String>) att.getIdents().clone();
 		String code = sorte + " " + att.getNom() + " : "
 				+ att.getType().getNom() + " for ";
@@ -53,36 +56,39 @@ public class LEGG implements IEgg {
 		// att.getIdents() peut contenir des doublons du fait des non terminaux
 		// refaits
 		String elt_a_enlever = idents.get(0);
-		while (idents.removeElement(elt_a_enlever))
-			;
+
+		while (idents.removeElement(elt_a_enlever));
+
 		while (idents.size() > 0) {
 			String elt_a_traiter = idents.get(0);
 			code += ", " + elt_a_traiter;
-			while (idents.removeElement(elt_a_traiter))
-				;
+			while (idents.removeElement(elt_a_traiter));
 		}
+
 		code += ";";
 		return code;
 	}
 
 	/**
-	 * generer l'expression reguliere permettant de retrouver le code de
-	 * declaration d'un attribut
-	 * 
+	 * générer l'expression regulière permettant de retrouver le code de
+	 * déclaration d'un attribut
+	 *
 	 * @param sorte
-	 *            0 si herite, 1 si synthetise
+	 *	        0 si herite, 1 si synthetise
 	 * @param name
-	 *            nom de l'attribut
+	 *	        nom de l'attribut
 	 * @param type
-	 *            type de l'attribut
-	 * @return la String contenant l'expression reguliere
+	 *	        type de l'attribut
+	 * @return la String contenant l'expression regulière
 	 */
 	public String mkPatternAttribut(int sorte, String name, IType type) {
 		String sorte_str = "";
+
 		if (sorte == 0)
 			sorte_str = mkInh();
 		else
 			sorte_str = mkSyn();
+
 		return Pattern.quote(sorte_str) + "[ \t\n\r]*" + Pattern.quote(name)
 				+ "[ \t\n\r]*" + Pattern.quote(":") + "[ \t\n\r]*"
 				+ Pattern.quote(type.getNom()) + "[ \t\n\r]+"
@@ -90,32 +96,32 @@ public class LEGG implements IEgg {
 				+ Pattern.quote(";");
 	}
 
-	// debut de declaration d'attribut herite
+	// début de déclaration d'attribut herité
 	public String mkInh() {
 		return "inh ";
 	}
 
-	// debut de declaration d'attribut synthetise
+	// début de déclaration d'attribut synthetisé
 	public String mkSyn() {
 		return "syn ";
 	}
 
-	// le nom reserve de la regle d'heritage automatique
+	// le nom réservé de la règle d'heritage automatique
 	public String mkAutoInh() {
 		return "#auto_inh";
 	}
 
-	// le nom reserve de l'attribut contenant l'analyseur lexical
+	// le nom réservé de l'attribut contenant l'analyseur lexical
 	public String mkScanner() {
 		return "scanner";
 	}
 
-	// partie gauche de la regle
+	// partie gauche de la règle
 	public String mkRuleLeft(String gauche) {
 		return "\n" + gauche + " -> ";
 	}
 
-	// element de la partie droite de la regle
+	// élément de la partie droite de la règle
 	public String mkRuleContinue(String elt) {
 		return elt + " ";
 	}
@@ -126,24 +132,24 @@ public class LEGG implements IEgg {
 	}
 
 	/**
-	 * definition d'une action
-	 * 
+	 * définition d'une action
+	 *
 	 * @param name
-	 *            le nom de l'action (avec # devant)
+	 *	        le nom de l'action (avec # devant)
 	 * @param src
-	 *            le source de l'action au format suivant IAction
+	 *	        le source de l'action au format suivant IAction
 	 * @return
 	 */
 	public String mkAction(String name, String src) {
 		return name + "{\n" + src + "\n}";
 	}
 
-	// debut des globales
+	// début des globales
 	public String mkStartGlobs() {
 		return "global\n";
 	}
 
-	// declaration d'une globale
+	// déclaration d'une globale
 	public String mkGlob(ENTREE e) {
 		return e.getNom() + " : " + e.getType().getNom() + ";\n";
 	}

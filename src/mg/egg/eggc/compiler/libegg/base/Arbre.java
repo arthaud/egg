@@ -8,16 +8,11 @@ import mg.egg.eggc.runtime.libjava.EGGException;
 
 /**
  * Classe d&eacute;crivant un arbre de symb&ocirc;les.
- * 
+ *
  * @version 1.0
  * @author Gilles
  */
-// public class Arbre implements ArbreConstants {
 public class Arbre implements Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -49,9 +44,9 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Construit un arbre.
-	 * 
+	 *
 	 * @param hauteur
-	 *            la hauteur maximale de l'arbre
+	 *	        la hauteur maximale de l'arbre
 	 */
 	public Arbre(int hauteur) {
 		debut = null;
@@ -67,9 +62,9 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Ajoute une r&egrave;gle &agrave; la fin de chaque branche.
-	 * 
+	 *
 	 * @param regle
-	 *            le num&eacute;ro de la r&egrave;gle &agrave; ajouter
+	 *	        le num&eacute;ro de la r&egrave;gle &agrave; ajouter
 	 */
 	public void ajouterRegle(int regle) {
 		debut.ajouterRegle(regle);
@@ -101,16 +96,17 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Construit un arbre.
-	 * 
+	 *
 	 * @param hauteur
-	 *            la hauteur maximale de l'arbre.
+	 *	        la hauteur maximale de l'arbre.
 	 * @param valeur
-	 *            le symb&ocirc;le associ&eacute; &agrave; la premi&egrave;re
-	 *            feuille
+	 *	        le symb&ocirc;le associ&eacute; &agrave; la premi&egrave;re
+	 *	        feuille
 	 */
 	public Arbre(int hauteur, SYMBOLE valeur) {
 		this(hauteur);
 		debut = new Feuille(valeur, hauteur);
+
 		if (valeur.getNumero() == SYMBOLE.EOF) {
 			for (int i = 0; i < hauteur; i++) {
 				Feuille f = new Feuille(new SYMBOLE(SYMBOLE.EOF), hauteur);
@@ -135,13 +131,14 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Remplace les non_terminaux par leurs k_premiers
-	 * 
+	 *
 	 * @return true si des changements ont &eacute;t&eacute; effectu&eacute;s
 	 */
 	public boolean remplacer_non_terminaux() {
 		Feuille f = debut;
 		boolean res = false;
 		Vector<Arbre> v = new Vector<Arbre>();
+
 		while (f != null) {
 			if (f.getValeur() instanceof NON_TERMINAL) {
 				v.addElement(((NON_TERMINAL) f.getValeur()).getK_suivants());
@@ -150,9 +147,11 @@ public class Arbre implements Serializable {
 			}
 			f = f.getFrere();
 		}
+
 		for (Enumeration<Arbre> e = v.elements(); e.hasMoreElements();) {
 			res |= ajouter(e.nextElement());
 		}
+
 		return res;
 	}
 
@@ -162,13 +161,17 @@ public class Arbre implements Serializable {
 	public void supprimer_non_terminaux() {
 		while ((debut != null)
 				&& ((debut.getValeur() instanceof NON_TERMINAL) || debut
-						.getValeur().getNumero() == SYMBOLE.LAMBDA))
+						.getValeur().getNumero() == SYMBOLE.LAMBDA)) {
 			debut = debut.getFrere();
+	    }
+
 		if (debut == null)
 			return;
+
 		Feuille f = debut;
 		Feuille g = debut.getFrere();
 		f.supprimer_non_terminaux();
+
 		while (g != null) {
 			if ((g.getValeur() instanceof NON_TERMINAL)
 					|| g.getValeur().getNumero() == SYMBOLE.LAMBDA) {
@@ -183,27 +186,31 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Concat&egrave;ne un autre arbre.
-	 * 
-	 * @param arbre
-	 *            l'autre arbre
+	 *
+	 * @param arbre l'autre arbre
 	 * @return true si des changements ont &eacute;t&eacute; effectu&eacute;s
 	 */
 	public boolean concatener(Arbre arbre) {
 		if (arbre.debut == null)
 			return false;
+
 		if (debut == null)
 			return false;
+
 		longueur += arbre.longueur;
 		boolean res = false;
 		boolean ajout = false;
+
 		if (debut.getValeur().getNumero() == SYMBOLE.LAMBDA) {
 			debut = debut.getFrere();
 			ajout = true;
 		}
+
 		if (debut != null) {
 			Feuille avant = debut;
 			Feuille courant = debut.getFrere();
 			res |= debut.concatener(arbre, 1);
+
 			while (courant != null) {
 				if (courant.getValeur().getNumero() == SYMBOLE.LAMBDA) {
 					ajout = true;
@@ -215,25 +222,28 @@ public class Arbre implements Serializable {
 				courant = avant.getFrere();
 			}
 		}
+
 		if (ajout) {
 			res |= ajouter(arbre);
 		}
+
 		return res;
 	}
 
 	/**
 	 * Ajoute un autre arbre sans contr&ocirc;le sur la hauteur
-	 * 
-	 * @param arbre
-	 *            l'autre arbre.
+	 *
+	 * @param arbre l'autre arbre
 	 */
 	public void ajouterI(Arbre arbre) {
 		if (arbre.debut == null)
 			return;
+
 		if (debut == null) {
 			debut = (Feuille) arbre.debut.clone();
 		} else {
 			Feuille f = arbre.debut;
+
 			while (f != null) {
 				debut.ajouterI(f);
 				f = f.getFrere();
@@ -243,9 +253,8 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Ajoute un autre arbre.
-	 * 
-	 * @param arbre
-	 *            l'autre arbre
+	 *
+	 * @param arbre l'autre arbre
 	 * @return true si des changements ont &eacute;t&eacute; effectu&eacute;s
 	 */
 	public boolean ajouter(Arbre arbre) {
@@ -270,12 +279,12 @@ public class Arbre implements Serializable {
 
 	/**
 	 * Renvoie une cha&icirc;ne repr&eacute;sentant l'arbre.
-	 * 
+	 *
 	 * @return une cha&icirc;ne repr&eacute;sentant l'arbre
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);
-		// sb.append ( "arbre de longueur :" + longueur + "\n" ) ;
+
 		if (debut == null) {
 			sb.append("vide\n");
 		} else {

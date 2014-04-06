@@ -9,12 +9,8 @@ import mg.egg.eggc.runtime.libjava.messages.CoreMessages;
 import mg.egg.eggc.runtime.libjava.messages.ICoreMessages;
 import mg.egg.eggc.runtime.libjava.problem.IProblem;
 
-//public class Feuille implements ArbreConstants {
 public class Feuille implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private int hauteur;
@@ -107,6 +103,7 @@ public class Feuille implements Serializable {
 				// frere.getValeur().getNumero()
 				String s1 = "", d1 = "", s2 = "", d2 = "";
 				Arbre a1 = null, a2 = null;
+
 				for (; e.hasMoreElements();) {
 					REGLE r = (REGLE) e.nextElement();
 					if (r.getNumero() == valeur.getNumero()) {
@@ -119,18 +116,11 @@ public class Feuille implements Serializable {
 						d2 = r.getK_premiers().toString();
 						a2 = r.getK_premiers();
 					}
-				}// for
-					// throw new
-					// EGGException(IProblem.Syntax,ICoreMessages.id_EGG_conflict,
-					// CoreMessages.EGG_conflict, new String[] { s1, d1, s2,
-					// d2 });
+				}
+
 				throw new EGGException(IProblem.Syntax,
 						ICoreMessages.id_EGG_conflict,
-						CoreMessages.EGG_conflict, new Object[] { s1, a1, s2,
-								a2 });
-				// throw new EGGException(IEGGErrors.conflict, new Object[] {
-				// s1,
-				// a1, s2, a2 });
+						CoreMessages.EGG_conflict, new Object[] { s1, a1, s2, a2 });
 			}
 		} else {
 			fils.detecterConflits(e);
@@ -146,6 +136,7 @@ public class Feuille implements Serializable {
 		} else {
 			fils.ajouterRegle(regle);
 		}
+
 		if (frere != null) {
 			frere.ajouterRegle(regle);
 		}
@@ -154,7 +145,9 @@ public class Feuille implements Serializable {
 	public Feuille smallClone(int h) {
 		if (h > hauteur)
 			return null;
+
 		Feuille f = new Feuille(valeur, hauteur);
+
 		if (fils != null) {
 			f.fils = fils.clone(h + 1);
 		}
@@ -164,12 +157,16 @@ public class Feuille implements Serializable {
 	public void supprimer_non_terminaux() {
 		while ((fils != null)
 				&& ((fils.getValeur() instanceof NON_TERMINAL) || fils
-						.getValeur().getNumero() == SYMBOLE.LAMBDA))
+						.getValeur().getNumero() == SYMBOLE.LAMBDA)) {
 			fils = fils.frere;
+	    }
+
 		if (fils == null)
 			return;
+
 		Feuille g = fils;
 		g.supprimer_non_terminaux();
+
 		while (g.frere != null) {
 			if ((g.frere.getValeur() instanceof NON_TERMINAL)
 					|| g.frere.getValeur().getNumero() == SYMBOLE.LAMBDA) {
@@ -184,7 +181,9 @@ public class Feuille implements Serializable {
 	public boolean ajouter(Arbre arbre, int h) {
 		if (h > hauteur)
 			return false;
+
 		boolean res = false;
+
 		if (fils == null) {
 			if (arbre.getDebut() != null) {
 				fils = arbre.getDebut().clone(h + 1);
@@ -203,7 +202,9 @@ public class Feuille implements Serializable {
 	public boolean ajouter(Feuille feuille, int h) {
 		if (feuille == null || h > hauteur)
 			return false;
+
 		boolean res = false;
+
 		if (valeur.getNumero() == feuille.getValeur().getNumero()) {
 			if (feuille.fils != null) {
 				if (fils == null) {
@@ -231,6 +232,7 @@ public class Feuille implements Serializable {
 	public void ajouterI(Feuille feuille) {
 		if (feuille == null)
 			return;
+
 		if (valeur.getNumero() == feuille.getValeur().getNumero()) {
 			if (feuille.fils != null) {
 				if (fils == null) {
@@ -275,7 +277,9 @@ public class Feuille implements Serializable {
 		if (h > hauteur) {
 			return null;
 		}
+
 		Feuille f = new Feuille(valeur, hauteur);
+
 		if (frere != null) {
 			f.frere = frere.clone(h);
 		}
@@ -290,7 +294,6 @@ public class Feuille implements Serializable {
 		for (int i = 0; i < n; i++) {
 			sb.append(" ");
 		}
-		// sb.append ( valeur.getNumero() + "\n" ) ;
 		// le nom du symbole
 		String vn = valeur.getNom();
 		if (vn != null)
@@ -309,12 +312,16 @@ public class Feuille implements Serializable {
 	public boolean concatener(Arbre arbre, int h) {
 		if (h > hauteur)
 			return false;
+
 		if (arbre.getDebut() == null)
 			return false;
+
 		if (fils == null)
 			return false;
+
 		boolean res = false;
 		boolean ajout = false;
+
 		if (fils.getValeur().getNumero() == SYMBOLE.LAMBDA) {
 			fils = fils.frere;
 			ajout = true;
@@ -344,6 +351,7 @@ public class Feuille implements Serializable {
 		Feuille f;
 		f = fils;
 		Vector<Arbre> v = new Vector<Arbre>();
+
 		while (f != null) {
 			if (f.getValeur() instanceof NON_TERMINAL) {
 				v.addElement(((NON_TERMINAL) f.getValeur()).getK_suivants());
@@ -352,6 +360,7 @@ public class Feuille implements Serializable {
 			}
 			f = f.frere;
 		}
+
 		for (Enumeration<Arbre> e = v.elements(); e.hasMoreElements();) {
 			res |= ajouter(e.nextElement(), h);
 		}

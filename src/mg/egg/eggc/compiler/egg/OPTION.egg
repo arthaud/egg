@@ -1,51 +1,55 @@
-option auto=true;
-option k=1;
-option version=5.0.0;
- 
+option auto = true;
+option k = 1;
+option version = 5.0.0;
+
 inh table : TDS for O;
 syn val : BOOLEAN for BOOL;
 
-space      separateur       is    "[\r\n\t ]+"  ;  
-sugar      t_k  is    "k"  ; 
-sugar      t_eg  is    "="  ;
-sugar      t_pv  is    "\;"  ;
-sugar      t_vrai  is    "true"  ;
-sugar      t_faux  is    "false"  ;
-sugar      t_auto  is    "auto"  ;
-sugar       t_version    is    "version" ;
+space      separateur  is    "[\r\n\t ]+" ;
+sugar      t_k         is    "k" ;
+sugar      t_eg        is    "=" ;
+sugar      t_pv        is    "\;" ;
+sugar      t_vrai      is    "true" ;
+sugar      t_faux      is    "false" ;
+sugar      t_auto      is    "auto" ;
+sugar       t_version  is    "version" ;
 
-term       t_vk   is    "[1-5]" ;
-term       t_vv    is    "[0-9]+(\.[0-9]+(\.[0-9]+)?)?" ;
+term       t_vk        is    "[1-5]" ;
+term       t_vv        is    "[0-9]+(\.[0-9]+(\.[0-9]+)?)?" ;
 
 O -> t_k t_eg t_vk t_pv #gen ;
 #gen {
 do
-    O^table.setK(t_vk^txt);
+  O^table.setK(t_vk^txt);
 end
 }
+
 O -> t_version t_eg t_vv t_pv #gen ;
 #gen {
 do
-    O^table.setVersion(t_vv^txt);
+  O^table.setVersion(t_vv^txt);
 end
 }
+
 O -> t_auto t_eg BOOL t_pv #gen ;
 #gen {
 do
-    O^table.setAuto(BOOL^val);
+  O^table.setAuto(BOOL^val);
 end
 }
 
 BOOL -> t_vrai #val ;
-#val { 
-do 
-   BOOL^val := true; 
-end 
+#val {
+do
+  BOOL^val := true;
+end
 }
+
 BOOL -> t_faux #val ;
-#val { 
-do 
-  BOOL^val := false; 
-end 
+#val {
+do
+  BOOL^val := false;
+end
 }
+
 end

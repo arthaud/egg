@@ -9,9 +9,6 @@ import mg.egg.eggc.runtime.libjava.messages.ICoreMessages;
 import mg.egg.eggc.runtime.libjava.problem.IProblem;
 
 public class NON_TERMINAL extends SYMBOLE {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private Vector<REGLE> regles;
@@ -28,9 +25,8 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * Si on connait deja les premiers ...
-	 * 
-	 * @param p
-	 *            l'ancienne valeur de s premiers
+	 *
+	 * @param p l'ancienne valeur de s premiers
 	 */
 	public void setK_premiers(Arbre p) {
 		k_premiers = p;
@@ -56,6 +52,7 @@ public class NON_TERMINAL extends SYMBOLE {
 			if (r.getNumero() == numero)
 				return r;
 		}
+
 		return null;
 	}
 
@@ -71,9 +68,8 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * Construit un nouveau non-terminal.
-	 * 
-	 * @param nom
-	 *            le nom du non-terminal
+	 *
+	 * @param nom le nom du non-terminal
 	 */
 	public NON_TERMINAL(String n) {
 		super(n);
@@ -95,9 +91,8 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * Construit un nouveau non-terminal.
-	 * 
-	 * @param nom
-	 *            le nom du non-terminal
+	 *
+	 * @param nom le nom du non-terminal
 	 */
 	public NON_TERMINAL(boolean e, String n, String comm) {
 		super(n, comm);
@@ -110,17 +105,17 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * Ajoute une r&egrave;gle de production.
-	 * 
-	 * @param regle
-	 *            la r&egrave;gle de production
+	 *
+	 * @param regle la r&egrave;gle de production
 	 */
 	public void add_regle(REGLE regle) {
 		regles.addElement(regle);
 	}
 
 	/**
-	 * Retourne la liste des r&egrave;gles de production. return la liste des
-	 * r&egrave;gles de production
+	 * Retourne la liste des r&egrave;gles de production.
+	 *
+	 * @return la liste des r&egrave;gles de production
 	 */
 	public Enumeration<REGLE> elements() {
 		return regles.elements();
@@ -128,29 +123,28 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * Calcule les k_premiers.
-	 * 
-	 * @param n
-	 *            la hauteur maximale de l'arbre
-	 * @param k
-	 *            l'ordre du calcul
+	 *
+	 * @param n la hauteur maximale de l'arbre
+	 * @param k l'ordre du calcul
 	 * @return les k_premiers
 	 */
 	public Arbre calcule_les_premiers(int n, int k) throws EGGException {
 		if (k_premiers == null) {
 			k_premiers = new Arbre(n);
 			en_cours = new boolean[n];
+
 			for (int i = 0; i < n; i++)
 				en_cours[i] = false;
 		}
+
 		if (k <= deja_fait) {
 			return k_premiers;
 		}
+
 		if (en_cours[k - 1]) {
-			// rec gauche
-			 throw new EGGException(IProblem.Syntax,
-			 ICoreMessages.id_EGG_left_recursion,
-			 CoreMessages.EGG_left_recursion, nom);
-//			throw new EGGException(IEGGErrors.left_recursion, nom);
+			throw new EGGException(IProblem.Syntax,
+					ICoreMessages.id_EGG_left_recursion,
+					CoreMessages.EGG_left_recursion, nom);
 		}
 		en_cours[k - 1] = true;
 
@@ -160,23 +154,24 @@ public class NON_TERMINAL extends SYMBOLE {
 			Arbre aux = r.calcule_les_premiers(n, k);
 			temp.ajouter(aux);
 		}
+
 		k_premiers = temp;
 		if (k > deja_fait)
 			deja_fait = k;
+
 		return k_premiers;
 	}
 
 	/**
 	 * Calcule les k_suivants.
-	 * 
-	 * @param n
-	 *            la hauteur maximale de l'arbre
-	 * @param k
-	 *            l'ordre du calcul
+	 *
+	 * @param n la hauteur maximale de l'arbre
+	 * @param k l'ordre du calcul
 	 */
 	public void calcule_les_suivants(int n, int k) throws EGGException {
 		if (k_suivants == null)
 			k_suivants = new Arbre(n);
+
 		for (Enumeration<REGLE> e = elements(); e.hasMoreElements();) {
 			REGLE r = e.nextElement();
 			r.calcule_les_suivants(n, k);
@@ -184,8 +179,9 @@ public class NON_TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * Remplace les non-terminaux par leurs k_suivants. return true si des
-	 * ajouts ont &eacute;t&eacute; effectu&eacute;s
+	 * Remplace les non-terminaux par leurs k_suivants.
+	 *
+	 * @return true si des ajouts ont &eacute;t&eacute; effectu&eacute;s
 	 */
 	public boolean remplace_non_terminaux() {
 		return k_suivants.remplacer_non_terminaux();
@@ -193,16 +189,17 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * Retourne une cha&icirc;ne repr&eacute;sentant le non-terminal courant.
-	 * 
+	 *
 	 * @return une cha&icirc;ne repr&eacute;sentant le non-terminal courant
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);
+
 		for (Enumeration<REGLE> e = regles.elements(); e.hasMoreElements();) {
 			sb.append(e.nextElement());
 		}
+
 		return "Symbole #" + numero + " : " + nom + "(Non Terminal )\n"
-		// + sb.toString() + les_attributs();
 				+ getK_premiers().toString();
 	}
 
@@ -217,17 +214,18 @@ public class NON_TERMINAL extends SYMBOLE {
 
 	/**
 	 * D&eacute;tecte les conflits.
-	 * 
-	 * @param k
-	 *            l'ordre des conflits
+	 *
+	 * @param k l'ordre des conflits
 	 */
 	public void detecterConflits(int k) throws EGGException {
 		k_premiers = new Arbre(k);
+
 		for (Enumeration<REGLE> e = elements(); e.hasMoreElements();) {
 			REGLE r = e.nextElement();
 			r.getK_premiers().ajouterRegle(r.getNumero());
 			k_premiers.ajouterI(r.getK_premiers());
 		}
+
 		k_premiers.detecterConflits(elements());
 	}
 
@@ -238,7 +236,6 @@ public class NON_TERMINAL extends SYMBOLE {
 	public void afficher_premiers_regles() {
 		for (Enumeration<REGLE> e = elements(); e.hasMoreElements();) {
 			REGLE r = e.nextElement();
-			// System.err.println(r);
 			System.err.println(r.getK_premiers().getDebut().getValeur());
 			System.err.println("//\\\\//\\\\//\\\\//\\\\//\\\\");
 		}
@@ -271,15 +268,14 @@ public class NON_TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * le terminal a-t-il change depuis la derniere compil ?
-	 * 
+	 * le terminal a-t-il changé depuis la dernière compilation ?
+	 *
 	 * @param old
 	 */
 	public void compare(NON_TERMINAL old) {
 		nomChange = !nom.equals(old.nom);
+
 		if (comm != null)
 			commChange = !comm.equals(old.comm);
-		// System.err.println("compare Non Terminal " + getNom() + " avec " +
-		// old.getNom() + " : " + (nomChange || commChange));
 	}
 }

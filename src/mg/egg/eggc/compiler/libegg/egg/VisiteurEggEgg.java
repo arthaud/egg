@@ -1,9 +1,11 @@
-////////////////////////////////////////////////////////////
-//// version prevue pour gerer un compilateur incremental
-//// pour eclipse mais pour l'instant tout est regenere 
-//// a chaque fois.
-//////////////////////////// MG 04-05 /////////////////////
-// Pour engendrer un .m avec juste la syntaxe
+/*
+ * version prévue pour gérer un compilateur incremental
+ * pour eclipse mais pour l'instant tout est regénéré
+ * à chaque fois.
+ *
+ * MG 04-05
+ * Pour engendrer un .m avec juste la syntaxe
+ */
 package mg.egg.eggc.compiler.libegg.egg;
 
 import java.util.Enumeration;
@@ -22,191 +24,181 @@ import mg.egg.eggc.runtime.libjava.EGGException;
 import mg.egg.eggc.runtime.libjava.IEGGCompilationUnit;
 
 public class VisiteurEggEgg implements IVisiteurEgg {
-    // un seul visiteur d'action par visiteurEgg
-    private IVisiteurAction vact;
+	// un seul visiteur d'action par visiteurEgg
+	private IVisiteurAction vact;
 
-    public IVisiteurAction getVisAction() {
-        return vact;
-    }
+	public IVisiteurAction getVisAction() {
+	    return vact;
+	}
 
-    // les attributs deja engendres
-    private Vector<AttEgg> atts;
+	// les attributs deja engendrés
+	private Vector<AttEgg> atts;
 
-    // les terminaux deja engendres
-    private Vector<TEgg> terms;
+	// les terminaux deja engendrés
+	private Vector<TEgg> terms;
 
-    public TEgg getTerm(String n) {
-        for (Enumeration e = terms.elements(); e.hasMoreElements();) {
-            TEgg tj = (TEgg) e.nextElement();
-            if (tj.getNom().equals(n))
-                return tj;
-        }
-        return null;
-    }
+	public TEgg getTerm(String n) {
+	    for (Enumeration e = terms.elements(); e.hasMoreElements();) {
+	        TEgg tj = (TEgg) e.nextElement();
 
-    // les regles deja engendrées
-    private Vector<REgg> regles;
+	        if (tj.getNom().equals(n))
+	            return tj;
+	    }
+	    return null;
+	}
 
-    public REgg getRegle(int n) {
-        // rajouter le test de debordement
-        if (n < regles.size())
-            return (REgg) regles.elementAt(n);
-        else
-            return null;
-    }
+	// les règles déjà engendrées
+	private Vector<REgg> regles;
 
-    // la grammaire
-    private TDS table;
+	public REgg getRegle(int n) {
+	    // rajouter le test de débordement
+	    if (n < regles.size())
+	        return (REgg) regles.elementAt(n);
+	    else
+	        return null;
+	}
 
-    public VisiteurEggEgg(TDS t) {
-        vact = new VisiteurActionEgg();
-        table = t;
-        atts = new Vector<AttEgg>();
-        // nterms = new Vector();
-        terms = new Vector<TEgg>();
-        regles = new Vector<REgg>();
-    }
+	// la grammaire
+	private TDS table;
 
-    // genere main() du compilo
-    // sans interet
-    public void racinec() {
-    }
+	public VisiteurEggEgg(TDS t) {
+	    vact = new VisiteurActionEgg();
+	    table = t;
+	    atts = new Vector<AttEgg>();
+	    terms = new Vector<TEgg>();
+	    regles = new Vector<REgg>();
+	}
 
-    // genere module
-    // sans interet
-    public void racine() {
-    }
+	// génère main() du compilo
+	public void racinec() {
+	}
 
-    // // genere messages
-    // // sans interet
-    // public void messages() {
-    // }
-    //
-    // // genere message
-    // // sans interet
-    // public void m_entete(MessageInfo m) {
-    // }
+	// génère module
+	public void racine() {
+	}
 
-    // genere l'analyseur lexical
-    // sans interet
-    public void lexical() {
-    }
+	// génère l'analyseur lexical
+	public void lexical() {
+	}
 
-    // genere l'entete d'un non terminal
-    // appele à la creation du non terminal
-    public void nt_entete(NON_TERMINAL nt) {
-    }
+	// génère l'entête d'un non terminal
+	// appelé à la création du non terminal
+	public void nt_entete(NON_TERMINAL nt) {
+	}
 
-    // appele a chaque creation de regle
-    public void regle(REGLE r) {
-        REgg c = new REgg(r);
-        regles.add(c);
-    }
+	// appelé à chaque création de règle
+	public void regle(REGLE r) {
+	    REgg c = new REgg(r);
+	    regles.add(c);
+	}
 
-    // appele à la declaration du non terminal externe
-    public void ex_entete(NON_TERMINAL nt) {
-    }
+	// appele à la déclaration du non terminal externe
+	public void ex_entete(NON_TERMINAL nt) {
+	}
 
-    // appele a chaque creation de regle
-    public void nt_regle(REGLE r) {
-        REgg c = getRegle(r.getNumero());
-        c.setEntete();
-    }
+	// appele à chaque création de règle
+	public void nt_regle(REGLE r) {
+	    REgg c = getRegle(r.getNumero());
+	    c.setEntete();
+	}
 
-    // genere l'analyse syntaxique d'un terminal ( = accepter)
-    // appele a la creation du terminal
-    public void t_entete(TERMINAL t) {
-        TEgg c = new TEgg(t);
-        terms.addElement(c);
-        c.setEntete();
-    }
+	// génère l'analyse syntaxique d'un terminal ( = accepter)
+	// appelé à la création du terminal
+	public void t_entete(TERMINAL t) {
+	    TEgg c = new TEgg(t);
+	    terms.addElement(c);
+	    c.setEntete();
+	}
 
-    // genere le code d'un attribut semantique
-    // non appelé
-    public void nt_attribut(NON_TERMINAL nt, ATTRIBUT a) {
-    }
+	// génère le code d'un attribut semantique
+	// non appelé
+	public void nt_attribut(NON_TERMINAL nt, ATTRIBUT a) {
+	}
 
-    // genere le code d'un attribut semantique
-    public void nt_attribut(ATTRIBUT a) {
-        AttEgg c = new AttEgg(a);
-        atts.addElement(c);
-        c.setEntete();
-    }
+	// génère le code d'un attribut sémantique
+	public void nt_attribut(ATTRIBUT a) {
+	    AttEgg c = new AttEgg(a);
+	    atts.addElement(c);
+	    c.setEntete();
+	}
 
-    public void globale(REGLE r, GLOB g) {
-        REgg c = getRegle(r.getNumero());
-        if (c == null)
-            c = new REgg(r);
-        c.setGlob(g);
-    }
+	public void globale(REGLE r, GLOB g) {
+	    REgg c = getRegle(r.getNumero());
 
-    // genere le code d'une var globale attribut semantique
-    public void nt_globale(NON_TERMINAL nt, GLOB g) {
-        // NtEgg c = getNterm(nt.getNom());
-        // c.setGlob(g);
-    }
+	    if (c == null)
+	        c = new REgg(r);
 
-    public void t_attribut(TERMINAL t, ATTRIBUT a) {
-    }
+	    c.setGlob(g);
+	}
 
-    // genere le code d'une action semantique
-    // appele a la creation de l'action
-    // nom (n), regle(r), code (c)
-    public void nt_action(ActREGLE a) {
-        REGLE r = a.getRegle();
-        // String n = a.getNom();
-        // System.err.println("Visiting action " + n + "of rule#" +
-        // r.getNumero());
-        REgg c = getRegle(r.getNumero());
-        if (c == null)
-            c = new REgg(r);
-        c.setAct(a);
-    }
+	// génère le code d'une var globale attribut sémantique
+	public void nt_globale(NON_TERMINAL nt, GLOB g) {
+	    // NtEgg c = getNterm(nt.getNom());
+	    // c.setGlob(g);
+	}
 
-    public String car(String s) {
-        // System.err.println("Appel visiteur car :" + s);
-        return s;
-    }
+	public void t_attribut(TERMINAL t, ATTRIBUT a) {
+	}
 
-    public void finaliser() throws EGGException {
-        StringBuffer sb = new StringBuffer();
-        sb.append("------------------ ***** -----------------------------\n");
-        sb.append("-- Regénération automatique de la grammaire de "
-                + table.getNom());
-        sb.append("-- permet de faire apparaitre les actions automatiques\n");
-        sb.append("------------------ ***** -----------------------------\n");
-        // les attributs
-        sb.append("\\section{Attributs}\n\n");
-        for (AttEgg a : atts) {
-            sb.append(a.finaliser());
-        }
-        sb.append("\n");
-        // les terminaux
-        sb.append("\\section{Terminaux}\n\n");
-        for (TEgg a : terms) {
-            sb.append(a.finaliser());
-        }
-        sb.append("\n");
-        // les regles
-        sb.append("\\section{Règles de production}\n");
-        for (REgg a : regles) {
-            sb.append(a.finaliser());
-        }
-        sb.append("\\end{document}\n");
-        // ecriture
-        IEGGCompilationUnit cu = table.getCompilationUnit();
-        cu.createFile(table.getNom() + ".egg", sb.toString());
-    }
+	// génère le code d'une action sémantique
+	// appelé à la création de l'action
+	// nom (n), regle(r), code (c)
+	public void nt_action(ActREGLE a) {
+	    REGLE r = a.getRegle();
+	    REgg c = getRegle(r.getNumero());
 
-    protected static String getOpEgg(String op) {
-        return op;
-    }
+	    if (c == null)
+	        c = new REgg(r);
 
-    protected static String getTypeEgg(String type) {
-        return type;
-    }
+	    c.setAct(a);
+	}
 
-    public void m_entete(String m) {
-    }
+	public String car(String s) {
+	    return s;
+	}
 
+	public void finaliser() throws EGGException {
+	    StringBuffer sb = new StringBuffer();
+	    sb.append("------------------ ***** -----------------------------\n");
+	    sb.append("-- Regénération automatique de la grammaire de "
+	            + table.getNom());
+	    sb.append("-- permet de faire apparaitre les actions automatiques\n");
+	    sb.append("------------------ ***** -----------------------------\n");
+
+	    // les attributs
+	    sb.append("\\section{Attributs}\n\n");
+	    for (AttEgg a : atts) {
+	        sb.append(a.finaliser());
+	    }
+	    sb.append("\n");
+
+	    // les terminaux
+	    sb.append("\\section{Terminaux}\n\n");
+	    for (TEgg a : terms) {
+	        sb.append(a.finaliser());
+	    }
+	    sb.append("\n");
+
+	    // les règles
+	    sb.append("\\section{Règles de production}\n");
+	    for (REgg a : regles) {
+	        sb.append(a.finaliser());
+	    }
+	    sb.append("\\end{document}\n");
+
+	    // écriture
+	    IEGGCompilationUnit cu = table.getCompilationUnit();
+	    cu.createFile(table.getNom() + ".egg", sb.toString());
+	}
+
+	protected static String getOpEgg(String op) {
+	    return op;
+	}
+
+	protected static String getTypeEgg(String type) {
+	    return type;
+	}
+
+	public void m_entete(String m) {
+	}
 }

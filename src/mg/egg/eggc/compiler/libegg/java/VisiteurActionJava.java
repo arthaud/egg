@@ -36,28 +36,34 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 	public String appel(ENTREE entree, String f, Vector<String> args) {
 		StringBuffer cargs = new StringBuffer();
 		boolean premier = true;
+
 		for (Enumeration e = args.elements(); e.hasMoreElements();) {
 			if (!premier) {
 				cargs.append(", ");
 			} else {
 				premier = false;
 			}
+
 			cargs.append((String) e.nextElement());
 		}
-		return "    " + var(entree) + "." + f + "(" + cargs.toString() + ");";
+
+		return "	" + var(entree) + "." + f + "(" + cargs.toString() + ");";
 	}
 
 	public String nouveau(ENTREE entree, Vector<String> args) {
 		StringBuffer cargs = new StringBuffer();
 		boolean premier = true;
+
 		for (Enumeration e = args.elements(); e.hasMoreElements();) {
 			if (!premier) {
 				cargs.append(", ");
 			} else {
 				premier = false;
 			}
+
 			cargs.append((String) e.nextElement());
 		}
+
 		return var(entree) + " = new "
 				+ UtilsJava.getTypeJava(entree.getType()) + "("
 				+ cargs.toString() + ");";
@@ -65,17 +71,21 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 
 	public String nouveau(IType type, Vector<String> args) {
 		StringBuffer cargs = new StringBuffer();
+
 		if (args != null) {
 			boolean premier = true;
+
 			for (Enumeration e = args.elements(); e.hasMoreElements();) {
 				if (!premier) {
 					cargs.append(", ");
 				} else {
 					premier = false;
 				}
+
 				cargs.append((String) e.nextElement());
 			}
 		}
+
 		return " new " + UtilsJava.getTypeJava(type) + "(" + cargs.toString()
 				+ ")";
 	}
@@ -85,8 +95,6 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 	}
 
 	public String fatal(String id, Vector<String> args) {
-		// System.err.println("Message id = " + id);
-		// mess.add(id);
 		StringBuffer sb = new StringBuffer();
 		sb.append("att_scanner._interrompre(IProblem.Semantic, att_scanner.getBeginLine(), "
 				+ "I"
@@ -96,12 +104,14 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 				+ ", "
 				+ table.getNom() + "Messages." + id + ",new Object[]{");
 		boolean premier = true;
+
 		for (Enumeration e = args.elements(); e.hasMoreElements();) {
 			if (!premier) {
 				sb.append(", ");
 			} else {
 				premier = false;
 			}
+
 			sb.append("\"\"+" + (String) e.nextElement());
 		}
 
@@ -110,19 +120,20 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 	}
 
 	public String signaler(String id, Vector<String> args) {
-		// System.err.println("Message id = " + id);
-		// mess.add(id);
 		StringBuffer sb = new StringBuffer();
 		sb.append("{ String as[]={\n");
 		boolean premier = true;
+
 		for (Enumeration e = args.elements(); e.hasMoreElements();) {
 			if (!premier) {
 				sb.append(", ");
 			} else {
 				premier = false;
 			}
+
 			sb.append((String) e.nextElement());
 		}
+
 		sb.append("}\n;");
 		sb.append("att_scanner._signaler(IProblem.Semantic, att_scanner.getBeginLine(), "
 				+ "I"
@@ -217,11 +228,6 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 		return txt;
 	}
 
-	// la version finale ...
-	// public String chaine(String ch){
-	// return ch;
-	// }
-
 	// la version avec %N et %T
 	public String chaine(String ch) {
 		char[] cch = ch.toCharArray();
@@ -243,7 +249,6 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 	}
 
 	public String decl(ENTREE entree) {
-		// System.out.println(entree);
 		return UtilsJava.getTypeJava(entree.getType()) + " " + var(entree)
 				+ ";";
 	}
@@ -274,20 +279,24 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 		IType tr = entree.getTypeReel();
 		if (tr != null)
 			n = "((" + UtilsJava.getTypeJava(tr) + ")" + n + ")";
+
 		return n;
 	}
 
 	public String fct(ENTREE entree, String f, Vector<String> args) {
 		StringBuffer cargs = new StringBuffer();
 		boolean premier = true;
+
 		for (Enumeration e = args.elements(); e.hasMoreElements();) {
 			if (!premier) {
 				cargs.append(", ");
 			} else {
 				premier = false;
 			}
+
 			cargs.append((String) e.nextElement());
 		}
+
 		return var(entree) + "." + f + "(" + cargs.toString() + ")";
 	}
 
@@ -300,7 +309,6 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 	}
 
 	public String car(String s) {
-		// System.err.println("Appel visiteur car :" + s);
 		if (s.equals(" "))
 			return "\\ ";
 		else if (s.equals("\\$"))
@@ -336,5 +344,4 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 		return "\t\t}catch(" + table.getNom() + "Exception loc_e){" + cinsts
 				+ "\n";
 	}
-
 }

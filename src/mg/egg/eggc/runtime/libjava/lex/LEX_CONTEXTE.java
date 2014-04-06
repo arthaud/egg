@@ -1,4 +1,6 @@
-// contexte de lecture : necessaire pour un chgt de lexical efficace 
+/**
+ * Contexte de lecture : necessaire pour un chgt de lexical efficace
+ */
 package mg.egg.eggc.runtime.libjava.lex;
 
 import java.io.BufferedReader;
@@ -45,8 +47,6 @@ public class LEX_CONTEXTE {
 	}
 
 	public LEX_CONTEXTE(String src) {
-		// System.err.println(" lex_contexte Contents=\n" +src.length() );
-		// fileIn = fi;
 		source = new BufferedReader(new StringReader(src));
 		b_size = 512;
 		buffer = new char[512];
@@ -84,6 +84,5 @@ public class LEX_CONTEXTE {
 
 	public String toString() {
 		return "LC : Reader : " + source + "\n";
-
 	}
 }

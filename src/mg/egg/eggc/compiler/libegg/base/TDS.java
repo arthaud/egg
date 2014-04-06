@@ -48,17 +48,17 @@ public class TDS implements Serializable {
 	private void setNom() {
 		String s = cu.getFileName();
 		int i = s.lastIndexOf(File.separatorChar);
-		// int i = s.lastIndexOf('/');
+
 		if (i != -1)
 			s = s.substring(i + 1);
+
 		if (s.endsWith(".m")) {
 			s = s.substring(0, s.length() - 2);
 		} else if (s.endsWith(".egg")) {
 			s = s.substring(0, s.length() - 4);
 		}
-		// System.err.println("TDS : nom = " + s);
-		nom = s;
 
+		nom = s;
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class TDS implements Serializable {
 		return options;
 	}
 
-	// lien avec les systeme de types
+	// lien avec le système de types
 	transient private Resolveur resolveur;
 
 	public Resolveur getResolveur() {
@@ -88,7 +88,7 @@ public class TDS implements Serializable {
 		return htable;
 	}
 
-	// table des regles dans l'ordre de declaration
+	// table des règles dans l'ordre de déclaration
 	public int compteur_regles = 0;
 
 	public int getCompteur_regles() {
@@ -115,9 +115,11 @@ public class TDS implements Serializable {
 		if (properties.get(message) == null) {
 			StringBuffer sb = new StringBuffer();
 			sb.append(message.toLowerCase());
+
 			for (int i = 0; i < nbargs; i++) {
 				sb.append("{" + i + "} ");
 			}
+
 			properties.put(message, sb.toString());
 		}
 	}
@@ -144,24 +146,26 @@ public class TDS implements Serializable {
 
 	/**
 	 * retourne une repr&eacute;sentation de la table des symb&ocirc;les.
-	 * 
+	 *
 	 * @return une cha&icirc;ne repr&eacute;sentant la TDS
 	 */
 	public String toString() {
 		StringBuffer r = new StringBuffer();
+
 		for (Enumeration<SYMBOLE> e = htable.elements(); e.hasMoreElements();) {
 			SYMBOLE s = e.nextElement();
 			r.append(s);
 		}
+
 		return r.toString();
 	}
 
 	/**
 	 * ins&eacute;re un nouvel &eacute;l&eacute;ment. <BR>
 	 * l'&eacute;l&eacute;ment est ins&eacute;r&eacute; &agrave; la fin de table
-	 * 
+	 *
 	 * @param i
-	 *            l'&eacute;l&eacute;ment &agrave; ins&eacute;rer
+	 *	        l'&eacute;l&eacute;ment &agrave; ins&eacute;rer
 	 */
 	public void inserer(SYMBOLE i) {
 		SYMBOLE o = htable.get(i.getNom());
@@ -175,9 +179,9 @@ public class TDS implements Serializable {
 	/**
 	 * ins&eacute;re un nouvel &eacute;l&eacute;ment. <BR>
 	 * l'&eacute;l&eacute;ment est ins&eacute;r&eacute; &agrave; la fin de table
-	 * 
+	 *
 	 * @param i
-	 *            l'&eacute;l&eacute;ment &agrave; ins&eacute;rer
+	 *	        l'&eacute;l&eacute;ment &agrave; ins&eacute;rer
 	 */
 	public boolean inserer_lexical(SYMBOLE i) {
 		SYMBOLE o = htable.get(i.getNom());
@@ -192,11 +196,11 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * recherche une Symbole par son nom. <BR>
+	 * recherche un Symbole par son nom. <BR>
 	 * et positionne le bool&eacute;en ok en cas de succ&egrave;s
-	 * 
+	 *
 	 * @param n
-	 *            le nom de l'info &agrave; rechercher
+	 *	        le nom de l'info &agrave; rechercher
 	 * @return l'info de nom n si elle est pr&eacute;sente ou null sinon
 	 * @see SYMBOLE
 	 * @see #ok
@@ -208,9 +212,9 @@ public class TDS implements Serializable {
 	/**
 	 * remplace une info par une info de m&ecirc;me nom. <BR>
 	 * l'info est ins&eacute;r&eacute; si la recherche &eacute;choue
-	 * 
+	 *
 	 * @param i
-	 *            l'info &agrave; mettre &agrave; jour
+	 *	        l'info &agrave; mettre &agrave; jour
 	 */
 	void remplacer(SYMBOLE i) {
 		htable.remove(i.getNom());
@@ -220,9 +224,9 @@ public class TDS implements Serializable {
 	/**
 	 * supprime l'info de m&egrave;me nom. <BR>
 	 * ne fait rien si la recherche &eacute;choue
-	 * 
+	 *
 	 * @param i
-	 *            l'info &agrave; supprimer
+	 *	        l'info &agrave; supprimer
 	 */
 	void supprimer(SYMBOLE i) {
 		htable.remove(i.getNom());
@@ -235,20 +239,18 @@ public class TDS implements Serializable {
 	}
 
 	public TDS(IEGGCompilationUnit unit) throws EGGException {
-		// System.err.println("new TDS unit " + unit);
 		cu = unit;
 		htable = new Hashtable<String, SYMBOLE>();
 		lexicaux = new Vector<SYMBOLE>();
 		compteur_regles = 0;
 		regles = new Vector<REGLE>();
-		// messages = new Vector<String>();
 		properties = new Properties();
 		attributs = new Attributs();
 		options = cu.getOptions();
 		setNom();
+
 		// lire la tds de la precedente compilation
 		// oldtds = cu.readTds();
-		// oldtds = null;
 	}
 
 	public void setAuto(boolean v) {
@@ -266,7 +268,7 @@ public class TDS implements Serializable {
 
 	/**
 	 * Renvoie les &eacute;l&eacute;ments de la TDS.
-	 * 
+	 *
 	 * @return les &eacute;l&eacute;ments de la TDS
 	 */
 	public Enumeration<SYMBOLE> elements() {
@@ -275,9 +277,9 @@ public class TDS implements Serializable {
 
 	/**
 	 * Retourne l'attribut de nom nom
-	 * 
+	 *
 	 * @param nom
-	 *            le nom de l'attribut a rechercher
+	 *	        le nom de l'attribut a rechercher
 	 * @return l'attribut recherch&eacute;, null si inconnu
 	 */
 	public ATTRIBUT attribut(String nom) {
@@ -293,8 +295,9 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * Calcule les premiers de tous les non-terminaux. @ param k l'ordre des
-	 * premiers
+	 * Calcule les premiers de tous les non-terminaux.
+	 *
+	 * @param k l'ordre des premiers
 	 */
 	private void calcule_les_premiers(int k) throws EGGException {
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {
@@ -309,8 +312,9 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * Calcule les suivants de tous les non-terminaux. @ param k l'ordre des
-	 * suivants
+	 * Calcule les suivants de tous les non-terminaux.
+	 *
+	 * @param k l'ordre des suivants
 	 */
 	private void calcule_les_suivants(int k) throws EGGException {
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {
@@ -347,7 +351,6 @@ public class TDS implements Serializable {
 			}
 		}
 
-		// ca sert a quoi ?
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {
 			SYMBOLE s = e.nextElement();
 			if (s instanceof NON_TERMINAL) {
@@ -384,8 +387,9 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * Detecte les conflits sur toutes les r&eacute;gles de production. @ param
-	 * l'ordre du conflit
+	 * Détecte les conflits sur toutes les r&eacute;gles de production.
+	 *
+	 * @param k l'ordre du conflit
 	 */
 	private void detecter_les_conflits(int k) throws EGGException {
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {
@@ -429,12 +433,10 @@ public class TDS implements Serializable {
 				if (nt.estExterne())
 					continue;
 				if (nt.getRegles().size() == 0) {
-					// recuperee par analyser_grammaire de TDS
+					// recupérée par analyser_grammaire de TDS
 					throw new EGGException(IProblem.Syntax,
 							ICoreMessages.id_EGG_nt_undefined_error,
 							CoreMessages.EGG_nt_undefined_error, nt.getNom());
-					// throw new EGGException(IEGGErrors.nt_undefined,
-					// nt.getNom());
 				}
 			}
 		}
@@ -442,22 +444,23 @@ public class TDS implements Serializable {
 
 	/**
 	 * Analyse syntaxiquement le source * LA fonction qui communique avec le .m
-	 * 
+	 *
 	 * @throws EGGException
 	 */
 	public void analyser_syntaxe() throws EGGException {
-		// si la syntaxe a change la reverifier
-		// System.err.println("Analyse syntaxe");
+		// si la syntaxe à changé, la revérifier
 		detecte_nt_sans_prod();
-		// System.err.println("calcul des premiers");
+
 		calcule_les_premiers(options.getK());
-		// System.err.println("calcul des suivants");
+
 		calcule_les_suivants(options.getK());
-		// System.err.println("calcul des sd");
+
 		calcule_symboles_directeurs();
-		// System.err.println("calcul des conflits");
+
 		detecter_les_conflits(options.getK());
+
 		reduire();
+
 		// cu.writeTds(this);
 	}
 

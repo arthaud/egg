@@ -1,14 +1,11 @@
 package mg.egg.eggc.runtime.libjava.problem;
 
-
 public interface IProblemRequestor {
-    void acceptProblem(IProblem problem);
+	void acceptProblem(IProblem problem);
 
-    void beginReporting();
+	void beginReporting();
 
-    void endReporting();
+	void endReporting();
 
-    boolean isActive();
-    
-    int getFatal();
+	int getFatal();
 }

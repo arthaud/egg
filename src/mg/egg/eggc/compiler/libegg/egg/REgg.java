@@ -13,110 +13,114 @@ import mg.egg.eggc.compiler.libegg.base.SymbREGLE;
 import mg.egg.eggc.runtime.libjava.EGGException;
 
 public class REgg {
-    // private NON_TERMINAL nonTerminal;
-    private REGLE regle;
+	private REGLE regle;
 
-    private StringBuffer entete;
+	private StringBuffer entete;
 
-    public StringBuffer getEntete() {
-        return entete;
-    }
+	public StringBuffer getEntete() {
+	    return entete;
+	}
 
-    // genere le code de la regle
-    public void setEntete() {
-        entete = new StringBuffer();
-        String comm = regle.getComm();
-        if (comm != null)
-            entete.append(regle.getComm() + '\n');
-        // entete.append ( "-- regle #" + regle.getNumero() +"\n" ) ;
-        entete.append(regle.getGauche().getNom() + "->");
-        for (Enumeration d = regle.getDroite().elements(); d.hasMoreElements();) {
-            EltREGLE er = (EltREGLE) d.nextElement();
-            if (er instanceof SymbREGLE) {
-                SYMBOLE s = ((SymbREGLE) er).getSymbole();
-                entete.append(" " + s.getNom());
-            } else {
-                ActREGLE ar = (ActREGLE) er;
-                if (ar.getCode() == null) {
-                    // System.err.println("Suppression de " + er.getNom());
-                } else {
-                    entete.append(" " + er.getNom());
-                }
-            }
-        }
-        entete.append(";\n");
-    }
+	// génère le code de la règle
+	public void setEntete() {
+	    entete = new StringBuffer();
+	    String comm = regle.getComm();
 
-    // les actions
-    private HashMap<String, String> acts;
+	    if (comm != null)
+	        entete.append(regle.getComm() + '\n');
 
-    public String getAct(String act) {
-        return acts.get(act);
-    }
+	    entete.append(regle.getGauche().getNom() + "->");
+	    for (Enumeration d = regle.getDroite().elements(); d.hasMoreElements();) {
+	        EltREGLE er = (EltREGLE) d.nextElement();
 
-    public void addAct(String act, String c) {
-        acts.put(act, c);
-    }
+	        if (er instanceof SymbREGLE) {
+	            SYMBOLE s = ((SymbREGLE) er).getSymbole();
+	            entete.append(" " + s.getNom());
+	        } else {
+	            ActREGLE ar = (ActREGLE) er;
+	            if (ar.getCode() != null) {
+	                entete.append(" " + er.getNom());
+	            }
+	        }
+	    }
+	    entete.append(";\n");
+	}
 
-    public void delAct(String act) {
-        acts.remove(act);
-    }
+	private HashMap<String, String> acts;
 
-    public void setAct(ActREGLE act) {
-        StringBuffer asb = new StringBuffer();
-        // l'entete d'une action
-        asb.append(act.getNom() + "{\n");
-        // le code
-        asb.append(act.getCode());
-        asb.append("end\n}\n");
-        // ajout dans la liste
-        // System.out.println("setAct " + act.getNom());
-        addAct(act.getNom(), asb.toString());
-    }
+	public String getAct(String act) {
+	    return acts.get(act);
+	}
 
-    private HashMap<String, String> globs;
+	public void addAct(String act, String c) {
+	    acts.put(act, c);
+	}
 
-    public String getGlob(String g) {
-        return globs.get(g);
-    }
+	public void delAct(String act) {
+	    acts.remove(act);
+	}
 
-    public void addGlob(String g, String c) {
-        globs.put(g, c);
-    }
+	public void setAct(ActREGLE act) {
+	    StringBuffer asb = new StringBuffer();
 
-    public void delGlob(String g) {
-        globs.remove(g);
-    }
+	    // l'entete d'une action
+	    asb.append(act.getNom() + "{\n");
 
-    public void setGlob(GLOB g) {
-        StringBuffer asb = new StringBuffer();
-        // visible dans le package
-        asb.append(g.getNom() + " : "
-                + VisiteurEggEgg.getTypeEgg(g.getType().getNom()) + ";\n");
-        // ajout dans la liste
-        addGlob(g.getNom(), asb.toString());
-    }
+	    // le code
+	    asb.append(act.getCode());
+	    asb.append("end\n}\n");
 
-    public REgg(REGLE r) {
-        regle = r;
-        acts = new HashMap<String, String>();
-        globs = new HashMap<String, String>();
-    }
+	    // ajout dans la liste
+	    addAct(act.getNom(), asb.toString());
+	}
 
-    // appele si chgt dans le nt
-    public String finaliser() throws EGGException {
-        // les globales
-        if (globs.values().size() != 0) {
-            entete.append("global\n");
-            for (Iterator e = globs.values().iterator(); e.hasNext();) {
-                entete.append(e.next() + "\n");
-            }
-        }
+	private HashMap<String, String> globs;
 
-        // les actions semantiques
-        for (Iterator e = acts.values().iterator(); e.hasNext();) {
-            entete.append(e.next() + "\n");
-        }
-        return entete.toString();
-    }
+	public String getGlob(String g) {
+	    return globs.get(g);
+	}
+
+	public void addGlob(String g, String c) {
+	    globs.put(g, c);
+	}
+
+	public void delGlob(String g) {
+	    globs.remove(g);
+	}
+
+	public void setGlob(GLOB g) {
+	    StringBuffer asb = new StringBuffer();
+
+	    // visible dans le package
+	    asb.append(g.getNom() + " : "
+	            + VisiteurEggEgg.getTypeEgg(g.getType().getNom()) + ";\n");
+
+	    // ajout dans la liste
+	    addGlob(g.getNom(), asb.toString());
+	}
+
+	public REgg(REGLE r) {
+	    regle = r;
+	    acts = new HashMap<String, String>();
+	    globs = new HashMap<String, String>();
+	}
+
+	// appelé si changement dans le nt
+	public String finaliser() throws EGGException {
+	    // les globales
+	    if (globs.values().size() != 0) {
+	        entete.append("global\n");
+
+	        for (Iterator e = globs.values().iterator(); e.hasNext();) {
+	            entete.append(e.next() + "\n");
+	        }
+	    }
+
+	    // les actions sémantiques
+	    for (Iterator e = acts.values().iterator(); e.hasNext();) {
+	        entete.append(e.next() + "\n");
+	    }
+
+	    return entete.toString();
+	}
 }

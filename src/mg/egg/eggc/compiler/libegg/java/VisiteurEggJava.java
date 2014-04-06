@@ -19,14 +19,10 @@ import mg.egg.eggc.runtime.libjava.EGGException;
 import mg.egg.eggc.runtime.libjava.IEGGCompilationUnit;
 
 public class VisiteurEggJava implements IVisiteurEgg, Serializable {
-	/**
-     * 
-     */
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * un seul visiteur d'action par visiteurEgg
-	 * 
 	 */
 	private IVisiteurAction vact;
 
@@ -40,6 +36,7 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 	private NtJava getNterm(String n) {
 		for (Enumeration e = nterms.elements(); e.hasMoreElements();) {
 			NtJava ntj = (NtJava) e.nextElement();
+
 			if (ntj.getNom().equals(n))
 				return ntj;
 		}
@@ -64,68 +61,70 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 	public VisiteurEggJava(TDS t) {
 		table = t;
 		nterms = new Vector<NtJava>();
-		// terms = new Vector<TJava>();
 		lex = new LexJava(t);
 		mod = new ModJava(t);
 		mess = new MJava(t);
+
 		if (t.syntaxOnly())
 			vact = new VisiteurActionNull(t);
 		else
 			vact = new VisiteurActionJava(t);
 	}
 
-	// genere main() du compilo
+	// génère main() du compilo
 	public void racinec() {
 		comp = new CompJava(table);
 	}
 
-	// genere module
+	// génère module
 	public void racine() {
 	}
 
-	// genere message
+	// génère message
 	public void m_entete(String m) {
 		return;
 	}
 
-	// genere l'analyseur lexical
+	// génère l'analyseur lexical
 	public void lexical() {
 	}
 
-	// appele à la declaration du non terminal externe
+	// appele à la déclaration du non terminal externe
 	public void ex_entete(NON_TERMINAL nt) {
 	}
 
 	/**
-	 * genere l'analyse syntaxique d'un terminal ( = accepter) appele a la
+	 * génère l'analyse syntaxique d'un terminal ( = accepter) appele a la
 	 * creation du terminal
-	 * 
+	 *
 	 * @param t
 	 */
 	public void t_entete(TERMINAL t) {
 	}
 
-	// genere l'entete d'un non terminal
-	// appele à la creation du non terminal
+	// génère l'entete d'un non terminal
+	// appele à la création du non terminal
 	public void nt_entete(NON_TERMINAL nt) {
-		// System.err.println("nt_entete : nom " + nt.getNom());
 		NtJava c = getNterm(nt.getNom());
+
 		if (c == null) {
 			c = new NtJava(nt, table);
 			nterms.add(c);
 		}
 	}
 
-	// appele a chaque creation de regle
+	// appele à chaque création de règle
 	public void regle(REGLE r) {
 	}
 
-	// appele à la fin de la description de la regle
+	// appele à la fin de la description de la règle
 	public void nt_regle(REGLE r) {
 		// le non terminal de gauche
 		NON_TERMINAL nt = (NON_TERMINAL) r.getGauche().getSymbole();
+
 		// le nterm de gauche
 		NtJava c = getNterm(nt.getNom());
+
 		if (c == null) {
 			// le creer
 			c = new NtJava(nt, table);
@@ -134,40 +133,38 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 		}
 	}
 
-	// utile ?
 	public void t_attribut(TERMINAL t, ATTRIBUT a) {
 	}
 
-	// genere le code d'un attribut semantique
+	// génère le code d'un attribut semantique
 	public void nt_attribut(NON_TERMINAL nt, ATTRIBUT a) {
 		NtJava c = getNterm(nt.getNom());
+
 		if (c == null) {
 			c = new NtJava(nt, table);
 			nterms.add(c);
 		}
 	}
 
-	// obsolete : genere le code d'un attribut semantique
+	// obsolète : génère le code d'un attribut semantique
 	public void nt_attribut(ATTRIBUT a) {
 	}
 
-	// obsolete : genere le code d'une var globale
+	// obsolète : génère le code d'une var globale
 	public void nt_globale(NON_TERMINAL nt, GLOB g) {
 	}
 
-	//
 	public void globale(REGLE r, GLOB g) {
 	}
 
-	// genere le code d'une action semantique
+	// génère le code d'une action semantique
 	// action_xxx
-	// appele a la creation de l'action
+	// appele à la création de l'action
 	// nom (n), regle(r), code (c)
 	public void nt_action(ActREGLE a) {
 	}
 
 	public String car(String s) {
-		// System.err.println("Appel visiteur car :" + s);
 		if (s.equals(" "))
 			return "\\ ";
 		else if (s.equals("\\$"))
@@ -193,58 +190,68 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 		String nom = table.getNom() + "Visitor";
 		StringBuffer sb = new StringBuffer();
 		sb.append("package " + pack + ";\n");
+
 		for (String e : incs) {
 			sb.append("import " + e + ";\n");
 		}
+
 		sb.append("import mg.egg.eggc.runtime.libjava.*;\n");
-		// creation de la classe
+
+		// création de la classe
 		sb.append("public class " + nom + " implements IDstVisitor {\n");
 		sb.append("protected boolean visitNode(IDstNode node){\n  return true;}\n");
 		sb.append("public boolean visit(IDstNode node){\n");
+
 		// les visiteurs externes
 		Vector<String> evs = new Vector<String>();
+
 		// redirection vers les visiteurs specifiques
 		for (NtJava nt : nterms) {
 			if (nt.estExterne()) {
 				String en = nt.getNom();
 				evs.add(en);
 				sb.append("  if (node.getClass() ==  c" + en + "){\n");
-				sb.append("    node.accept(f" + en + "Visitor);\n");
+				sb.append("	node.accept(f" + en + "Visitor);\n");
 				sb.append("  }\n");
 			} else {
 				sb.append("  if (node instanceof " + nt.getNomClasse() + ")\n");
-				sb.append("    return visit((" + nt.getNomClasse()
+				sb.append("	return visit((" + nt.getNomClasse()
 						+ ") node);\n");
 			}
 		}
+
 		// le terminal
 		sb.append("  if (node instanceof T_" + table.getNom() + ")\n");
-		sb.append("    return visit((T_" + table.getNom() + ") node);\n");
+		sb.append("	return visit((T_" + table.getNom() + ") node);\n");
 		sb.append("  return false;\n}\n");
 		sb.append("public void endVisit(IDstNode node){\n");
-		// redirection vers les visiteurs specifiques
+
+		// redirection vers les visiteurs spécifiques
 		for (NtJava nt : nterms) {
-			if (nt.estExterne()) {
-			} else {
+			if (!nt.estExterne()) {
 				sb.append("  if (node instanceof " + nt.getNomClasse() + ")\n");
-				sb.append("    endVisit((" + nt.getNomClasse() + ") node);\n");
+				sb.append("	endVisit((" + nt.getNomClasse() + ") node);\n");
 			}
 		}
 		sb.append("  }\n");
+
 		// declaration des externes
 		for (String ev : evs) {
 			sb.append("private Class c" + ev + "= new " + ev
 					+ "().getAxiom().getClass();\n");
 			sb.append("public " + ev + "Visitor f" + ev + "Visitor;\n");
 		}
+
 		// creation du constructeur sans arg
 		sb.append("public " + nom + "(");
 		int i = 0;
+
 		for (String ev : evs) {
 			sb.append(ev + "Visitor v" + ++i);
 			if (i < evs.size())
 				sb.append(",");
 		}
+
 		i = 1;
 		sb.append("){\n");
 		for (String ev : evs) {
@@ -252,7 +259,7 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 		}
 		sb.append("  }\n");
 
-		// creation du constructeur avec arg
+		// création du constructeur avec arg
 		if (evs.size() != 0) {
 			sb.append("public " + nom + "(){\n");
 			for (String ev : evs) {
@@ -261,15 +268,18 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 
 			sb.append("  }\n");
 		}
-		// creation des visiteurs specifiques pour les non-terminaux
+
+		// création des visiteurs spécifiques pour les non-terminaux
 		for (NtJava nt : nterms) {
 			if (nt.estExterne())
 				continue;
+
 			sb.append("public boolean visit(" + nt.getNomClasse()
 					+ " node ){\n  return visitNode(node);\n}\n");
 			sb.append("public void endVisit(" + nt.getNomClasse()
 					+ " node){\n}\n");
 		}
+
 		// idem pour les terminaux
 		sb.append("public boolean visit(T_" + table.getNom()
 				+ " node){\n  return false;}\n");
@@ -278,39 +288,43 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 		table.getCompilationUnit().createFile(nom + ".java", sb.toString());
 	}
 
-	// finaliser = ecrire ds un fichier par exemple
 	public void finaliser() throws EGGException {
 		IEGGCompilationUnit cu = table.getCompilationUnit();
-//		System.err.println("etat compilation " + cu.isOk());
+
 		if (!cu.isOk())
 			return;
-		// achanger puisqu'on ne serialise plus la tds
+
+		// a changer puisqu'on ne serialise plus la tds
 		cu.writeTds(table);
+
 		// modif get package straight from prefix
 		String ngen = table.directory().replace('\\', '/');
 		String pack = ngen.replace('/', '.');
+
 		if (!"".equals(table.prefix()))
 			pack = table.prefix() + "." + pack;
+
 		Vector<String> incs = table.getOptions().getLibs();
 		lex.finaliser(pack, incs);
+
 		if (comp != null) {
 			comp.finaliser(pack, incs);
 		}
+
 		// pour les modules
 		if (mod != null) {
 			mod.finaliser(pack, incs);
 		}
+
 		for (NtJava nt : nterms) {
 			nt.finaliser(pack, incs);
 		}
+
 		// finaliser les messages d'erreurs
 		mess.finaliser(pack);
-		// try {
+
 		if (table.getDst())
 			genVisitor(pack, incs);
-		// } catch (EGGException ee) {
-		// // return ee.getErreur();
-		// }
 	}
 
 	public static String getOpJava(String op) {
@@ -366,6 +380,7 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 	public static String getTypeJava(IType type) {
 		String ntype = type.getNom();
 		StringBuffer stype = new StringBuffer();
+
 		if (ntype.equals("STRING"))
 			stype.append("String");
 		else if (ntype.equals("STRINGS"))
@@ -386,11 +401,14 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 			stype.append("/* Non determine */ Object");
 		else
 			stype.append(ntype);
+
 		Vector<IType> pars = type.getPars();
+
 		if (pars != null) {
 			// ajouter les parametres eventuels
 			stype.append("<");
 			boolean premier = true;
+
 			for (IType p : pars) {
 				if (!premier)
 					stype.append(", ");
@@ -413,14 +431,15 @@ public class VisiteurEggJava implements IVisiteurEgg, Serializable {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("VisiteurEggJava" + "\n");
-
 		sb.append("lexical " + lex + "\n");
 		sb.append("comp " + comp + "\n");
 		sb.append("mod " + mod + "\n");
 		sb.append("mess " + mess + "\n");
+
 		for (Enumeration e = nterms.elements(); e.hasMoreElements();) {
 			sb.append("non terminal " + (NtJava) e.nextElement() + "\n");
 		}
+
 		return sb.toString();
 	}
 

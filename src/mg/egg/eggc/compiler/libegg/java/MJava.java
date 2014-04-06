@@ -8,9 +8,13 @@ import mg.egg.eggc.runtime.libjava.EGGException;
 
 public class MJava implements Serializable {
 	private static final long serialVersionUID = 1L;
+
 	Properties properties;
+
 	transient TDS table;
+
 	private String nom;
+
 	public String getNom() {
 		return nom;
 	}
@@ -35,8 +39,10 @@ public class MJava implements Serializable {
 		entete.append("public class " + nom + " extends NLS {\n");
 		entete.append("  private static final long serialVersionUID = 1L;\n");
 		entete.append("  private static final String BUNDLE_NAME = \"");
+
 		if (!"".equals(table.prefix()))
 			entete.append(table.prefix() + ".");
+
 		entete.append(table.getNom() + "\";\n");
 		entete.append("  private " + nom + "() {\n");
 		entete.append("  // Do not instantiate\n");
@@ -50,6 +56,7 @@ public class MJava implements Serializable {
 		entete.append("  return RESOURCE_BUNDLE;\n");
 		entete.append("  }		\n");
 		entete.append("\n");
+
 		ientete = new StringBuffer();
 		ientete.append("package " + pack + ";\n");
 		ientete.append("public interface I" + nom + " {\n");
@@ -61,8 +68,7 @@ public class MJava implements Serializable {
 		nom = t.getNom() + "Messages";
 		properties = t.getProperties();
 		properties.put(t.getNom() + "_expected_token", "Terminal {1} attendu au lieu de {0}.");
-		properties.put(t.getNom() + "_unexpected_token",
-				"Terminal {0} inattendu.");
+		properties.put(t.getNom() + "_unexpected_token", "Terminal {0} inattendu.");
 		properties.put(t.getNom() + "_expected_eof", "Fin de source attendue près de {0}.");
 	}
 
@@ -70,12 +76,15 @@ public class MJava implements Serializable {
 		setEntete(pack);
 		// 0 reserved for CoreMessages
 		int i = (Math.abs(nom.hashCode() % 100) + 1) << 16;
+
 		for (Object m : properties.keySet()) {
 			entete.append("  public static  String " + m + ";\n");
 			ientete.append("  public static final int id_" + m + " = " + i++ + ";\n");
 		}
+
 		entete.append("  }\n");
 		ientete.append("  }\n");
+
 		table.getCompilationUnit().createFile(nom + ".java", entete.toString());
 		table.getCompilationUnit().createFile("I" + nom + ".java",
 				ientete.toString());

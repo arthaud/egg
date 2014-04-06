@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TERMINAL extends SYMBOLE {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private List<String> names;
@@ -65,13 +61,11 @@ public class TERMINAL extends SYMBOLE {
 
 	/**
 	 * Construit un nouveau terminal.
-	 * 
-	 * @param type
-	 *            le type
-	 * @param nom
-	 *            le nom
+	 *
+	 * @param type le type
+	 * @param nom le nom
 	 * @param expreg
-	 *            l'expression r&eacute;guli&egrave;re EGG associ&eacute;e
+	 *	        l'expression r&eacute;guli&egrave;re EGG associ&eacute;e
 	 */
 	public TERMINAL(int type, String nom, String expreg) {
 		super(nom);
@@ -88,21 +82,8 @@ public class TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * Construit un nouveau terminal.
-	 * 
-	 * @param type
-	 *            le type
-	 * @param nom
-	 *            le nom
-	 * @param expreg
-	 *            l'expression r&eacute;guli&egrave;re associ&eacute;e
-	 */
-	// public TERMINAL(int type, String nom, String expreg) {
-	// this(type, nom, expreg, "");
-	// }
-	/**
 	 * Retourne une cha&icirc;ne d&eacute;crivant le terminal courant.
-	 * 
+	 *
 	 * @return une cha&icirc;ne d&eacute;crivant le terminal courant
 	 */
 	public String toString() {
@@ -125,37 +106,38 @@ public class TERMINAL extends SYMBOLE {
 	public String ecrire_def() {
 		StringBuffer sb = new StringBuffer();
 		switch (type) {
-		case SPACE:
-			sb.append("space\t");
-			sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
-			break;
-		case SUGAR:
-			sb.append("sugar\t");
-			sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
-			break;
-		case TERM:
-			sb.append("term\t");
-			sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
-			break;
-		case MACRO:
-			sb.append("macro\t");
-			sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
-			break;
-		case COMPIL:
-			sb.append("compil\t");
-			sb.append(nom + ";\n");
-			break;
-		case COMM:
-			sb.append("comment\t");
-			sb.append(nom + ";\n");
-			break;
+			case SPACE:
+				sb.append("space\t");
+				sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
+				break;
+			case SUGAR:
+				sb.append("sugar\t");
+				sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
+				break;
+			case TERM:
+				sb.append("term\t");
+				sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
+				break;
+			case MACRO:
+				sb.append("macro\t");
+				sb.append(nom + "\t\tis\t\"" + expreg + "\";\n");
+				break;
+			case COMPIL:
+				sb.append("compil\t");
+				sb.append(nom + ";\n");
+				break;
+			case COMM:
+				sb.append("comment\t");
+				sb.append(nom + ";\n");
+				break;
 		}
+
 		return sb.toString();
 	}
 
 	/**
 	 * Retourne le type du terminal courant.
-	 * 
+	 *
 	 * @return le type du terminal courant
 	 */
 	public int get_type() {
@@ -221,21 +203,17 @@ public class TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * le terminal a-t-il change depuis la derniere compil ?
-	 * 
+	 * le terminal a-t-il changé depuis la dernière compilation ?
+	 *
 	 * @param old
 	 */
 	public void compare(TERMINAL old) {
-
 		nomChange = !nom.equals(old.nom);
 		typeChange = type != old.type;
 		expregChange = !expreg.equals(old.expreg);
 		namesChange = !names.equals(old.names);
+
 		if (comm != null)
 			commChange = !comm.equals(old.comm);
-		// System.err.println("compare Terminal " + getNom() + " avec " +
-		// old.getNom() + " : " +
-		// (nomChange || typeChange || expregChange || commChange));
 	}
-
 }

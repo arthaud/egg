@@ -15,4 +15,3 @@
 <!ATTLIST import 
         lib CDATA #REQUIRED 
         >
-   

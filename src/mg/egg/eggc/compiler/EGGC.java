@@ -17,17 +17,19 @@ public class EGGC implements Serializable {
 			IEGGCompilationUnit cu = new EGGSourceFile(args[0]);
 			ProblemReporter prp = new ProblemReporter(cu);
 			ProblemRequestor prq = new ProblemRequestor();
-			// new ProblemRequestor(true) to show internal errors
 			EGG compilo = new EGG(prp);
 			compilo.set_eval(true);
 			compilo.set_source(cu);
+
 			prq.beginReporting();
 			compilo.set_eval(true);
 			compilo.compile(cu);
+
 			for (IProblem problem : prp.getAllProblems())
 				prq.acceptProblem(problem);
+
 			prq.endReporting();
-//			System.exit(prq.getFatal());
+			System.exit(prq.getFatal());
 		} catch (Exception e) {
 			//e.printStackTrace();
 			System.exit(1);

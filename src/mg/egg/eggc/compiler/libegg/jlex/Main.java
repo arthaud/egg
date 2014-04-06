@@ -7,7 +7,7 @@
 
  /***************************************************************
  JLEX COPYRIGHT NOTICE, LICENSE, AND DISCLAIMER
- Copyright 1996-2000 by Elliot Joel Berk and C. Scott Ananian 
+ Copyright 1996-2000 by Elliot Joel Berk and C. Scott Ananian
 
  Permission to use, copy, modify, and distribute this software and its
  documentation for any purpose and without fee is hereby granted,
@@ -850,7 +850,7 @@ class CMakeNfa {
 
 /**
  * Extract character classes from NFA and simplify.
- * 
+ *
  * @author C. Scott Ananian 25-Jul-1999
  */
 class CSimplifyNfa {
@@ -2141,7 +2141,7 @@ public class Main {
 	// }
 	/**
 	 * LA fonction appelée depuis EGG
-	 * 
+	 *
 	 * @param arg
 	 * @throws java.io.IOException
 	 * @throws EGGException
@@ -3076,7 +3076,7 @@ class CLexGen {
 
 	/***************************************************************************
 	 * Function: generate Description:
-	 * 
+	 *
 	 * @throws EGGException
 	 **************************************************************************/
 	void generate() throws java.io.IOException, java.io.FileNotFoundException,
@@ -5047,7 +5047,7 @@ class CLexGen {
 				if (CDTrans.F != dtrans.m_dtrans[j]) {
 					if (last_transition != dtrans.m_dtrans[j]) {
 						System.out.println();
-						System.out.print(" *    goto " + dtrans.m_dtrans[j]
+						System.out.print(" *	goto " + dtrans.m_dtrans[j]
 								+ " on ");
 						chars_printed = 0;
 					}
@@ -5058,7 +5058,7 @@ class CLexGen {
 					chars_printed = chars_printed + str.length();
 					if (56 < chars_printed) {
 						System.out.println();
-						System.out.print(" *             ");
+						System.out.print(" *	         ");
 						chars_printed = 0;
 					}
 
@@ -5074,14 +5074,14 @@ class CLexGen {
 
 /*
  * SparseBitSet 25-Jul-1999. C. Scott Ananian <cananian@alumni.princeton.edu>
- * 
+ *
  * Re-implementation of the standard java.util.BitSet to support sparse sets,
  * which we need to efficiently support unicode character classes.
  */
 
 /**
  * A set of bits. The set automatically grows as more bits are needed.
- * 
+ *
  * @version 1.00, 25 Jul 1999
  * @author C. Scott Ananian
  */
@@ -5115,9 +5115,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Creates an empty set with the specified size.
-	 * 
+	 *
 	 * @param nbits
-	 *            the size of the set
+	 *	        the size of the set
 	 */
 	public SparseBitSet(int nbits) {
 		this();
@@ -5176,9 +5176,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Sets a bit.
-	 * 
+	 *
 	 * @param bit
-	 *            the bit to be set
+	 *	        the bit to be set
 	 */
 	public void set(int bit) {
 		int bnum = bit >> LG_BITS;
@@ -5190,9 +5190,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Clears a bit.
-	 * 
+	 *
 	 * @param bit
-	 *            the bit to be cleared
+	 *	        the bit to be cleared
 	 */
 	public void clear(int bit) {
 		int bnum = bit >> LG_BITS;
@@ -5211,9 +5211,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Gets a bit.
-	 * 
+	 *
 	 * @param bit
-	 *            the bit to be gotten
+	 *	        the bit to be gotten
 	 */
 	public boolean get(int bit) {
 		int bnum = bit >> LG_BITS;
@@ -5225,9 +5225,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Logically ANDs this bit set with the specified set of bits.
-	 * 
+	 *
 	 * @param set
-	 *            the bit set to be ANDed with
+	 *	        the bit set to be ANDed with
 	 */
 	public void and(SparseBitSet set) {
 		binop(this, set, AND);
@@ -5235,9 +5235,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Logically ORs this bit set with the specified set of bits.
-	 * 
+	 *
 	 * @param set
-	 *            the bit set to be ORed with
+	 *	        the bit set to be ORed with
 	 */
 	public void or(SparseBitSet set) {
 		binop(this, set, OR);
@@ -5245,9 +5245,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Logically XORs this bit set with the specified set of bits.
-	 * 
+	 *
 	 * @param set
-	 *            the bit set to be XORed with
+	 *	        the bit set to be XORed with
 	 */
 	public void xor(SparseBitSet set) {
 		binop(this, set, XOR);
@@ -5344,9 +5344,9 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Compares this object against the specified object.
-	 * 
+	 *
 	 * @param obj
-	 *            the object to commpare with
+	 *	        the object to commpare with
 	 * @return true if the objects are the same; false otherwise.
 	 */
 	public boolean equals(Object obj) {
@@ -5357,7 +5357,7 @@ final class SparseBitSet implements Cloneable {
 
 	/**
 	 * Compares two SparseBitSets for equality.
-	 * 
+	 *
 	 * @return true if the objects are the same; false otherwise.
 	 */
 	public static boolean equals(SparseBitSet a, SparseBitSet b) {
@@ -6097,10 +6097,10 @@ interface CEmit {
 // /* Function: yy_move_end */
 // m_outstr.append("void " + className + "::yy_move_end(void) {\n");
 // m_outstr.append("\tif (yy_buffer_end > yy_buffer_start &&\n");
-// m_outstr.append("\t    '\\n' == yy_buffer[yy_buffer_end-1])\n");
+// m_outstr.append("\t	'\\n' == yy_buffer[yy_buffer_end-1])\n");
 // m_outstr.append("\t\tyy_buffer_end--;\n");
 // m_outstr.append("\tif (yy_buffer_end > yy_buffer_start &&\n");
-// m_outstr.append("\t    '\\r' == yy_buffer[yy_buffer_end-1])\n");
+// m_outstr.append("\t	'\\r' == yy_buffer[yy_buffer_end-1])\n");
 // m_outstr.append("\t\tyy_buffer_end--;\n");
 // m_outstr.append("}\n");
 //
@@ -6139,9 +6139,9 @@ interface CEmit {
 // m_outstr.append("\tyy_buffer_index = yy_buffer_end;\n");
 // m_outstr.append("\tyy_at_bol = "
 // + "(yy_buffer_end > yy_buffer_start) &&\n");
-// m_outstr.append("\t            "
+// m_outstr.append("\t	        "
 // + "('\\r' == yy_buffer[yy_buffer_end-1] ||\n");
-// m_outstr.append("\t            "
+// m_outstr.append("\t	        "
 // + " '\\n' == yy_buffer[yy_buffer_end-1]);\n");
 // m_outstr.append("}\n");
 //
@@ -6533,7 +6533,7 @@ class CEmitJava implements CEmit {
 	/*
 	 * void emit_imports ( CSpec spec, OutputStream outstream ) throws
 	 * java.io.IOException { set(spec,outstream);
-	 * 
+	 *
 	 * if (CUtility.DEBUG) { CUtility.jassert(null != m_spec);
 	 * CUtility.jassert(null != m_outstream); }
 	 */
@@ -6988,10 +6988,10 @@ class CEmitJava implements CEmit {
 		/* Function: yy_move_end */
 		m_outstr.append("\tprivate void yy_move_end () {\n");
 		m_outstr.append("\t\tif (yy_buffer_end > yy_buffer_start &&\n");
-		m_outstr.append("\t\t    '\\n' == yy_buffer[yy_buffer_end-1])\n");
+		m_outstr.append("\t\t	'\\n' == yy_buffer[yy_buffer_end-1])\n");
 		m_outstr.append("\t\t\tyy_buffer_end--;\n");
 		m_outstr.append("\t\tif (yy_buffer_end > yy_buffer_start &&\n");
-		m_outstr.append("\t\t    '\\r' == yy_buffer[yy_buffer_end-1])\n");
+		m_outstr.append("\t\t	'\\r' == yy_buffer[yy_buffer_end-1])\n");
 		m_outstr.append("\t\t\tyy_buffer_end--;\n");
 		m_outstr.append("\t}\n");
 
@@ -7030,13 +7030,13 @@ class CEmitJava implements CEmit {
 		m_outstr.append("\t\tyy_buffer_index = yy_buffer_end;\n");
 		m_outstr.append("\t\tyy_at_bol = "
 				+ "(yy_buffer_end > yy_buffer_start) &&\n");
-		m_outstr.append("\t\t            "
+		m_outstr.append("\t\t	        "
 				+ "('\\r' == yy_buffer[yy_buffer_end-1] ||\n");
-		m_outstr.append("\t\t            "
+		m_outstr.append("\t\t	        "
 				+ " '\\n' == yy_buffer[yy_buffer_end-1] ||\n");
-		m_outstr.append("\t\t            " + /* unicode LS */
+		m_outstr.append("\t\t	        " + /* unicode LS */
 		" 2028/*LS*/ == yy_buffer[yy_buffer_end-1] ||\n");
-		m_outstr.append("\t\t            " + /* unicode PS */
+		m_outstr.append("\t\t	        " + /* unicode PS */
 		" 2029/*PS*/ == yy_buffer[yy_buffer_end-1]);\n");
 		m_outstr.append("\t}\n");
 
@@ -7567,9 +7567,9 @@ class CEmitJava implements CEmit {
 
 /*******************************************************************************
  * JLEX COPYRIGHT NOTICE, LICENSE AND DISCLAIMER.
- * 
+ *
  * Copyright 1996 by Elliot Joel Berk
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose and without fee is hereby granted, provided
  * that the above copyright notice appear in all copies and that both the
@@ -7577,7 +7577,7 @@ class CEmitJava implements CEmit {
  * supporting documentation, and that the name of Elliot Joel Berk not be used
  * in advertising or publicity pertaining to distribution of the software
  * without specific, written prior permission.
- * 
+ *
  * Elliot Joel Berk disclaims all warranties with regard to this software,
  * including all implied warranties of merchantability and fitness. In no event
  * shall Elliot Joel Berk be liable for any special, indirect or consequential

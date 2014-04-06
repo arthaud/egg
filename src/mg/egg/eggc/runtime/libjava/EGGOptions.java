@@ -164,24 +164,8 @@ public class EGGOptions implements Serializable {
 
 	public boolean verifier() {
 		return ("java".equals(glang) || "cpp".equals(glang)
-				|| "latex".equals(glang) || "egg".equals(glang) || "no"
-				.equals(glang))
+				|| "latex".equals(glang) || "egg".equals(glang) || "no".equals(glang))
 				&& ("jlex".equals(lexer) || "external".equals(lexer)) && k > 0;
-	}
-
-	// COMP INC
-	public boolean egal(EGGOptions old) {
-		// System.err.println("Options old = " + old);
-		// System.err.println("Options new = " + this);
-		boolean eg = k == old.k && auto_att == old.auto_att
-				&& version.equals(old.version) && glang.equals(old.glang)
-				&& dst == old.dst && typage == old.typage
-				&& syntaxOnly == old.syntaxOnly
-				&& directory.equals(old.directory) && prefix.equals(old.prefix)
-				&& lexer.equals(old.lexer) && module == old.module
-				&& main == old.main && libs.equals(old.getLibs());
-		// System.err.println("Options ************** eg = " + eg);
-		return eg;
 	}
 
 	public String toString() {
