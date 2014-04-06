@@ -24,6 +24,7 @@ ljava:
 
 legg: 
 	$(JAVAC) -classpath . \
+	mg/egg/eggc/internal/dst/*.java \
 	mg/egg/eggc/compiler/libegg/base/*.java \
 	mg/egg/eggc/compiler/libegg/java/*.java \
 	mg/egg/eggc/compiler/libegg/jlex/*.java \
@@ -48,6 +49,7 @@ jar: mg/egg/eggc/compiler/egg/java
 	$(JAR) cmf MANIFEST.MF $(OUTJAR) \
 	mg/egg/eggc/compiler/*.class \
 	mg/egg/eggc/compiler/egg.dtd \
+	mg/egg/eggc/internal/dst/*.class \
 	mg/egg/eggc/compiler/egg/*.properties \
 	mg/egg/eggc/compiler/egg/java/*.class \
 	mg/egg/eggc/compiler/libegg/base/*.class \
@@ -66,6 +68,7 @@ clean:
 	rm -rf \
 	$(OUTJAR) \
 	mg/egg/eggc/compiler/egg/java \
+	mg/egg/eggc/internal/dst/*.class \
 	mg/egg/eggc/compiler/*.class \
 	mg/egg/eggc/compiler/libegg/base/*.class \
 	mg/egg/eggc/compiler/libegg/java/*.class  \
