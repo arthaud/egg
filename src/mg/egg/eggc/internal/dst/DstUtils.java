@@ -7,7 +7,6 @@ import mg.egg.eggc.compiler.egg.java.S_ACTS_EGG;
 import mg.egg.eggc.compiler.egg.java.S_GLOBALES_EGG;
 import mg.egg.eggc.compiler.egg.java.S_LACTION_LACTION;
 import mg.egg.eggc.compiler.egg.java.S_LOCALES_LACTION;
-import mg.egg.eggc.compiler.egg.java.S_LOCS_LACTION;
 import mg.egg.eggc.compiler.egg.java.S_S_EGG;
 import mg.egg.eggc.compiler.egg.java.T_LACTION;
 import mg.egg.eggc.runtime.libjava.IDstNode;
@@ -73,15 +72,10 @@ public class DstUtils {
 		if (!(l instanceof S_LOCALES_LACTION))
 			return names;
 
-		ls = l.getChildren();
-		if (ls == null)
-			return names;
-
-		l = ls.get(1); // locs ?
 		try {
-			while (l instanceof S_LOCS_LACTION
+			while (l instanceof S_LOCALES_LACTION
 					&& ((ls = l.getChildren()) != null)) {
-				names.add(((T_LACTION) ls.get(0)).getTxt()); // ident var
+				names.add(((T_LACTION) ls.get(1)).getTxt()); // ident var
 				l = ls.get(3);
 			}
 		} catch (Exception e) {

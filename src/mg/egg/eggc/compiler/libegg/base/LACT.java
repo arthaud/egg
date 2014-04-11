@@ -61,12 +61,12 @@ public class LACT implements IAction {
 
 	// debut des locales
 	public String mkStartLocs() {
-		return "local";
+		return "-- locals";
 	}
 
 	// déclaration d'une locale
 	public String mkLoc(ENTREE e) {
-		return e.getNom() + " : " + e.getType().getNom() + ";";
+		return e.getType().getNom() + " " + e.getNom() + ";";
 	}
 
 	// affectation
@@ -76,12 +76,12 @@ public class LACT implements IAction {
 
 	// debut des instructions
 	public String mkStartInsts() {
-		return "do";
+		return "";
 	}
 
 	// fin des instructions
 	public String mkEndInsts() {
-		return "end";
+		return "";
 	}
 
 	// commentaire

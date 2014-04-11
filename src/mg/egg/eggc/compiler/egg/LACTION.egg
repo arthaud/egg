@@ -9,11 +9,11 @@ inh table : TDS for
 inh reg : REGLE for
     LACTION;
 inh avis : IVisiteurAction for
-    LACTION, LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS,
+    LACTION, LOCALES, INSTS, INST, ELSIF, WITH, WITHS,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
     ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP, APP2;
 inh act : LACT for
-    LACTION, LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS, VAR,
+    LACTION, LOCALES, INSTS, INST, ELSIF, WITH, WITHS, VAR,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
     ARGS, ARGSX, EARGS , EXCEPTION, INST2, APP, APP2;
 syn nom : STRING for
@@ -23,7 +23,7 @@ syn entree : ENTREE for
 inh hentree : ENTREE for
     INST2, APP, APP2, WITH, WITHS;
 syn code : STRING for
-    LACTION, LOCALES, LOCS, INSTS, INST,INST2, ELSIF, WITH, WITHS,
+    LACTION, LOCALES, INSTS, INST, INST2, ELSIF, WITH, WITHS,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
     APP, APP2, EXCEPTION;
 inh hcode : STRING for
@@ -33,7 +33,7 @@ syn args : Vector<STRING> for
 inh hargs : Vector<STRING> for
     ARGS, EARGS, ARGSX;
 syn type : IType for
-    VTYPE, TYPE, WITH, APP, APP2,
+    TYPE, WITH, APP, APP2,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR;
 inh htype : IType for
     EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR;
@@ -42,7 +42,7 @@ syn types : Vector<IType> for
 inh htypes : Vector<IType> for
     ARGS, EARGS, ARGSX;
 inh res : Resolveur for
-    VTYPE, TYPE, TGEN, XTYPE;
+    TYPE, TGEN, XTYPE;
 syn pars : Vector<IType> for
     TGEN, XTYPE;
 
@@ -88,8 +88,8 @@ sugar      t_et             is    "(\&|(\&\&))"     aka $&$, $&&$ ;
 sugar      t_ou             is    "(\||(\|\|))"     aka $|$ ,$||$ ;
 sugar      t_not            is    "(\~|\!)"         aka $~$ ,$!$ ;
 sugar      t_append         is    "\@"              aka $@$ ;
---sugar      t_aco      is    "\{"                  ;
---sugar      t_acf      is    "\}"                  ;
+sugar      t_aco            is    "\{"              aka ${$ ;
+sugar      t_acf            is    "\}"              aka $}$ ;
 sugar      t_if             is    "if"              aka $if$ ;
 sugar      t_elseif         is    "elseif"          aka $elseif$ ;
 sugar      t_else           is    "else"            aka $else$ ;
@@ -128,7 +128,7 @@ term     t_car      is    "\'({esc}|\\[\\\']|{ccar})\'" ;
 term     t_ident    is    "[a-zA-Z_][a-zA-Z_0-9]*" ;
 
 
-LACTION -> #res LOCALES t_do #inc INSTS EXCEPTION t_end #gen ;
+LACTION -> #res t_aco LOCALES INSTS EXCEPTION t_acf #gen ;
 global
   offset : INTEGER;
   length : INTEGER;
@@ -137,12 +137,7 @@ global
 do
   offset := LACTION^scanner.getOffset();
   LACTION^avis.resetIndent();
-end
-}
-
-#inc {
-do
-  LACTION^avis.incIndent();
+  LOCALES^avis.incIndent();
 end
 }
 
@@ -151,7 +146,7 @@ local
   c : STRING;
 do
   -- met à jour le code de l'action
-  LACTION^code := LOCALES^code @ LACTION^avis.insts() @ INSTS^code + EXCEPTION^code;
+  LACTION^code := LOCALES^code @ LACTION^avis.insts() @ INSTS^code @ EXCEPTION^code;
   LACTION^avis.decIndent();
   length := LACTION^scanner.getOffset() + LACTION^scanner.getLength() - offset;
   LACTION^offset := offset;
@@ -159,48 +154,14 @@ do
 end
 }
 
-LOCALES -> t_local #inc LOCS #gen ;
-#inc {
-do
-  LOCALES^avis.incIndent();
-end
-}
-
-#gen {
-do
-  LOCALES^code := LOCALES^avis.locales() @ LOCS^code;
-  LOCALES^avis.decIndent();
-end
-}
-
-LOCALES -> #gen ;
-#gen {
-do
-  LOCALES^code := "";
-end
-}
-
-VTYPE -> t_deuxpoints #trans TYPE #gen ;
-#trans {
-do
-  TYPE^res := VTYPE^res;
-end
-}
-
-#gen {
-do
-  VTYPE^type := TYPE^type;
-end
-}
-
-LOCS -> t_ident #trans VTYPE t_pointvirgule #add LOCS #gen ;
+LOCALES -> #trans TYPE t_ident t_pointvirgule #add LOCALES #gen ;
 global
   r : Resolveur;
 
 #trans {
 do
-  r := LOCS^act.getResolveur();
-  VTYPE^res := r;
+  r := LOCALES^act.getResolveur();
+  TYPE^res := r;
 end
 }
 
@@ -211,13 +172,13 @@ local
   e : ENTREE;
   b : BLOC;
 do
-  b := LOCS^act.getBloc();
+  b := LOCALES^act.getBloc();
   l := b.getLocs();
   e := l.chercher(t_ident^txt);
   if e /= null then
     error(LACTION_local_yet_declared, t_ident^txt);
   else
-    v := new VAR(t_ident^txt, VTYPE^type);
+    v := new VAR(t_ident^txt, TYPE^type);
     l.ajouter_locale(v);
 
     -- inférence de type
@@ -232,17 +193,17 @@ local
   e : ENTREE;
   b : BLOC;
 do
-  b := LOCS^act.getBloc();
+  b := LOCALES^act.getBloc();
   l := b.getLocs();
   e := l.chercher(t_ident^txt);
-  LOCS^code := LOCS^avis.indent() @ LOCS^avis.decl(e) @ "%N" @ LOCS1^code;
+  LOCALES^code := LOCALES^avis.indent() @ LOCALES^avis.decl(e) @ "%N" @ LOCALES1^code;
 end
 }
 
-LOCS -> #gen ;
+LOCALES -> #gen ;
 #gen {
 do
-  LOCS^code := "";
+  LOCALES^code := "";
 end
 }
 

@@ -16,41 +16,30 @@ term   entier      is    "[0-9]+" ;
 
 
 S -> V #a ;
-global x : Integer;
+global Integer x;
 
 #a {
-do
     x := 42;
     write "resultat : " + V^val + "\n";
-end
 }
 
-global x : Integer;
+global Integer x;
 
 V -> entier #a ;
 
 #a {
-local
-    i : Integer;
-do
+    Integer i;
     -- hack, on ne peut pas utiliser de méthodes statiques..
     i := new Integer(0);
     V^val := i.parseInt(entier^txt);
-end
 }
 
 V -> paro U #a ;
 #a {
-do
     V^val := U^val;
-end
 }
 
 U -> plus V V parf #a ;
 #a {
-do
     U^val := V^val + V1^val;
-end
 }
-
-end
