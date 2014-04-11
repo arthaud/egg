@@ -547,7 +547,6 @@ public class REGLE implements Serializable {
 					String c = CodeAutoInhs(ar, l);
 
 					if (c != null) { // stocker le code
-						// ar.setCode(c);
 						ar.setCodeSrc(c);
 					} else { // supprimer l'action
 						droite.remove(ar);
@@ -560,8 +559,11 @@ public class REGLE implements Serializable {
 	private String CodeAutoInhs(ActREGLE ar, IAction l) {
 		boolean code_non_vide = false;
 		StringBuffer sb = new StringBuffer();
-		sb.append("\n  do\n");
-		sb.append("   -- auto generated code from inherited attributes\n");
+		sb.append(l.mkStart());
+		sb.append("\n");
+		sb.append(l.mkStartInsts());
+		sb.append("\n");
+		sb.append(l.mkComment("auto generated code from inherited attributes"));
 
 		// Les attributs hérités du symbole de gauche
 		SymbREGLE gs = gauche;
@@ -590,17 +592,19 @@ public class REGLE implements Serializable {
 
 					if (sa != null) { // oui
 						if (sa.getEtat()) {
-							sb.append("	--" + sr.getNom() + '^' + a.getNom()
-									+ " affecte par ailleurs\n");
+							sb.append(l.mkComment(sr.getNom() + '^' + a.getNom() + " affecte par ailleurs"));
 						} else {
-							sb.append("	" + l.mkCopy(sa, ga));
+							sb.append("	 " + l.mkCopy(sa, ga));
 							code_non_vide = true;
 						}
 					}
 				} // symbRegle
 			}
 		}
-		sb.append("  end\n");
+		sb.append(l.mkEndInsts());
+		sb.append("\n");
+		sb.append(l.mkEnd());
+		sb.append("\n");
 
 		if (code_non_vide)
 			return sb.toString();

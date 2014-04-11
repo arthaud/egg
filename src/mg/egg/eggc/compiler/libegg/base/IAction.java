@@ -41,6 +41,9 @@ public interface IAction {
 	// fin des instructions
 	public String mkEndInsts();
 
+	// commentaire
+	public String mkComment(String com);
+
 	// appel de procedure
 	public String mkCall();
 
@@ -79,24 +82,4 @@ public interface IAction {
 
 	// accès à un attribut de la i+1eme occurence (sans specification du type)
 	public ENTREE mkAtt(String non_terminal, int i, String att);
-
-	// l'expression regulière pour retrouver une variable globale
-	public String mkPatternGlob_1var2(String var);
-
-	// l'expression regulière pour retrouver si un attribut du non terminal est
-	// present
-	public String mkPatternAttribut_1nt2att(String non_terminal);
-
-	// l'expression regulière pour retrouver si un attribut du non terminal
-	// d'indice i est présent
-	public String mkPatternAttribut_1ntiatt(String non_terminal, int i);
-
-	// l'expression regulière pour retrouver si un attribut du non terminal est
-	// présent
-	public String mkPatternAttribut_1nt2att3(String non_terminal, String att);
-
-	// l'expression regulière pour retrouver si un attribut du non terminal
-	// d'indice i est present
-	public String mkPatternAttribut_1ntiatt2(String non_terminal, int i,
-			String att);
 }
