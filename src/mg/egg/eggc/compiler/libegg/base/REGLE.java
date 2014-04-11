@@ -560,8 +560,7 @@ public class REGLE implements Serializable {
 	private String CodeAutoInhs(ActREGLE ar, IAction l) {
 		boolean code_non_vide = false;
 		StringBuffer sb = new StringBuffer();
-		sb.append("\n  do\n");
-		sb.append("   -- auto generated code from inherited attributes\n");
+		sb.append("{\n   -- auto generated code from inherited attributes\n");
 
 		// Les attributs hérités du symbole de gauche
 		SymbREGLE gs = gauche;
@@ -600,7 +599,7 @@ public class REGLE implements Serializable {
 				} // symbRegle
 			}
 		}
-		sb.append("  end\n");
+		sb.append("}\n");
 
 		if (code_non_vide)
 			return sb.toString();
