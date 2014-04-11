@@ -145,9 +145,9 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * retourne une repr&eacute;sentation de la table des symb&ocirc;les.
+	 * retourne une représentation de la table des symbôles.
 	 *
-	 * @return une cha&icirc;ne repr&eacute;sentant la TDS
+	 * @return une chaîne représentant la TDS
 	 */
 	public String toString() {
 		StringBuffer r = new StringBuffer();
@@ -161,11 +161,11 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * ins&eacute;re un nouvel &eacute;l&eacute;ment. <BR>
-	 * l'&eacute;l&eacute;ment est ins&eacute;r&eacute; &agrave; la fin de table
+	 * insere un nouvel élément.
+	 * l'élément est inséré à la fin de table
 	 *
 	 * @param i
-	 *	        l'&eacute;l&eacute;ment &agrave; ins&eacute;rer
+	 *	        l'élément à insérer
 	 */
 	public void inserer(SYMBOLE i) {
 		SYMBOLE o = htable.get(i.getNom());
@@ -177,11 +177,11 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * ins&eacute;re un nouvel &eacute;l&eacute;ment. <BR>
-	 * l'&eacute;l&eacute;ment est ins&eacute;r&eacute; &agrave; la fin de table
+	 * insére un nouvel élément.
+	 * l'élément est inséré à la fin de table
 	 *
 	 * @param i
-	 *	        l'&eacute;l&eacute;ment &agrave; ins&eacute;rer
+	 *	        l'élément à insérer
 	 */
 	public boolean inserer_lexical(SYMBOLE i) {
 		SYMBOLE o = htable.get(i.getNom());
@@ -196,12 +196,12 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * recherche un Symbole par son nom. <BR>
-	 * et positionne le bool&eacute;en ok en cas de succ&egrave;s
+	 * recherche un Symbole par son nom.
+	 * et positionne le booléen ok en cas de succès
 	 *
 	 * @param n
-	 *	        le nom de l'info &agrave; rechercher
-	 * @return l'info de nom n si elle est pr&eacute;sente ou null sinon
+	 *	        le nom de l'info à rechercher
+	 * @return l'info de nom n si elle est présente ou null sinon
 	 * @see SYMBOLE
 	 * @see #ok
 	 */
@@ -210,11 +210,11 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * remplace une info par une info de m&ecirc;me nom. <BR>
-	 * l'info est ins&eacute;r&eacute; si la recherche &eacute;choue
+	 * remplace une info par une info de même nom.
+	 * l'info est inséré si la recherche échoue
 	 *
 	 * @param i
-	 *	        l'info &agrave; mettre &agrave; jour
+	 *	        l'info à mettre à jour
 	 */
 	void remplacer(SYMBOLE i) {
 		htable.remove(i.getNom());
@@ -222,11 +222,11 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * supprime l'info de m&egrave;me nom. <BR>
-	 * ne fait rien si la recherche &eacute;choue
+	 * supprime l'info de mème nom.
+	 * ne fait rien si la recherche échoue
 	 *
 	 * @param i
-	 *	        l'info &agrave; supprimer
+	 *	        l'info à supprimer
 	 */
 	void supprimer(SYMBOLE i) {
 		htable.remove(i.getNom());
@@ -267,9 +267,9 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * Renvoie les &eacute;l&eacute;ments de la TDS.
+	 * Renvoie les éléments de la TDS.
 	 *
-	 * @return les &eacute;l&eacute;ments de la TDS
+	 * @return les éléments de la TDS
 	 */
 	public Enumeration<SYMBOLE> elements() {
 		return htable.elements();
@@ -280,15 +280,15 @@ public class TDS implements Serializable {
 	 *
 	 * @param nom
 	 *	        le nom de l'attribut a rechercher
-	 * @return l'attribut recherch&eacute;, null si inconnu
+	 * @return l'attribut recherché, null si inconnu
 	 */
 	public ATTRIBUT attribut(String nom) {
 		return attributs.attribut(nom);
 	}
 
 	/**
-	 * Ajoute un attribut. @ param a l'attribut &agrave; ajouter return 1 si
-	 * l'attribut a &eacute;t&eacute; ajout&eacute;, 0 sinon
+	 * Ajoute un attribut. @ param a l'attribut à ajouter return 1 si
+	 * l'attribut a été ajouté, 0 sinon
 	 */
 	public boolean ajouter_att(ATTRIBUT a) {
 		return attributs.ajouter_att(a);
@@ -363,7 +363,7 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * L'axiome re&ccedil;oit le premier non-terminal.
+	 * L'axiome reçoit le premier non-terminal.
 	 */
 	public void ajouter_axiome() {
 		axiome.setK_suivants(new Arbre(options.getK()));
@@ -372,7 +372,7 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * Calcule les symb&ocirc;les directeurs de tous les non-terminaux.
+	 * Calcule les symbôles directeurs de tous les non-terminaux.
 	 */
 	private void calcule_symboles_directeurs() {
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {
@@ -387,7 +387,7 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * Détecte les conflits sur toutes les r&eacute;gles de production.
+	 * Détecte les conflits sur toutes les régles de production.
 	 *
 	 * @param k l'ordre du conflit
 	 */
@@ -404,7 +404,7 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * R&eacute;duit l'arbre des k_premiers de tous les non-terminaux.
+	 * Réduit l'arbre des k_premiers de tous les non-terminaux.
 	 */
 	private void reduire() {
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {
@@ -423,7 +423,7 @@ public class TDS implements Serializable {
 	}
 
 	/**
-	 * D&eacute;tecte un non-terminal sans r&egrave;gle de production.
+	 * Détecte un non-terminal sans règle de production.
 	 */
 	void detecte_nt_sans_prod() throws EGGException {
 		for (Enumeration<SYMBOLE> e = elements(); e.hasMoreElements();) {

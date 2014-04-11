@@ -104,18 +104,18 @@ public class NON_TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * Ajoute une r&egrave;gle de production.
+	 * Ajoute une règle de production.
 	 *
-	 * @param regle la r&egrave;gle de production
+	 * @param regle la règle de production
 	 */
 	public void add_regle(REGLE regle) {
 		regles.addElement(regle);
 	}
 
 	/**
-	 * Retourne la liste des r&egrave;gles de production.
+	 * Retourne la liste des règles de production.
 	 *
-	 * @return la liste des r&egrave;gles de production
+	 * @return la liste des règles de production
 	 */
 	public Enumeration<REGLE> elements() {
 		return regles.elements();
@@ -181,16 +181,16 @@ public class NON_TERMINAL extends SYMBOLE {
 	/**
 	 * Remplace les non-terminaux par leurs k_suivants.
 	 *
-	 * @return true si des ajouts ont &eacute;t&eacute; effectu&eacute;s
+	 * @return true si des ajouts ont été effectués
 	 */
 	public boolean remplace_non_terminaux() {
 		return k_suivants.remplacer_non_terminaux();
 	}
 
 	/**
-	 * Retourne une cha&icirc;ne repr&eacute;sentant le non-terminal courant.
+	 * Retourne une chaîne représentant le non-terminal courant.
 	 *
-	 * @return une cha&icirc;ne repr&eacute;sentant le non-terminal courant
+	 * @return une chaîne représentant le non-terminal courant
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);
@@ -213,7 +213,7 @@ public class NON_TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * D&eacute;tecte les conflits.
+	 * Détecte les conflits.
 	 *
 	 * @param k l'ordre des conflits
 	 */

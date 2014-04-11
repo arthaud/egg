@@ -5,7 +5,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * Classe d&eacute;crivant un symb&ocirc;le.
+ * Classe décrivant un symbôle.
  *
  * @see NON_TERMINAL
  * @see TERMINAL
@@ -21,7 +21,7 @@ public class SYMBOLE implements Serializable {
 	 */
 
 	/**
-	 * Le symb&ocirc;le lambda.
+	 * Le symbôle lambda.
 	 */
 	public final static int LAMBDA = 0;
 
@@ -31,7 +31,7 @@ public class SYMBOLE implements Serializable {
 	public final static int EOF = -1;
 
 	/**
-	 * N'import quel symb&ocirc;le.
+	 * N'importe quel symbôle.
 	 */
 	public final static int ALL = -2;
 
@@ -46,7 +46,7 @@ public class SYMBOLE implements Serializable {
 	}
 
 	/**
-	 * Le num&eacute;ro du symb&ocirc;le.
+	 * Le numéro du symbôle.
 	 */
 	protected int numero;
 
@@ -67,7 +67,7 @@ public class SYMBOLE implements Serializable {
 	}
 
 	/**
-	 * Le num&eacute;ro du symb&ocirc;le suivant.
+	 * Le numéro du symbôle suivant.
 	 */
 	private static int compteur = 1;
 
@@ -98,7 +98,7 @@ public class SYMBOLE implements Serializable {
 	/**
 	 * Construit un nouveau SYMBOLE de nom nom
 	 *
-	 * @param nom le nom du symb&ocirc;le
+	 * @param nom le nom du symbôle
 	 */
 	public SYMBOLE(String nom) {
 		this(nom, "");
@@ -107,7 +107,7 @@ public class SYMBOLE implements Serializable {
 	/**
 	 * Construit un nouveau SYMBOLE de nom nom
 	 *
-	 * @param nom le nom du symb&ocirc;le
+	 * @param nom le nom du symbôle
 	 */
 	public SYMBOLE(String nom, String comm) {
 		this.nom = nom;
@@ -118,18 +118,18 @@ public class SYMBOLE implements Serializable {
 	}
 
 	/**
-	 * Construit un nouveau symb&ocirc;le de num&eacute;ro numero
+	 * Construit un nouveau symbôle de numéro numero
 	 *
-	 * @param numero le num&eacute;ro du symb&ocirc;le
+	 * @param numero le numéro du symbôle
 	 */
 	public SYMBOLE(int numero) {
 		this(numero, "");
 	}
 
 	/**
-	 * Construit un nouveau symb&ocirc;le de num&eacute;ro numero
+	 * Construit un nouveau symbôle de numéro numero
 	 *
-	 * @param numero le num&eacute;ro du symb&ocirc;le
+	 * @param numero le numéro du symbôle
 	 */
 	public SYMBOLE(int numero, String comm) {
 		this.numero = numero;
@@ -140,9 +140,9 @@ public class SYMBOLE implements Serializable {
 	}
 
 	/**
-	 * Teste l'&eacute;galit&eacute; des noms et des num&eacute;ros.
+	 * Teste l'égalité des noms et des numéros.
 	 *
-	 * @param o l'objet &agrave; tester
+	 * @param o l'objet à tester
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof SYMBOLE) {
@@ -154,10 +154,10 @@ public class SYMBOLE implements Serializable {
 	}
 
 	/**
-	 * Renvoie une cha&icirc;ne d&eacute;crivant les attributs du symb&ocirc;le
+	 * Renvoie une chaîne décrivant les attributs du symbôle
 	 * courant.
 	 *
-	 * @return la cha&icirc;ne d&eacute;crivant les attributs du symb&ocirc;le
+	 * @return la chaîne décrivant les attributs du symbôle
 	 */
 	public String les_attributs() {
 		if (attributs == null)

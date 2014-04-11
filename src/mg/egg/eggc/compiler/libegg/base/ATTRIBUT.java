@@ -58,7 +58,7 @@ public class ATTRIBUT implements Serializable {
 	}
 
 	/**
-	 * Le num&eacute;ro de l'attribut.
+	 * Le numéro de l'attribut.
 	 */
 	private int numero;
 
@@ -76,12 +76,12 @@ public class ATTRIBUT implements Serializable {
 	}
 
 	/**
-	 * Attribut h&eacute;rit&eacute;.
+	 * Attribut hérité.
 	 */
 	public final static int HER = 0;
 
 	/**
-	 * Attribut synth&eacute;tis&eacute;.
+	 * Attribut synthétisé.
 	 */
 	public final static int SYN = 1;
 
@@ -93,7 +93,7 @@ public class ATTRIBUT implements Serializable {
 	 * Construit un attribut.
 	 *
 	 * @param numero
-	 *	        le num&eacute;ro
+	 *	        le numéro
 	 * @param sorte
 	 *	        la sorte de l'attribut
 	 * @param nom
@@ -112,9 +112,9 @@ public class ATTRIBUT implements Serializable {
 	}
 
 	/**
-	 * Renvoie une cha&icirc;ne repr&eacute;sentant l'attribut.
+	 * Renvoie une chaîne représentant l'attribut.
 	 *
-	 * @return la cha&icirc;ne repr&eacute;sentant l'attribut.
+	 * @return la chaîne représentant l'attribut.
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);
@@ -137,11 +137,11 @@ public class ATTRIBUT implements Serializable {
 	}
 
 	/**
-	 * Ajoute un nouvel &eacute;l&eacute;ment &agrave; la liste des
-	 * symb&ocirc;les dont il est un attribut.
+	 * Ajoute un nouvel élément à la liste des
+	 * symbôles dont il est un attribut.
 	 *
 	 * @param nom
-	 *	        le nom du symb&ocirc;le
+	 *	        le nom du symbôle
 	 */
 	public void ajouter_ident(String nom) {
 		idents.addElement(nom);
@@ -161,11 +161,11 @@ public class ATTRIBUT implements Serializable {
 	}
 
 	/**
-	 * Retourne l'attribut courant si nom est un symb&ocirc;le ayant l'attribut
+	 * Retourne l'attribut courant si nom est un symbôle ayant l'attribut
 	 * courant comme attribut.
 	 *
 	 * @param nom
-	 *	        le nom du symb&ocirc;le
+	 *	        le nom du symbôle
 	 */
 	public ATTRIBUT renvoie_attribut(String nom) {
 		for (Enumeration<String> e = idents.elements(); e.hasMoreElements();) {

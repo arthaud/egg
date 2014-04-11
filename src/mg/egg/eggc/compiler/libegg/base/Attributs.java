@@ -10,7 +10,7 @@ public class Attributs extends Vector<ATTRIBUT> {
 	 * Construit une liste d'attributs.
 	 *
 	 * @param n
-	 *	        la taille et l'incr&eacute;ment du tableau dynamique
+	 *	        la taille et l'incrément du tableau dynamique
 	 */
 	public Attributs(int n) {
 		super(n, n);
@@ -24,7 +24,7 @@ public class Attributs extends Vector<ATTRIBUT> {
 	 * Recherche un attribut de nom nom.
 	 *
 	 * @param nom
-	 *	        le nom de l'attribut &agrave; rechercher
+	 *	        le nom de l'attribut à rechercher
 	 * @return l'attribut de nom nom, null sinon
 	 */
 	public ATTRIBUT attribut(String nom) {
@@ -41,8 +41,8 @@ public class Attributs extends Vector<ATTRIBUT> {
 	}
 
 	/**
-	 * Ins&egrave;re un attribut a dans la liste. si aucun attribut de
-	 * m&ecirc;me nom n'existe d&eacute;j&agrave;
+	 * Insère un attribut a dans la liste. si aucun attribut de
+	 * même nom n'existe déjà
 	 *
 	 * @return 1 si un ajout a ete effectue, 0 sinon
 	 */
@@ -58,9 +58,9 @@ public class Attributs extends Vector<ATTRIBUT> {
 	}
 
 	/**
-	 * Renvoie une cha&icirc;ne d&eacute;crivant les attributs.
+	 * Renvoie une chaîne décrivant les attributs.
 	 *
-	 * @return une cha&icicc;ne d&eacute;crivant les attributs
+	 * @return une chaîne décrivant les attributs
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);

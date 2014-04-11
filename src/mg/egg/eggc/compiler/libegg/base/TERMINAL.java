@@ -30,7 +30,7 @@ public class TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * Un s&eacute;parateur.
+	 * Un séparateur.
 	 */
 	public final static int SPACE = 0;
 
@@ -65,7 +65,7 @@ public class TERMINAL extends SYMBOLE {
 	 * @param type le type
 	 * @param nom le nom
 	 * @param expreg
-	 *	        l'expression r&eacute;guli&egrave;re EGG associ&eacute;e
+	 *	        l'expression régulière EGG associée
 	 */
 	public TERMINAL(int type, String nom, String expreg) {
 		super(nom);
@@ -82,9 +82,9 @@ public class TERMINAL extends SYMBOLE {
 	}
 
 	/**
-	 * Retourne une cha&icirc;ne d&eacute;crivant le terminal courant.
+	 * Retourne une chaîne décrivant le terminal courant.
 	 *
-	 * @return une cha&icirc;ne d&eacute;crivant le terminal courant
+	 * @return une chaîne décrivant le terminal courant
 	 */
 	public String toString() {
 		return "Symbole #"

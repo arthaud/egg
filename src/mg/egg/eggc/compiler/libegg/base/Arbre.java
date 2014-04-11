@@ -7,7 +7,7 @@ import java.util.Vector;
 import mg.egg.eggc.runtime.libjava.EGGException;
 
 /**
- * Classe d&eacute;crivant un arbre de symb&ocirc;les.
+ * Classe décrivant un arbre de symbôles.
  *
  * @version 1.0
  * @author Gilles
@@ -16,7 +16,7 @@ public class Arbre implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * La premi&egrave;re feuille.
+	 * La première feuille.
 	 */
 	private Feuille debut;
 
@@ -61,10 +61,10 @@ public class Arbre implements Serializable {
 	}
 
 	/**
-	 * Ajoute une r&egrave;gle &agrave; la fin de chaque branche.
+	 * Ajoute une règle à la fin de chaque branche.
 	 *
 	 * @param regle
-	 *	        le num&eacute;ro de la r&egrave;gle &agrave; ajouter
+	 *	        le numéro de la règle à ajouter
 	 */
 	public void ajouterRegle(int regle) {
 		debut.ajouterRegle(regle);
@@ -75,7 +75,7 @@ public class Arbre implements Serializable {
 	}
 
 	/**
-	 * R&eacute;duit l'arbre.
+	 * Réduit l'arbre.
 	 */
 	public void reduire() {
 		int res = -100;
@@ -100,7 +100,7 @@ public class Arbre implements Serializable {
 	 * @param hauteur
 	 *	        la hauteur maximale de l'arbre.
 	 * @param valeur
-	 *	        le symb&ocirc;le associ&eacute; &agrave; la premi&egrave;re
+	 *	        le symbôle associé à la première
 	 *	        feuille
 	 */
 	public Arbre(int hauteur, SYMBOLE valeur) {
@@ -123,7 +123,7 @@ public class Arbre implements Serializable {
 	}
 
 	/**
-	 * D&eacute;tecte les conflits.
+	 * Détecte les conflits.
 	 */
 	public void detecterConflits(Enumeration<REGLE> e) throws EGGException {
 		debut.detecterConflits(e);
@@ -132,7 +132,7 @@ public class Arbre implements Serializable {
 	/**
 	 * Remplace les non_terminaux par leurs k_premiers
 	 *
-	 * @return true si des changements ont &eacute;t&eacute; effectu&eacute;s
+	 * @return true si des changements ont été effectués
 	 */
 	public boolean remplacer_non_terminaux() {
 		Feuille f = debut;
@@ -185,10 +185,10 @@ public class Arbre implements Serializable {
 	}
 
 	/**
-	 * Concat&egrave;ne un autre arbre.
+	 * Concatène un autre arbre.
 	 *
 	 * @param arbre l'autre arbre
-	 * @return true si des changements ont &eacute;t&eacute; effectu&eacute;s
+	 * @return true si des changements ont été effectués
 	 */
 	public boolean concatener(Arbre arbre) {
 		if (arbre.debut == null)
@@ -231,7 +231,7 @@ public class Arbre implements Serializable {
 	}
 
 	/**
-	 * Ajoute un autre arbre sans contr&ocirc;le sur la hauteur
+	 * Ajoute un autre arbre sans contrôle sur la hauteur
 	 *
 	 * @param arbre l'autre arbre
 	 */
@@ -255,7 +255,7 @@ public class Arbre implements Serializable {
 	 * Ajoute un autre arbre.
 	 *
 	 * @param arbre l'autre arbre
-	 * @return true si des changements ont &eacute;t&eacute; effectu&eacute;s
+	 * @return true si des changements ont été effectués
 	 */
 	public boolean ajouter(Arbre arbre) {
 		if (arbre.debut == null)
@@ -278,9 +278,9 @@ public class Arbre implements Serializable {
 	}
 
 	/**
-	 * Renvoie une cha&icirc;ne repr&eacute;sentant l'arbre.
+	 * Renvoie une chaîne représentant l'arbre.
 	 *
-	 * @return une cha&icirc;ne repr&eacute;sentant l'arbre
+	 * @return une chaîne représentant l'arbre
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);

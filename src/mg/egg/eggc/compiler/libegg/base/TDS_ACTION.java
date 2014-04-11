@@ -18,12 +18,12 @@ public class TDS_ACTION extends Vector<ENTREE> {
 	}
 
 	/**
-	 * La m&egrave;re sup&eacute;rieure
+	 * La mère supérieure
 	 */
 	protected TDS_ACTION mere;
 
 	/**
-	 * Construit une nouvelle table des symb&ocirc;les.
+	 * Construit une nouvelle table des symbôles.
 	 */
 	public TDS_ACTION(TDS_ACTION m) {
 		super(3, 3);
@@ -76,10 +76,10 @@ public class TDS_ACTION extends Vector<ENTREE> {
 	}
 
 	/**
-	 * Recherche localement l'entr&eacute;e de nom nom.
+	 * Recherche localement l'entrée de nom nom.
 	 *
-	 * @param nom le nom de l'entr&eacute;e
-	 * @return l'entr&eacute;e de nom nom, null sinon
+	 * @param nom le nom de l'entrée
+	 * @return l'entrée de nom nom, null sinon
 	 */
 	public ENTREE chercher_loc(String nom) {
 		for (Enumeration<ENTREE> e = elements(); e.hasMoreElements();) {

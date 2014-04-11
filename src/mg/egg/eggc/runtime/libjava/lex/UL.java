@@ -3,7 +3,7 @@ package mg.egg.eggc.runtime.libjava.lex;
 public class UL {
 
 	/**
-	 * La cha&icirc;ne associ&eacute;e &agrave; la fen&ecirc;tre.
+	 * La chaîne associée à la fenêtre.
 	 */
 	public String nom;
 
@@ -12,52 +12,52 @@ public class UL {
 	}
 
 	/**
-	 * Le code de la fen&egrave;tre.
+	 * Le code de la fenètre.
 	 */
 	public int code;
 
 	/**
-	 * La ligne de la fen&ecirc;tre.
+	 * La ligne de la fenêtre.
 	 */
 	public int ligne;
 
 	/**
-	 * La colonne de la fen&ecirc;tre.
+	 * La colonne de la fenêtre.
 	 */
 	public int colonne;
 
 	/**
-	 * Retourne une cha&icirc;ne repr&eacute;sentant la fen&ecirc;tre courante.
+	 * Retourne une chaîne représentant la fenêtre courante.
 	 *
-	 * @return une cha&icirc;ne repr&eacute;sentant la fene&ecirc;tre courante
+	 * @return une chaîne représentant la feneêtre courante
 	 */
 	public String toString() {
 	    return "ul: >" + nom + "<, (" + code + ")";
 	}
 
 	/**
-	 * Construit une nouvelle fen&egrave;tre.
+	 * Construit une nouvelle fenètre.
 	 *
 	 * @param code
-	 *            le code de la fen&ecirc;tre
+	 *            le code de la fenêtre
 	 * @param nom
-	 *            le nom de la fen&ecirc;tre
+	 *            le nom de la fenêtre
 	 */
 	public UL(int code, String nom) {
 	    this(code, nom, 0, 0);
 	}
 
 	/**
-	 * Construit une nouvelle fen&egrave;tre.
+	 * Construit une nouvelle fenètre.
 	 *
 	 * @param code
-	 *            le code de la fen&ecirc;tre
+	 *            le code de la fenêtre
 	 * @param nom
-	 *            le nom de la fen&ecirc;tre
+	 *            le nom de la fenêtre
 	 * @param ligne
-	 *            la ligne de la fen&ecirc;tre
+	 *            la ligne de la fenêtre
 	 * @param colonne
-	 *            la colonne de la fen&ecirc;tre
+	 *            la colonne de la fenêtre
 	 */
 	public UL(int code, String nom, int ligne, int colonne) {
 	    this.code = code;

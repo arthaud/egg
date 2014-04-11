@@ -11,7 +11,7 @@ public class REGLE implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * le symb&ocirc;le &agrave; gauche de la r&egrave;gle de production
+	 * le symbôle à gauche de la règle de production
 	 */
 	private SymbREGLE gauche;
 
@@ -20,7 +20,7 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * la liste de symb&ocirc;les en partie droite de la r&egrave;gle de
+	 * la liste de symbôles en partie droite de la règle de
 	 * producion.
 	 */
 	private Vector<EltREGLE> droite;
@@ -73,7 +73,7 @@ public class REGLE implements Serializable {
 	private int deja_fait;
 
 	/**
-	 * le num&eacute;ro de la r&egrave;gle de production.
+	 * le numéro de la règle de production.
 	 */
 	private int numero;
 
@@ -82,7 +82,7 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * les k_premiers de la r&egrave;gle de production.
+	 * les k_premiers de la règle de production.
 	 */
 	transient private Arbre k_premiers;
 
@@ -101,10 +101,10 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Construit une r&eacute;gle de production avec gauche en gauche.
+	 * Construit une régle de production avec gauche en gauche.
 	 *
 	 * @param gauche
-	 *	        la partie gauche de la r&egrave;gle de production
+	 *	        la partie gauche de la règle de production
 	 */
 	public REGLE(TDS t, NON_TERMINAL g, Resolveur r, String c) {
 		numero = t.getCompteur_regles();
@@ -121,25 +121,25 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Renvoie une &eacute;num&eacute;ration des symb&ocirc;les en partie droite
-	 * de la r&egrave;gle de production.
+	 * Renvoie une énumération des symbôles en partie droite
+	 * de la règle de production.
 	 */
 	public Enumeration<EltREGLE> elements() {
 		return droite.elements();
 	}
 
 	/**
-	 * Calcule les premiers d'une cha&icirc;ne de symb&ocirc;les &agrave;
+	 * Calcule les premiers d'une chaîne de symbôles à
 	 * l'ordre k.
 	 *
 	 * @param n
-	 *	        l'ordre de l'arbre r&eacute;sultat
+	 *	        l'ordre de l'arbre résultat
 	 * @param k
 	 *	        l'ordre des premiers
 	 * @param v
-	 *	        la cha&icirc;ne de symb&ocirc;les
+	 *	        la chaîne de symbôles
 	 * @param debut
-	 *	        l'indice du premier &eacute;l&eacute;ment de la cha&icirc;ne
+	 *	        l'indice du premier élément de la chaîne
 	 * @return les k_premiers
 	 */
 	public Arbre calcule_premiers_chaine(int n, int k, Vector<EltREGLE> v,
@@ -183,10 +183,10 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Calcule les suivants &agrave; l'ordre k.
+	 * Calcule les suivants à l'ordre k.
 	 *
 	 * @param n
-	 *	        la hauteur maximale de l'arbre r&eacute;sultat
+	 *	        la hauteur maximale de l'arbre résultat
 	 * @param k
 	 *	        l'ordre des suivants
 	 */
@@ -216,13 +216,13 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Calcule les premiers de la r&egrave;gle de production.
+	 * Calcule les premiers de la règle de production.
 	 *
 	 * @param n
 	 *	        la hauteur maximale de l'arbre
 	 * @param k
 	 *	        l'ordre des premiers
-	 * @return les k_premiers de la r&egrave;gle de production.
+	 * @return les k_premiers de la règle de production.
 	 */
 	public Arbre calcule_les_premiers(int n, int k) throws EGGException {
 		if (k_premiers == null)
@@ -241,7 +241,7 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Calcule les symb&ocirc;les directeurs de la r&egrave;gle de production.
+	 * Calcule les symbôles directeurs de la règle de production.
 	 */
 	public void calcule_symboles_directeurs() {
 		k_premiers.concatener(((NON_TERMINAL) gauche.getSymbole())
@@ -249,9 +249,9 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Ajoute un symb&ocirc;le &agrave; droite de la r&egrave;gle de production.
+	 * Ajoute un symbôle à droite de la règle de production.
 	 *
-	 * @param s le symb&ocirc;le &agrave; ajouter
+	 * @param s le symbôle à ajouter
 	 */
 	public void add_droite(SYMBOLE s) {
 		int p = ++lastpos;
@@ -280,9 +280,9 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Ajouter une action &agrave; droite de la r&egrave;gle de production.
+	 * Ajouter une action à droite de la règle de production.
 	 *
-	 * @param n l'action &agrave; ajouter
+	 * @param n l'action à ajouter
 	 */
 	public boolean add_action(String n) {
 		int p = ++lastpos;
@@ -353,7 +353,7 @@ public class REGLE implements Serializable {
 	 * Retourne l'action de nom nom.
 	 *
 	 * @param nom
-	 *	        de l'action &agrave; chercher
+	 *	        de l'action à chercher
 	 * @return l'action de nom nom, null si inexistante
 	 */
 	public ActREGLE action(String nom) {
@@ -369,9 +369,9 @@ public class REGLE implements Serializable {
 	}
 
 	/**
-	 * Renvoie une repr&eacute;sentation de la r&egrave;gle de production.
+	 * Renvoie une représentation de la règle de production.
 	 *
-	 * @return une repr&eacute;sentation de la r&egrave;gle de production.
+	 * @return une représentation de la règle de production.
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);
