@@ -132,14 +132,14 @@ global
   offset : INTEGER;
   length : INTEGER;
 
-#res{
+#res {
 do
   offset := LACTION^scanner.getOffset();
   LACTION^avis.resetIndent();
 end
 }
 
-#inc{
+#inc {
 do
   LACTION^avis.incIndent();
 end
@@ -152,20 +152,20 @@ do
   -- met à jour le code de l'action
   LACTION^code := LOCALES^code @ LACTION^avis.insts() @ INSTS^code + EXCEPTION^code;
   LACTION^avis.decIndent();
-  length := LACTION^scanner.getOffset() + LACTION^scanner.getLength()- offset;
+  length := LACTION^scanner.getOffset() + LACTION^scanner.getLength() - offset;
   LACTION^offset := offset;
   LACTION^length := length;
 end
 }
 
 LOCALES -> t_local #inc LOCS #gen ;
-#inc{
+#inc {
 do
   LOCALES^avis.incIndent();
 end
 }
 
-#gen{
+#gen {
 do
   LOCALES^code := LOCALES^avis.locales() @ LOCS^code;
   LOCALES^avis.decIndent();
@@ -174,7 +174,6 @@ end
 
 LOCALES -> #gen ;
 #gen {
-local
 do
   LOCALES^code := "";
 end
@@ -226,7 +225,7 @@ do
 end
 }
 
-#gen{
+#gen {
 local
   l : TDS_ACTION;
   e : ENTREE;
@@ -241,26 +240,22 @@ end
 
 LOCS -> #gen ;
 #gen {
-local
 do
   LOCS^code := "";
 end
 }
 
-TYPE -> t_ident #trans TGEN #gen ;
-#trans { do
-end
-}
-
+TYPE -> t_ident TGEN #gen ;
 #gen {
 do
   TYPE^type := TYPE^res.getType(t_ident^txt, TGEN^pars);
 end
 }
 
-TGEN -> #gen;
-#gen { do
-  TGEN^pars := null ;
+TGEN -> #gen ;
+#gen {
+do
+  TGEN^pars := null;
 end
 }
 
@@ -288,33 +283,33 @@ end
 }
 
 TYPE -> t_integer #gen ;
-#gen{ do TYPE^type := TYPE^res.getType("INTEGER"); end }
+#gen { do TYPE^type := TYPE^res.getType("INTEGER"); end }
 
 TYPE -> t_double #gen ;
-#gen{ do TYPE^type := TYPE^res.getType("DOUBLE"); end }
+#gen { do TYPE^type := TYPE^res.getType("DOUBLE"); end }
 
 TYPE -> t_string #gen ;
-#gen{ do TYPE^type := TYPE^res.getType("STRING"); end }
+#gen { do TYPE^type := TYPE^res.getType("STRING"); end }
 
 TYPE -> t_char #gen ;
-#gen{ do TYPE^type := TYPE^res.getType("CHARACTER"); end }
+#gen { do TYPE^type := TYPE^res.getType("CHARACTER"); end }
 
 INSTS -> #gen ;
-#gen{
+#gen {
 do
   INSTS^code := "";
 end
 }
 
 INSTS -> INST INSTS #gen ;
-#gen{
+#gen {
 do
   INSTS^code := INSTS^avis.indent() @ INST^code @ "%N" @ INSTS1^code;
 end
 }
 
 EXCEPTION -> #gen ;
-#gen{
+#gen {
 do
   EXCEPTION^code := "";
 end
@@ -345,7 +340,7 @@ do
 end
 }
 
-#gen{
+#gen {
 do
   EXCEPTION^code := EXCEPTION^avis.exc(t_ident^txt, INSTS^code);
 end
@@ -538,7 +533,6 @@ end
 }
 
 #gen {
-local
 do
   EARGS^args := EARGS1^args;
   EARGS^types := EARGS1^types;
@@ -614,7 +608,6 @@ end
 
 ELSIF -> #gen ;
 #gen {
-local
 do
   ELSIF^code := ELSIF^avis.indent() @ ELSIF^avis.ifFin();
 end
@@ -708,7 +701,6 @@ end
 }
 
 #gen {
-local
 do
   WITH^type := TYPE^type;
   WITH^nom := TYPE^type.getNom();
@@ -748,9 +740,7 @@ end
 }
 
 WITHS -> #gen ;
-
 #gen {
-local
 do
   WITHS^code := WITHS^avis.indent() @ WITHS^avis.matchFin();
 end
@@ -765,7 +755,6 @@ end
 }
 
 #gen {
-local
 do
   EXPR^type := EXPRTERME^type;
   EXPR^code := EXPRTERME^code;
@@ -784,7 +773,6 @@ end
 }
 
 #gen {
-local
 do
   EXPRTERME^type := EXPRTERME1^type;
   EXPRTERME^code := EXPRTERME1^code;
@@ -1051,7 +1039,6 @@ end
 }
 
 #gen {
-local
 do
   EXPRFACTEUR^type := EXPRFACTEUR1^type;
   EXPRFACTEUR^code := EXPRFACTEUR1^code;
@@ -1118,7 +1105,6 @@ end
 
 ARGSX -> t_virgule EXPR #expr ARGSX #gen ;
 #expr {
-local
 do
   ARGSX^hargs.add(EXPR^code);
   ARGSX^htypes.add(EXPR^type);

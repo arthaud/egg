@@ -4,8 +4,8 @@ option k = 2;
 
 
 inh source : SourceUnit for PROG;
-inh tds    : TDS     for BLOC, INST, INSTS, TERME, FACTEUR, TYPE, CHAMPS, TERMES;
-syn type   : DTYPE   for TYPE, TERME, FACTEUR;
+inh tds    : TDS        for BLOC, INST, INSTS, TERME, FACTEUR, TYPE, CHAMPS, TERMES;
+syn type   : DTYPE      for TYPE, TERME, FACTEUR;
 
 syn syn_type : DTYPE for FX;
 inh her_type : DTYPE for FX;
@@ -109,7 +109,7 @@ end
 -------------------------------------------------------
 -- instructions (et declarations)
 -------------------------------------------------------
-INSTS ->      ;
+INSTS -> ;
 
 INSTS -> INST INSTS ;
 

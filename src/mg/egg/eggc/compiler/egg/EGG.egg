@@ -37,7 +37,7 @@ sugar    t_syn              is           "syn"        aka $syn$ ;
 sugar    t_aka              is           "aka"        aka $aka$ ;
 sugar    t_deuxpoints       is           ":"          aka $:$ ;
 sugar    t_aco              is           "\{"         aka ${$ ;
-sugar    t_acf              is            "\}"        aka $}$ ;
+sugar    t_acf              is           "\}"         aka $}$ ;
 sugar    t_cro              is           "\["         aka $[$ ;
 sugar    t_crf              is           "\]"         aka $]$ ;
 sugar    t_for              is           "for"        aka $for$ ;
@@ -65,7 +65,7 @@ sugar    t_char             is           "CHARACTER"  aka $CHARACTER$ ;
 macro    mlc                is           "[A-Za-z0-9_]" ;
 term     t_action           is           "#{mlc}+" ;
 term     t_ident            is           "[a-zA-Z]{mlc}*" ;
-term 	   t_alias            is           "\$[^\$]+\$" ;
+term     t_alias            is           "\$[^\$]+\$" ;
 
 compil   LACTION;
 compil   OPTION;
@@ -172,14 +172,13 @@ ATTRIBUTS -> ATTRIBUT ATTRIBUTS ;
 ATTRIBUTS -> ;
 
 SATT -> t_inh #sorte ;
-#sorte{ do SATT^sorte := 0; end }
+#sorte { do SATT^sorte := 0; end }
 
 SATT -> t_syn #sorte ;
-#sorte{ do SATT^sorte := 1; end }
+#sorte { do SATT^sorte := 1; end }
 
 VTYPE -> t_deuxpoints #trans TYPE #gen ;
 #trans {
-local
 do
   TYPE^res := VTYPE^res;
   TYPE^vis := VTYPE^vis;
@@ -187,7 +186,6 @@ end
 }
 
 #gen {
-local
 do
   VTYPE^type := TYPE^type;
 end
@@ -251,7 +249,8 @@ end
 }
 
 TGEN -> #gen ;
-#gen { do
+#gen {
+do
   TGEN^pars := null;
 end
 }
@@ -280,16 +279,16 @@ end
 }
 
 TYPE -> t_integer #gen ;
-#gen{ local do TYPE^type := TYPE^res.getType("INTEGER"); end }
+#gen { do TYPE^type := TYPE^res.getType("INTEGER"); end }
 
 TYPE -> t_double #gen ;
-#gen{ local do TYPE^type := TYPE^res.getType("DOUBLE"); end }
+#gen { do TYPE^type := TYPE^res.getType("DOUBLE"); end }
 
 TYPE -> t_string #gen ;
-#gen{ local do TYPE^type := TYPE^res.getType("STRING"); end }
+#gen { do TYPE^type := TYPE^res.getType("STRING"); end }
 
 TYPE -> t_char #gen ;
-#gen{ local do TYPE^type := TYPE^res.getType("CHARACTER"); end }
+#gen { do TYPE^type := TYPE^res.getType("CHARACTER"); end }
 
 -- à arranger quand les types tableaux arriveront
 --TYPE -> t_cro t_crf TYPE #gen;
@@ -340,7 +339,7 @@ end
 }
 
 IDENTS -> #fin ;
-#fin{
+#fin {
 do
   -- pour traiter globalement l'attribut
   IDENTS^vis.nt_attribut(IDENTS^att);
@@ -764,7 +763,7 @@ GLOBALES -> t_global GLOBS ;
 GLOBALES -> ;
 
 GLOBS -> #trans t_ident VTYPE t_pointvirgule #add GLOBS ;
-#trans{
+#trans {
 local
   t : TDS_ACTION;
 do
@@ -838,7 +837,6 @@ end
 }
 
 #add {
-local
 do
   if a /= null then
     a.setCodeSrc(ACTS^table, LACTION^offset, LACTION^length);
@@ -846,8 +844,6 @@ do
 
     -- visiter
     ACTS^vis.nt_action(a);
-  else
-    -- action non utilisée
   end
 end
 }
@@ -866,7 +862,7 @@ local
 do
   -- engendrer le code de l'action auto
   -- TODO si en mode auto
-  if ACTS^table.getAutoAtt() = true then
+  if ACTS^table.getAutoAtt() then
     -- récuperer l'action auto s'il y a des attributs hérités !
     --   if ~ACTS^reg.add_action_inhs()  then
     --     error(EGG_action_yet_declared, "#auto");
@@ -917,7 +913,7 @@ do
   ACTS^vis.nt_regle(ACTS^reg);
 
   -- vérifier que les atributs sont bien initialisés ...
-   if ACTS^table.syntaxOnly() /= true then
+   if ! ACTS^table.syntaxOnly() then
      t := ACTS^reg.getTable();
 
      -- créer un message d'erreur pour ca
@@ -928,7 +924,7 @@ do
 
      -- vérifier les actions non définies
      acts := ACTS^reg.verifierActions();
-     if acts/= null then
+     if acts /= null then
        error(EGG_undefined_actions, acts,ACTS^reg.toStringSyntaxAction());
     end
   end
