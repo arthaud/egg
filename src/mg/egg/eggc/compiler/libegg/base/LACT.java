@@ -51,12 +51,12 @@ public class LACT implements IAction {
 
 	// debut d'action
 	public String mkStart() {
-		return "";
+		return "{";
 	}
 
 	// fin d'action
 	public String mkEnd() {
-		return "";
+		return "}";
 	}
 
 	// debut des locales

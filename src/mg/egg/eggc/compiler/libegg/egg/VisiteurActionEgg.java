@@ -201,6 +201,10 @@ public class VisiteurActionEgg implements IVisiteurAction {
         return "";
 	}
 
+	public String opAdd(String avant, String nom, String code) {
+	    return avant + getOpEgg(nom) + code;
+	}
+
 	public String vide() {
 	    return "nil";
 	}
