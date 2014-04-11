@@ -19,11 +19,11 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	}
 
 	public String insts() {
-	    return "do\n";
+	    return "\n";
 	}
 
 	public String locales() {
-	    return "local\n";
+	    return "-- locals\n";
 	}
 
 	public String aff(ENTREE entree, String code) {
@@ -88,9 +88,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	}
 
 	public String ecrire(String code) {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append("write " + code + ";");
-	    return sb.toString();
+	    return "write " + code + ";";
 	}
 
 	public String fatal(String id, Vector args) {
@@ -200,9 +198,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	}
 
 	public String matchFin() {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append("end");
-	    return sb.toString();
+        return "";
 	}
 
 	public String opAdd(String avant, String nom, String code) {

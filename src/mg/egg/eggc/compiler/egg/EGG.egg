@@ -4,8 +4,8 @@ option k = 1;
 option version = 5.3.1;
 
 inh source : IEGGCompilationUnit for S;
-syn type : IType for VTYPE, TYPE;
-inh res : Resolveur for VTYPE, TYPE, TGEN, XTYPE;
+syn type : IType for TYPE;
+inh res : Resolveur for TYPE, TGEN, XTYPE;
 syn pars : Vector<IType> for TGEN, XTYPE;
 syn code : STRING for IDENT, EXPREG, LACTION;
 inh table : TDS for OPTIONS, OPTION, ATTRIBUTS , ATTRIBUT , LEXICAUX , LEXICAL , AXIOME , EXTS,
@@ -20,7 +20,7 @@ inh lex : TERMINAL for ALIASES, ALIASESX;
 inh reg : REGLE for PDROITE, ACTS, GLOBALES, GLOBS, LACTION;
 inh vis : IVisiteurEgg for
     ATTRIBUTS , ATTRIBUT , LEXICAUX , LEXICAL , EXPREG, AXIOME , EXTS,
-    PRODUCTIONS , PRODUCTION , PDROITE , VTYPE, TYPE , ACTS, TGEN, XTYPE,
+    PRODUCTIONS , PRODUCTION , PDROITE , TYPE , ACTS, TGEN, XTYPE,
     GLOBALES, GLOBS, IDENT, IDENTS
  --, MESSAGES
 ;
@@ -73,7 +73,7 @@ compil   EXPREG;
 
 
 
-S -> #init OPTIONS ATTRIBUTS LEXICAUX EXTS AXIOME PRODUCTIONS t_end #gen ;
+S -> #init OPTIONS ATTRIBUTS LEXICAUX EXTS AXIOME PRODUCTIONS #gen ;
 global
   table : TDS;
   v : IVisiteurEgg;
@@ -177,24 +177,10 @@ SATT -> t_inh #sorte ;
 SATT -> t_syn #sorte ;
 #sorte { do SATT^sorte := 1; end }
 
-VTYPE -> t_deuxpoints #trans TYPE #gen ;
+ATTRIBUT -> SATT #trans t_ident t_deuxpoints TYPE t_for IDENT #add IDENTS t_pointvirgule ;
 #trans {
 do
-  TYPE^res := VTYPE^res;
-  TYPE^vis := VTYPE^vis;
-end
-}
-
-#gen {
-do
-  VTYPE^type := TYPE^type;
-end
-}
-
-ATTRIBUT -> SATT #trans t_ident VTYPE t_for IDENT #add IDENTS t_pointvirgule ;
-#trans {
-do
-  VTYPE^res := ATTRIBUT^table.getResolveur();
+  TYPE^res := ATTRIBUT^table.getResolveur();
 end
 }
 
@@ -206,7 +192,7 @@ local
   atteval : ATTRIBUT;
   nt : NON_TERMINAL;
 do
-  attribut := new ATTRIBUT(SATT^sorte, t_ident^txt, VTYPE^type, ATTRIBUT^scanner.getCommentaire());
+  attribut := new ATTRIBUT(SATT^sorte, t_ident^txt, TYPE^type, ATTRIBUT^scanner.getCommentaire());
 
   if ~ATTRIBUT^table.ajouter_att(attribut) then
     error(EGG_attribute_yet_declared, t_ident^txt);
@@ -762,13 +748,13 @@ GLOBALES -> t_global GLOBS ;
 
 GLOBALES -> ;
 
-GLOBS -> #trans t_ident VTYPE t_pointvirgule #add GLOBS ;
-#trans {
+GLOBS -> #trans TYPE t_ident t_pointvirgule #add GLOBS ;
+#trans{
 local
   t : TDS_ACTION;
 do
   t := GLOBS^reg.getTable();
-  VTYPE^res := t.getResolveur();
+  TYPE^res := t.getResolveur();
 end
 }
 
@@ -789,7 +775,7 @@ do
   if e /= null then
     error(EGG_global_var_yet_declared, t_ident^txt);
   else
-    g := new GLOB(GLOBS^reg, t_ident^txt, VTYPE^type);
+    g := new GLOB(GLOBS^reg, t_ident^txt, TYPE^type);
     t.ajouter_globale(g);
     GLOBS^reg.ajouter_globale(g);
 
@@ -805,7 +791,7 @@ end
 GLOBS -> ;
 
 -- une liste d'actions
-ACTS -> GLOBALES t_action t_aco #trans LACTION t_acf #add ACTS ;
+ACTS -> GLOBALES t_action #trans LACTION #add ACTS ;
 global
   a : ActREGLE;
 
