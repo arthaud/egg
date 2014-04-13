@@ -17,7 +17,7 @@ term   entier      is    "[0-9]+" ;
 
 S -> V #a ;
 #a {
-    write "resultat : " + V^val + "\n";
+    write("resultat : " + V^val + "\n");
 }
 
 V -> entier #a ;

@@ -20,7 +20,7 @@ global Integer x;
 
 #a {
     x := 42;
-    write "resultat : " + V^val + "\n";
+    write("resultat : " + V^val + "\n");
 }
 
 global Integer x;

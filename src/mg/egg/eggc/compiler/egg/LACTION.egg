@@ -413,7 +413,7 @@ do
 end
 }
 
-INST -> t_write EXPR t_pointvirgule #gen ;
+INST -> t_write t_paro EXPR t_parf t_pointvirgule #gen ;
 #gen {
 do
   INST^code := INST^avis.ecrire(EXPR^code);
