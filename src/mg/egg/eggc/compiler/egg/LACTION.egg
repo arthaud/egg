@@ -66,8 +66,6 @@ sugar      t_sup            is    "\>"              aka $>$ ;
 sugar      t_paro           is    "\("              aka $($ ;
 sugar      t_parf           is    "\)"              aka $)$ ;
 sugar      t_is             is    "is"              aka $is$ ;
-sugar      t_do             is    "do"              aka $do$ ;
-sugar      t_local          is    "local"           aka $local$ ;
 sugar      t_end            is    "end"             aka $end$ ;
 sugar      t_call           is    "call"            aka $call$ ;
 sugar      t_when           is    "when"            aka $when$ ;
@@ -500,7 +498,7 @@ do
 end
 }
 
-INST -> t_if EXPR t_then #inc INSTS #dec ELSIF t_end #gen ;
+INST -> t_if t_paro EXPR t_parf t_aco #inc INSTS t_acf #dec ELSIF #gen ;
 #inc {
 do
   INST^avis.incIndent();
@@ -524,8 +522,7 @@ do
 end
 }
 
-
-ELSIF -> t_elseif EXPR t_then #inc INSTS #dec ELSIF #gen ;
+ELSIF -> t_elseif t_paro EXPR t_parf t_aco #inc INSTS t_acf #dec ELSIF #gen ;
 #inc {
 do
   ELSIF^avis.incIndent();
@@ -549,7 +546,7 @@ do
 end
 }
 
-ELSIF -> t_else #inc INSTS #gen ;
+ELSIF -> t_else t_aco #inc INSTS t_acf #gen ;
 #inc {
 do
   ELSIF^avis.incIndent();

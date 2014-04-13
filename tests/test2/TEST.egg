@@ -82,16 +82,16 @@ TYPE -> ident  #a ;
     INFOTYPE it;
 
     i := TYPE^tds.chercherGlobalement(ident^txt);
-    if i = null then
+    if (i = null) {
         error(B_undefined_type, ident^txt);
-    else
+    } else {
         match i with INFOTYPE then
             it := i;
             TYPE^type := it.getType();
         else
             error(B_not_type, ident^txt);
         end
-    end
+    }
 }
 
 -------------------------------------------------------
@@ -109,12 +109,12 @@ INST -> type ident aff TYPE  #tds pv  ;
     INFO i;
 
     i := INST^tds.chercherGlobalement(ident^txt);
-    if i /= null then
+    if (i /= null) {
         error(B_var_already_defined, ident^txt);
-    else
+    } else {
         i := new INFOTYPE(TYPE^type);
         INST^tds.inserer(ident^txt, i);
-    end
+    }
 }
 
 -------------------------------------------------------
@@ -124,14 +124,14 @@ INST -> TYPE ident aff TERME #tdstype pv ;
 #tdstype {
     INFO i;
     i := INST^tds.chercherLocalement(ident^txt);
-    if i /= null then
+    if (i /= null) {
         error(B_var_already_defined, ident^txt);
-    elseif ~TYPE^type.compareTo(TERME^type) then
+    } elseif (~TYPE^type.compareTo(TERME^type)) {
         error(B_not_compatible, TYPE^type, TERME^type);
-    else
+    } else {
         i := new INFOVAR(TYPE^type);
         INST^tds.inserer(ident^txt,  i);
-    end
+    }
 }
 
 -------------------------------------------------------
@@ -141,19 +141,19 @@ INST -> ident #a1 FX aff TERME pv #a2 ;
 #a1 {
     INFO var;
     var := INST^tds.chercherGlobalement(ident^txt);
-    if var = null then
+    if (var = null) {
         error(B_undefined_var, ident^txt);
-    else
+    } else {
         FX^her_type := var.getType();
-    end
+    }
 }
 
 #a2 {
     DTYPE t;
     t := TERME^type;
-    if ! t.compareTo(FX^syn_type) then
+    if (! t.compareTo(FX^syn_type)) {
         error(B_not_compatible, t, FX^syn_type);
-    end
+    }
 }
 
 -------------------------------------------------------
@@ -161,16 +161,16 @@ INST -> ident #a1 FX aff TERME pv #a2 ;
 -------------------------------------------------------
 INST -> si paro TERME #type parf BLOC sinon BLOC ;
 #type {
-    if ~TERME^type.compareTo(new DTYPE("booleen", 1)) then
+    if (~TERME^type.compareTo(new DTYPE("booleen", 1))) {
         error(B_not_bool, TERME^type);
-    end
+    }
 }
 
 INST -> tantque paro TERME #type parf BLOC ;
 #type {
-    if ~TERME^type.compareTo(new DTYPE("booleen", 1)) then
+    if (~TERME^type.compareTo(new DTYPE("booleen", 1))) {
         error(B_not_bool, TERME^type);
-    end
+    }
 }
 
 TERME -> FACTEUR #type ;
@@ -185,11 +185,11 @@ FACTEUR -> ident #a1 FX #a2 ;
 #a1 {
     INFO i;
     i := FACTEUR^tds.chercherGlobalement(ident^txt);
-    if i = null then
+    if (i = null) {
         error(B_undefined_var, ident^txt);
-    else
+    } else {
         FX^her_type := i.getType();
-    end
+    }
 }
 
 #a2 {
@@ -282,11 +282,11 @@ CHAMPS -> #a ;
 
 CHAMPS -> TYPE ident pv #a CHAMPS #b ;
 #a {
-    if CHAMPS^her_champs.chercher(ident^txt) != null then
+    if (CHAMPS^her_champs.chercher(ident^txt) != null) {
         error(B_field_already_defined, ident^txt);
-    else
+    } else {
         CHAMPS^her_champs.inserer(new CHAMP(ident^txt, TYPE^type));
-    end
+    }
 
     CHAMPS1^her_champs := CHAMPS^her_champs;
 }
@@ -306,9 +306,9 @@ FX -> pt ident #a1 FX #a2 ;
         liste_champs := p.getChamps();
         champ := liste_champs.chercher(ident^txt);
 
-        if champ = null then
+        if (champ = null) {
             error(B_undefined_field, ident^txt, p);
-        end
+        }
 
         FX1^her_type := champ.getType();
     else

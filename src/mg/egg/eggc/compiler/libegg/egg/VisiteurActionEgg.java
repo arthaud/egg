@@ -119,31 +119,32 @@ public class VisiteurActionEgg implements IVisiteurAction {
 
 	public String ifExpr(String e, String a, String s) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("if " + e + " then\n");
+	    sb.append("if (" + e + ") {\n");
 	    sb.append(a);
+	    sb.append("\n}\n");
 	    sb.append(s);
 	    return sb.toString();
 	}
 
 	public String ifSinonSi(String e, String a, String s) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("elseif " + e + " then\n");
+	    sb.append("elseif (" + e + ") {\n");
 	    sb.append(a);
+	    sb.append("\n}\n");
 	    sb.append(s);
 	    return sb.toString();
 	}
 
 	public String ifSinon(String s) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("else\n");
+	    sb.append("else {\n");
 	    sb.append(s);
+	    sb.append("\n}\n");
 	    return sb.toString();
 	}
 
 	public String ifFin() {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append("end");
-	    return sb.toString();
+        return "";
 	}
 
 	public String matchVarAvec(ENTREE entree, String nom, String w, String ws) {
