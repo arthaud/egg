@@ -57,7 +57,7 @@ global        -- globale aux actions de cette règle
 }
 
 #tds2 {
-    write "TDS:\n" + t;
+    write("TDS:\n" + t);
 }
 
 -------------------------------------------------------
