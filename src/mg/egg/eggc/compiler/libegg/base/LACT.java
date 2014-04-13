@@ -96,7 +96,7 @@ public class LACT implements IAction {
 
 	// debut de if
 	public String mkStartIf() {
-		return "if ";
+		return "if (";
 	}
 
 	// debut de else d'un if
@@ -106,12 +106,12 @@ public class LACT implements IAction {
 
 	// debut de elsif d'un if
 	public String mkElsifIf() {
-		return "elseif ";
+		return "elseif (";
 	}
 
 	// fin d'un if
 	public String mkEndIf() {
-		return "end";
+		return "}";
 	}
 
 	// debut d'un match
