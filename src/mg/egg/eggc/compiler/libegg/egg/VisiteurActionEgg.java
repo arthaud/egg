@@ -88,7 +88,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	}
 
 	public String ecrire(String code) {
-	    return "write " + code + ";";
+	    return "write(" + code + ");";
 	}
 
 	public String fatal(String id, Vector args) {
