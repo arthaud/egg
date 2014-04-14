@@ -176,6 +176,13 @@ out=$(execute test4 simple.test 2>&1)
 [[ $? = 0 ]] && [[ "$out" = *"test1 = true"*"test2 = true"*"test3 = true"*"lu = 42"* ]]
 check "opérateur instanceof"
 
+# test5
+compile_and_check test5
+
+out=$(execute test5 simple.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"resultat : 9"* ]]
+check "appels de méthodes chaînés"
+
 # Resultats
 title "Resultats :"
 msg "tests : $tests"

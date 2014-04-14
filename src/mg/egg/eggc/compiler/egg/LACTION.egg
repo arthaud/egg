@@ -5,38 +5,38 @@ option version = 5.2.8;
 inh table : TDS for
     LACTION, INSTS, INST, INST2, ELSIF, WITH, WITHS, VAR,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    APP, APP2, ARGS, ARGSX, EARGS, EXCEPTION;
+    APP, ARGS, ARGSX, EARGS, EXCEPTION;
 inh reg : REGLE for
     LACTION;
 inh avis : IVisiteurAction for
     LACTION, LOCALES, INSTS, INST, ELSIF, WITH, WITHS,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP, APP2;
+    ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP;
 inh act : LACT for
     LACTION, LOCALES, INSTS, INST, ELSIF, WITH, WITHS, VAR,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    ARGS, ARGSX, EARGS , EXCEPTION, INST2, APP, APP2;
+    ARGS, ARGSX, EARGS , EXCEPTION, INST2, APP;
 syn nom : STRING for
     WITH, OPBOOL, OPCOMP, OPADD, OPMUL;
 syn entree : ENTREE for
     VAR;
 inh hentree : ENTREE for
-    INST2, APP, APP2, WITH, WITHS;
+    INST2, WITH, WITHS;
 syn code : STRING for
     LACTION, LOCALES, INSTS, INST, INST2, ELSIF, WITH, WITHS,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    APP, APP2, EXCEPTION;
+    APP, EXCEPTION;
 inh hcode : STRING for
-    EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR;
+    EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR, APP;
 syn args : Vector<STRING> for
     ARGS, EARGS, ARGSX;
 inh hargs : Vector<STRING> for
     ARGS, EARGS, ARGSX;
 syn type : IType for
-    TYPE, WITH, APP, APP2,
+    TYPE, WITH, APP,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR;
 inh htype : IType for
-    EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR;
+    EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR, APP;
 syn types : Vector<IType> for
     ARGS, EARGS, ARGSX;
 inh htypes : Vector<IType> for
@@ -67,7 +67,6 @@ sugar      t_paro           is    "\("              aka $($ ;
 sugar      t_parf           is    "\)"              aka $)$ ;
 sugar      t_is             is    "is"              aka $is$ ;
 sugar      t_end            is    "end"             aka $end$ ;
-sugar      t_call           is    "call"            aka $call$ ;
 sugar      t_when           is    "when"            aka $when$ ;
 sugar      t_error          is    "error"           aka $error$ ;
 sugar      t_attention      is    "warning"         aka $warning$ ;
@@ -339,15 +338,7 @@ do
 end
 }
 
-INST2 -> APP2 #gen ;
-#gen {
-do
-  INST2^code := APP2^code + ";";
-end
-}
-
-
-INST -> t_call #trans VAR #check t_point t_ident t_paro ARGS t_parf t_pointvirgule #gen ;
+INST2 -> t_point t_ident #trans t_paro ARGS t_parf #hgen APP #gen ;
 #trans {
 local
   a : Vector<STRING>;
@@ -361,27 +352,21 @@ do
 end
 }
 
-#check {
+#hgen {
+local
+  r : Resolveur;
+  c : STRING;
 do
-  if ~VAR^entree.getEtat() then
-    error(LACTION_var_non_initialized, VAR^entree.getNom());
-  elseif ~VAR^entree.utilisable(INST^act.getPos()) then
-    error(LACTION_var_illegal_access, VAR^entree.getNom());
-  end
+  r := INST2^act.getResolveur();
+  APP^htype := r.contFct(INST2^hentree.getType(), t_ident^txt, ARGS^types);
+  c := INST2^avis.var(INST2^hentree);
+  APP^hcode := INST2^avis.fct(c, t_ident^txt, ARGS^args);
 end
 }
 
 #gen {
-local
-  r : Resolveur;
 do
-  VAR^entree.setEtat(true);
-
-  r := INST^act.getResolveur();
-  r.contProc(VAR^entree, t_ident^txt, ARGS^types);
-
-  -- args: liste de expr
-  INST^code := INST^avis.appel(VAR^entree, t_ident^txt, ARGS^args);
+  INST2^code := APP^code + ";";
 end
 }
 
@@ -409,7 +394,7 @@ do
     VAR^entree.setEtat(true);
     INST^code := INST^avis.nouveau(VAR^entree, ARGS^args);
     r := INST^act.getResolveur();
-    r.contProc(VAR^entree, t_ident^txt, ARGS^types);
+    r.contProc(VAR^entree.getType(), t_ident^txt, ARGS^types);
   end
 end
 }
@@ -1002,35 +987,28 @@ do
   elseif ~VAR^entree.utilisable(FACTEUR^act.getPos()) then
     error(LACTION_var_illegal_access, VAR^entree.getNom());
   else
-    APP^hentree := VAR^entree;
+    APP^htype := VAR^entree.getType();
+    APP^hcode := FACTEUR^avis.var(VAR^entree);
   end
 end
 }
 
 #gen {
 do
-  FACTEUR^code := APP^code;
   FACTEUR^type := APP^type;
+  FACTEUR^code := APP^code;
 end
 }
 
 APP -> #gen ;
 #gen {
 do
-  APP^code := APP^avis.var(APP^hentree);
-  APP^type := APP^hentree.getType();
+  APP^type := APP^htype;
+  APP^code := APP^hcode;
 end
 }
 
-APP -> APP2 #gen ;
-#gen {
-do
-  APP^code := APP2^code;
-  APP^type := APP2^type;
-end
-}
-
-APP2 -> t_point t_ident #trans t_paro ARGS t_parf #gen ;
+APP -> t_point t_ident #trans t_paro ARGS t_parf #hgen APP #gen ;
 #trans {
 local
   a : Vector<STRING>;
@@ -1044,13 +1022,20 @@ do
 end
 }
 
-#gen {
+#hgen {
 local
   r: Resolveur;
 do
-  r := APP2^act.getResolveur();
-  APP2^type := r.contFct(APP2^hentree, t_ident^txt, ARGS^types);
-  APP2^code := APP2^avis.fct(APP2^hentree, t_ident^txt, ARGS^args);
+  r := APP^act.getResolveur();
+  APP1^htype := r.contFct(APP^htype, t_ident^txt, ARGS^types);
+  APP1^hcode := APP^avis.fct(APP^hcode, t_ident^txt, ARGS^args);
+end
+}
+
+#gen {
+do
+  APP^type := APP1^type;
+  APP^code := APP1^code;
 end
 }
 

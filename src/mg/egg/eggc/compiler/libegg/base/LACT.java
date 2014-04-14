@@ -91,7 +91,7 @@ public class LACT implements IAction {
 
 	// appel de procedure
 	public String mkCall() {
-		return "call ";
+		return "";
 	}
 
 	// debut de if

@@ -1,0 +1,49 @@
+option auto = true;
+option version = 0.0.1;
+option k = 1;
+
+inh source : SourceUnit for S;
+inh hvalues : Vector<STRING> for LINE;
+syn values : Vector<STRING> for LINE;
+syn out : INTEGER for LINES;
+
+space  separateur  is    "[\t ]+" ;
+sugar  return      is    "[\n\r]" ;
+sugar  v           is    "," ;
+term   ident       is    "[a-zA-Z_]+" ;
+
+S -> LINES #gen ;
+#gen {
+    write("resultat : " + LINES^out + "\n");
+}
+
+LINES -> #gen ;
+#gen {
+    LINES^out := 0;
+}
+
+LINES -> ident #trans LINE return LINES #gen ;
+#trans {
+    LINE^hvalues := new Vector<STRING>();
+    LINE^hvalues.add(ident^txt);
+}
+
+#gen {
+    LINE^values.listIterator().hasNext(); -- test d'un chaînage d'appels de méthodes
+    LINES^out := LINES1^out + LINE^values.subList(0, LINE^values.size()).size(); -- test d'un chaînage d'appels de méthodes
+}
+
+LINE -> #gen ;
+#gen {
+    LINE^values := LINE^hvalues;
+}
+
+LINE -> v ident #trans LINE #gen ;
+#trans {
+    LINE^hvalues.add(ident^txt);
+    LINE1^hvalues := LINE^hvalues;
+}
+
+#gen {
+    LINE^values := LINE1^values;
+}

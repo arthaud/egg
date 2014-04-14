@@ -299,7 +299,7 @@ public class VisiteurActionLatex implements IVisiteurAction {
 		return "\\eggvar{" + nom + "}";
 	}
 
-	public String fct(ENTREE entree, String f, Vector<String> args) {
+	public String fct(String code, String f, Vector<String> args) {
 		StringBuffer cargs = new StringBuffer();
 		boolean premier = true;
 		for (Enumeration e = args.elements(); e.hasMoreElements();) {
@@ -310,9 +310,8 @@ public class VisiteurActionLatex implements IVisiteurAction {
 			}
 			cargs.append((String) e.nextElement());
 		}
-		return "\\actfct{" + var(entree) + "." + f + "}{" + cargs.toString()
+		return "\\actfct{" + code + "." + f + "}{" + cargs.toString()
 			+ "}\n";
-		//		return var(entree) + "." + f + "(" + cargs.toString() + ")";
 	}
 
 	public String non(String code) {

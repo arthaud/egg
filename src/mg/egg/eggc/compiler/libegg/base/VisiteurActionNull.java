@@ -139,7 +139,7 @@ public class VisiteurActionNull implements IVisiteurAction {
 		return "";
 	}
 
-	public String fct(ENTREE hentree, String txt, Vector<String> args) {
+	public String fct(String code, String txt, Vector<String> args) {
 		return "";
 	}
 
