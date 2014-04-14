@@ -116,22 +116,22 @@ public class LACT implements IAction {
 
 	// debut d'un match
 	public String mkStartMatch() {
-		return "match ";
+		return "match (";
 	}
 
 	// cas d'un match
 	public String mkWithMatch() {
-		return "with ";
+		return "case ";
 	}
 
 	// else d'un match
 	public String mkElseMatch() {
-		return "else ";
+		return "default ";
 	}
 
 	// fin d'un match
 	public String mkEndMatch() {
-		return "end";
+		return "";
 	}
 
 	/**

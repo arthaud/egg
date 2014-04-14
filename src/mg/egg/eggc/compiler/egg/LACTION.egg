@@ -4,30 +4,30 @@ option version = 5.2.8;
 
 inh table : TDS for
     LACTION,
-    INSTS, INST, INST2, ELSIF, WITH, WITHS, VAR,
+    INSTS, INST, INST2, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP,
     ARGS, ARGSX, EARGS, EXCEPTION;
 inh reg : REGLE for
     LACTION;
 inh avis : IVisiteurAction for
     LACTION,
-    LOCALES, INSTS, INST, ELSIF, WITH, WITHS,
+    LOCALES, INSTS, INST, ELSIF, CASE, CASES,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP,
     ARGS, ARGSX, EARGS, EXCEPTION, INST2;
 inh act : LACT for
     LACTION,
-    LOCALES, INSTS, INST, ELSIF, WITH, WITHS, VAR,
+    LOCALES, INSTS, INST, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
     APP, EARGS , EXCEPTION, INST2;
 syn nom : STRING for
-    WITH, OPADD, OPMUL;
+    CASE, OPADD, OPMUL;
 syn entree : ENTREE for
     VAR;
 inh hentree : ENTREE for
-    INST2, WITH, WITHS;
+    INST2, CASE, CASES;
 syn code : STRING for
     LACTION,
-    LOCALES, INSTS, INST,INST2, ELSIF, WITH, WITHS,
+    LOCALES, INSTS, INST,INST2, ELSIF, CASE, CASES,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, EXCEPTION;
 inh hcode : STRING for
     EXPRTERME, EXPRFACTEUR, APP;
@@ -36,7 +36,7 @@ syn args : Vector<STRING> for
 inh hargs : Vector<STRING> for
     ARGS, EARGS, ARGSX;
 syn type : IType for
-    TYPE, WITH, EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP;
+    TYPE, CASE, EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP;
 inh htype : IType for
     EXPRTERME, EXPRFACTEUR, APP;
 syn types : Vector<IType> for
@@ -90,9 +90,8 @@ sugar      t_if             is    "if"              aka $if$ ;
 sugar      t_elseif         is    "elseif"          aka $elseif$ ;
 sugar      t_else           is    "else"            aka $else$ ;
 sugar      t_match          is    "match"           aka $match$ ;
-sugar      t_with           is    "with"            aka $with$ ;
-sugar      t_then           is    "then"            aka $then$ ;
-sugar      t_begin          is    "begin"           aka $begin$ ;
+sugar      t_case           is    "case"            aka $case$ ;
+sugar      t_default        is    "default"         aka $default$ ;
 sugar      t_egal           is    "(=)"             aka $=$ ;
 sugar      t_different      is    "((\/=)|(\!=))"   aka $/=$,$!=$ ;
 sugar      t_nil            is    "((nil)|(null))"  aka $nil$,$null$ ;
@@ -599,7 +598,7 @@ do
 end
 }
 
-INST -> t_match VAR #check WITH WITHS t_end #gen ;
+INST -> t_match t_paro VAR t_parf #check t_aco CASE CASES t_acf #gen ;
 #check {
 do
   if ~VAR^entree.getEtat() then
@@ -608,66 +607,66 @@ do
     error(LACTION_var_illegal_access, VAR^entree.getNom());
   end
 
-  WITH^hentree := VAR^entree;
-  WITHS^hentree := VAR^entree;
+  CASE^hentree := VAR^entree;
+  CASES^hentree := VAR^entree;
 end
 }
 
 #gen {
 do
   INST^code :=
-    INST^avis.matchVarAvec(VAR^entree, WITH^type, WITH^code, WITHS^code) @
+    INST^avis.matchVarAvec(VAR^entree, CASE^type, CASE^code, CASES^code) @
     INST^avis.indent() @
-    INST^avis.matchSi(VAR^entree, WITH^type, WITH^code, WITHS^code);
+    INST^avis.matchSi(VAR^entree, CASE^type, CASE^code, CASES^code);
 end
 }
 
-WITH  -> t_with #res TYPE #trans t_then INSTS #gen ;
+CASE  -> t_case #res TYPE #trans t_aco INSTS t_acf #gen ;
 #res {
 local
   r : Resolveur;
 do
-  r := WITH^act.getResolveur();
+  r := CASE^act.getResolveur();
   TYPE^res := r;
 end
 }
 
 #trans {
 do
-  WITH^avis.incIndent();
+  CASE^avis.incIndent();
 
   -- on transtype la variable du match
   -- pendant le temps de INSTS
-  --WITH^hentree.setTypeReel(TYPE^type);
-  WITH^avis.transtyper(WITH^hentree, TYPE^type);
+  --CASE^hentree.setTypeReel(TYPE^type);
+  CASE^avis.transtyper(CASE^hentree, TYPE^type);
 end
 }
 
 #gen {
 do
-  WITH^type := TYPE^type;
-  WITH^nom := TYPE^type.getNom();
-  WITH^code := INSTS^code;
-  WITH^avis.decIndent();
+  CASE^type := TYPE^type;
+  CASE^nom := TYPE^type.getNom();
+  CASE^code := INSTS^code;
+  CASE^avis.decIndent();
 
   -- on retablit le type original
-  --WITH^hentree.resetTypeReel();
-  WITH^avis.detranstyper(WITH^hentree);
+  --CASE^hentree.resetTypeReel();
+  CASE^avis.detranstyper(CASE^hentree);
 end
 }
 
-WITHS -> WITH WITHS #gen ;
+CASES -> CASE CASES #gen ;
 #gen {
 do
-  WITHS^code := WITHS^avis.indent() @
-                WITHS^avis.matchSinonSi(WITHS^hentree, WITH^type, WITH^code, WITHS1^code);
+  CASES^code := CASES^avis.indent() @
+                CASES^avis.matchSinonSi(CASES^hentree, CASE^type, CASE^code, CASES1^code);
 end
 }
 
-WITHS -> t_else #inc INSTS #gen ;
+CASES -> t_default #inc t_aco INSTS t_acf #gen ;
 #inc {
 do
-  WITHS^avis.incIndent();
+  CASES^avis.incIndent();
 end
 }
 
@@ -676,16 +675,16 @@ local
   a : STRING;
 do
   a := INSTS^code;
-  WITHS^avis.decIndent();
-  WITHS^code :=  WITHS^avis.indent() @ WITHS^avis.matchSinon(a) @
-                 WITHS^avis.indent() @ WITHS^avis.matchFin();
+  CASES^avis.decIndent();
+  CASES^code :=  CASES^avis.indent() @ CASES^avis.matchSinon(a) @
+                 CASES^avis.indent() @ CASES^avis.matchFin();
 end
 }
 
-WITHS -> #gen ;
+CASES -> #gen ;
 #gen {
 do
-  WITHS^code := WITHS^avis.indent() @ WITHS^avis.matchFin();
+  CASES^code := CASES^avis.indent() @ CASES^avis.matchFin();
 end
 }
 
