@@ -283,7 +283,7 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 		return n;
 	}
 
-	public String fct(ENTREE entree, String f, Vector<String> args) {
+	public String fct(String code, String f, Vector<String> args) {
 		StringBuffer cargs = new StringBuffer();
 		boolean premier = true;
 
@@ -297,7 +297,7 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 			cargs.append((String) e.nextElement());
 		}
 
-		return var(entree) + "." + f + "(" + cargs.toString() + ")";
+		return "(" + code + ")." + f + "(" + cargs.toString() + ")";
 	}
 
 	public String non(String code) {

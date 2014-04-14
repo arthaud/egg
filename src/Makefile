@@ -14,7 +14,7 @@ ELANG=EXPREG
 
 #################
 
-all : ljava package class legg comp jar
+all : ljava package legg class comp jar
 
 ljava: 
 	$(JAVAC) -classpath . mg/egg/eggc/runtime/libjava/*.java
@@ -40,7 +40,7 @@ package:
 	$(JAVA) -jar ../../../../../$(EGGJAR) $(ELANG).egg 
 
 class: mg/egg/eggc/compiler/egg/java
-	$(JAVAC) -classpath $(EGGJAR) mg/egg/eggc/compiler/egg/java/*.java
+	$(JAVAC) -classpath . mg/egg/eggc/compiler/egg/java/*.java
 
 comp:
 	$(JAVAC) -classpath . mg/egg/eggc/compiler/*.java 

@@ -86,11 +86,11 @@ public class LactionResolveur extends Resolveur {
 		return null;
 	}
 
-	public IType contFct(ENTREE e, String m, Vector<IType> ts) {
+	public IType contFct(IType e, String m, Vector<IType> ts) {
 		return null;
 	}
 
-	public void contProc(ENTREE e, String m, Vector<IType> ts) {
+	public void contProc(IType e, String m, Vector<IType> ts) {
 	}
 
 	public void contErr(Vector<IType> ts) {

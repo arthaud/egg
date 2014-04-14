@@ -45,7 +45,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	        }
 	        cargs.append((String) e.nextElement());
 	    }
-	    sb.append("call " + var(entree) + "." + f + "(" + cargs.toString()
+	    sb.append(var(entree) + "." + f + "(" + cargs.toString()
 	            + ");");
 
 	    return sb.toString();
@@ -250,7 +250,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	    return entree.getNom();
 	}
 
-	public String fct(ENTREE entree, String f, Vector args) {
+	public String fct(String code, String f, Vector args) {
 	    StringBuffer cargs = new StringBuffer();
 	    boolean premier = true;
 
@@ -263,7 +263,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	        cargs.append((String) e.nextElement());
 	    }
 
-	    return var(entree) + "." + f + "(" + cargs.toString() + ")";
+	    return code + "." + f + "(" + cargs.toString() + ")";
 	}
 
 	public String non(String code) {

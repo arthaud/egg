@@ -73,7 +73,7 @@ public interface IVisiteurAction {
 
 	public String var(ENTREE entree);
 
-	public String fct(ENTREE hentree, String txt, Vector<String> args);
+	public String fct(String code, String txt, Vector<String> args);
 
 	public String non(String code);
 

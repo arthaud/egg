@@ -227,9 +227,9 @@ abstract public class Resolveur {
 
 	abstract public IType contConst(IType t, Vector<IType> ts);
 
-	abstract public IType contFct(ENTREE e, String m, Vector<IType> ts);
+	abstract public IType contFct(IType e, String m, Vector<IType> ts);
 
-	abstract public void contProc(ENTREE e, String m, Vector<IType> ts);
+	abstract public void contProc(IType e, String m, Vector<IType> ts);
 
 	abstract public void contErr(Vector<IType> ts);
 }
