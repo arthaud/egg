@@ -149,57 +149,62 @@ public class VisiteurActionEgg implements IVisiteurAction {
 
 	public String matchVarAvec(ENTREE entree, String nom, String w, String ws) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("match " + var(entree) + "\n");
+	    sb.append("match (" + var(entree) + ") {\n");
 	    return sb.toString();
 	}
 
 	public String matchSi(ENTREE entree, String nom, String w, String ws) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("with " + nom + " then\n");
+	    sb.append("case " + nom + " {\n");
 	    sb.append(w);
+	    sb.append("}\n");
 	    sb.append(ws);
 	    return sb.toString();
 	}
 
 	public String matchSinonSi(ENTREE entree, String nom, String w, String ws) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("with " + nom + " then\n");
+	    sb.append("case " + nom + " {\n");
 	    sb.append(w);
+	    sb.append("}\n");
 	    sb.append(ws);
 	    return sb.toString();
 	}
 
 	public String matchVarAvec(ENTREE entree, IType t, String w, String ws) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("match " + var(entree) + "\n");
+	    sb.append("match (" + var(entree) + ") {\n");
 	    return sb.toString();
 	}
 
 	public String matchSi(ENTREE entree, IType t, String w, String ws) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("with " + getTypeEgg(t.getNom()) + " then\n");
+	    sb.append("case " + getTypeEgg(t.getNom()) + " {\n");
 	    sb.append(w);
+	    sb.append("}\n");
 	    sb.append(ws);
 	    return sb.toString();
 	}
 
 	public String matchSinonSi(ENTREE entree, IType t, String w, String ws) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("with " + getTypeEgg(t.getNom()) + " then\n");
+	    sb.append("case " + getTypeEgg(t.getNom()) + " {\n");
 	    sb.append(w);
+	    sb.append("}\n");
 	    sb.append(ws);
 	    return sb.toString();
 	}
 
 	public String matchSinon(String code) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append("else\n");
+	    sb.append("default {\n");
 	    sb.append(code);
+	    sb.append("}\n");
 	    return sb.toString();
 	}
 
 	public String matchFin() {
-        return "";
+        return "}\n";
 	}
 
 	public String vide() {
@@ -232,8 +237,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	}
 
 	public String decl(ENTREE entree) {
-	    return var(entree) + " : " + getTypeEgg(entree.getType().getNom())
-	            + ";";
+	    return getTypeEgg(entree.getType().getNom()) + " " + var(entree) + ";";
 	}
 
 	public String instanceOf(String code, IType t) {

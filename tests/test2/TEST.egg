@@ -85,12 +85,15 @@ TYPE -> ident  #a ;
     if (i = null) {
         error(B_undefined_type, ident^txt);
     } else {
-        match i with INFOTYPE then
-            it := i;
-            TYPE^type := it.getType();
-        else
-            error(B_not_type, ident^txt);
-        end
+        match (i) {
+            case INFOTYPE {
+                it := i;
+                TYPE^type := it.getType();
+            }
+            default {
+                error(B_not_type, ident^txt);
+            }
+        }
     }
 }
 
@@ -208,12 +211,15 @@ FX -> #a ;
 FX -> etoile #a1 FX #a2 ;
 #a1 {
     POINTEUR p;
-    match FX^her_type with POINTEUR then
-        p := FX^her_type;
-        FX1^her_type := p.getType();
-    else
-        error(B_not_pointeur, FX^her_type);
-    end
+    match (FX^her_type) {
+        case POINTEUR {
+            p := FX^her_type;
+            FX1^her_type := p.getType();
+        }
+        default {
+            error(B_not_pointeur, FX^her_type);
+        }
+    }
 }
 
 #a2 {
@@ -301,19 +307,22 @@ FX -> pt ident #a1 FX #a2 ;
     LCHAMPS liste_champs;
     CHAMP champ;
 
-    match FX^her_type with STRUCT then
-        p := FX^her_type;
-        liste_champs := p.getChamps();
-        champ := liste_champs.chercher(ident^txt);
+    match (FX^her_type) {
+        case STRUCT {
+            p := FX^her_type;
+            liste_champs := p.getChamps();
+            champ := liste_champs.chercher(ident^txt);
 
-        if (champ = null) {
-            error(B_undefined_field, ident^txt, p);
+            if (champ = null) {
+                error(B_undefined_field, ident^txt, p);
+            }
+
+            FX1^her_type := champ.getType();
         }
-
-        FX1^her_type := champ.getType();
-    else
-        error(B_not_struct, FX^her_type);
-    end
+        default {
+            error(B_not_struct, FX^her_type);
+        }
+    }
 }
 
 #a2 {
