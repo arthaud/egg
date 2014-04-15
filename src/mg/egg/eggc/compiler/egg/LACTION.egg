@@ -19,6 +19,10 @@ inh act : LACT for
     LOCALES, INSTS, INST, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
     APP, EARGS , EXCEPTION, INST2;
+inh tds_act : TDS_ACTION for
+    LOCALES, INSTS, INST, ELSIF, CASE, CASES, VAR,
+    EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
+    APP, EARGS , EXCEPTION, INST2;
 syn nom : STRING for
     CASE, OPADD, OPMUL;
 syn entree : ENTREE for
@@ -129,10 +133,17 @@ global
   length : INTEGER;
 
 #res {
+local
+  t : TDS_ACTION;
 do
   offset := LACTION^scanner.getOffset();
   LACTION^avis.resetIndent();
   LOCALES^avis.incIndent();
+
+  t := LACTION^act.getTds();
+  LOCALES^tds_act := t;
+  INSTS^tds_act := t;
+  EXCEPTION^tds_act := t;
 end
 }
 
@@ -163,18 +174,16 @@ end
 #add {
 local
   v : VAR;
-  l : TDS_ACTION;
+  t : TDS_ACTION;
   e : ENTREE;
-  b : BLOC;
 do
-  b := LOCALES^act.getBloc();
-  l := b.getLocs();
-  e := l.chercher(t_ident^txt);
+  t := LOCALES^tds_act;
+  e := t.chercher(t_ident^txt);
   if e /= null then
     error(LACTION_local_yet_declared, t_ident^txt);
   else
     v := new VAR(t_ident^txt, TYPE^type);
-    l.ajouter_locale(v);
+    t.ajouter_locale(v);
 
     -- inférence de type
     r.contDecl(v);
@@ -184,13 +193,11 @@ end
 
 #gen {
 local
-  l : TDS_ACTION;
+  t : TDS_ACTION;
   e : ENTREE;
-  b : BLOC;
 do
-  b := LOCALES^act.getBloc();
-  l := b.getLocs();
-  e := l.chercher(t_ident^txt);
+  t := LOCALES^tds_act;
+  e := t.chercher(t_ident^txt);
   LOCALES^code := LOCALES^avis.indent() @ LOCALES^avis.decl(e) @ "%N" @ LOCALES1^code;
 end
 }
@@ -279,19 +286,17 @@ global
 
 #add {
 local
-  l : TDS_ACTION;
+  t : TDS_ACTION;
   e : ENTREE;
-  b : BLOC;
 do
-  b:= EXCEPTION^act.getBloc();
-  l := b.getLocs();
-  e := l.chercher(t_ident^txt);
+  t := EXCEPTION^tds_act;
+  e := t.chercher(t_ident^txt);
 
   if e /= null then
     error(LACTION_local_yet_declared, t_ident^txt);
   else
     v := new VAR(t_ident^txt, null);
-    l.ajouter_locale(v);
+    t.ajouter_locale(v);
     v.setEtat(true);
   end
 end
@@ -558,14 +563,12 @@ end
 VAR -> t_ident #gen ;
 #gen {
 local
-  l : TDS_ACTION;
+  t : TDS_ACTION;
   e : ENTREE;
-  b : BLOC;
   r : Resolveur;
 do
-  b:= VAR^act.getBloc();
-  l := b.getLocs();
-  e := l.chercher(t_ident^txt);
+  t := VAR^tds_act;
+  e := t.chercher(t_ident^txt);
 
   if e = null then
     error(LACTION_not_a_var, t_ident^txt);
@@ -578,17 +581,15 @@ end
 VAR -> t_ident t_chapeau t_ident #gen ;
 #gen {
 local
-  l : TDS_ACTION;
+  t : TDS_ACTION;
   e : ENTREE;
   s: STRING;
-  b : BLOC;
   symb : SYMBOLE;
   r : Resolveur;
 do
-  b:= VAR^act.getBloc();
-  l := b.getLocs();
+  t := VAR^tds_act;
   s := t_ident^txt @ "^" @ t_ident1^txt;
-  e := l.chercher(s);
+  e := t.chercher(s);
 
   if e = null then
     error(LACTION_not_an_attribute, t_ident1^txt,t_ident^txt);
