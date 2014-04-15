@@ -4,34 +4,34 @@ option version = 5.2.8;
 
 inh table : TDS for
     LACTION,
-    INSTS, INST, INST2, ELSIF, CASE, CASES, VAR,
+    INSTS, INST, INST2, AFF, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP,
     ARGS, ARGSX, EARGS, EXCEPTION;
 inh reg : REGLE for
     LACTION;
 inh avis : IVisiteurAction for
     LACTION,
-    LOCALES, INSTS, INST, ELSIF, CASE, CASES,
+    INSTS, INST, ELSIF, CASE, CASES,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP,
-    ARGS, ARGSX, EARGS, EXCEPTION, INST2;
+    ARGS, ARGSX, EARGS, EXCEPTION, INST2, AFF;
 inh act : LACT for
     LACTION,
-    LOCALES, INSTS, INST, ELSIF, CASE, CASES, VAR,
+    INSTS, INST, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
-    APP, EARGS , EXCEPTION, INST2;
+    APP, EARGS , EXCEPTION, INST2, AFF;
 inh tds_act : TDS_ACTION for
-    LOCALES, INSTS, INST, ELSIF, CASE, CASES, VAR,
+    INSTS, INST, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
-    APP, EARGS , EXCEPTION, INST2;
+    APP, EARGS , EXCEPTION, INST2, AFF;
 syn nom : STRING for
     CASE, OPADD, OPMUL;
 syn entree : ENTREE for
     VAR;
 inh hentree : ENTREE for
-    INST2, CASE, CASES;
+    INST2, AFF, CASE, CASES;
 syn code : STRING for
     LACTION,
-    LOCALES, INSTS, INST,INST2, ELSIF, CASE, CASES,
+    INSTS, INST, INST2, AFF, ELSIF, CASE, CASES,
     EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, EXCEPTION;
 inh hcode : STRING for
     EXPRTERME, EXPRFACTEUR, APP;
@@ -127,7 +127,7 @@ term     t_car      is    "\'({esc}|\\[\\\']|{ccar})\'" ;
 term     t_ident    is    "[a-zA-Z_][a-zA-Z_0-9]*" ;
 
 
-LACTION -> #res t_aco LOCALES INSTS EXCEPTION t_acf #gen ;
+LACTION -> #res t_aco INSTS EXCEPTION t_acf #gen ;
 global
   offset : INTEGER;
   length : INTEGER;
@@ -138,12 +138,11 @@ local
 do
   offset := LACTION^scanner.getOffset();
   LACTION^avis.resetIndent();
-  LOCALES^avis.incIndent();
+  LACTION^avis.incIndent();
 
   t := LACTION^act.getTds();
-  LOCALES^tds_act := t;
-  INSTS^tds_act := t;
-  EXCEPTION^tds_act := t;
+  INSTS^tds_act := new TDS_ACTION(t);
+  EXCEPTION^tds_act := new TDS_ACTION(t);
 end
 }
 
@@ -152,60 +151,11 @@ local
   c : STRING;
 do
   -- met à jour le code de l'action
-  LACTION^code := LOCALES^code @ LACTION^avis.insts() @ INSTS^code @ EXCEPTION^code;
+  LACTION^code := LACTION^avis.insts() @ INSTS^code @ EXCEPTION^code;
   LACTION^avis.decIndent();
   length := LACTION^scanner.getOffset() + LACTION^scanner.getLength() - offset;
   LACTION^offset := offset;
   LACTION^length := length;
-end
-}
-
-LOCALES -> #trans TYPE t_ident t_pointvirgule #add LOCALES #gen ;
-global
-  r : Resolveur;
-
-#trans {
-do
-  r := LOCALES^act.getResolveur();
-  TYPE^res := r;
-end
-}
-
-#add {
-local
-  v : VAR;
-  t : TDS_ACTION;
-  e : ENTREE;
-do
-  t := LOCALES^tds_act;
-  e := t.chercher(t_ident^txt);
-  if e /= null then
-    error(LACTION_local_yet_declared, t_ident^txt);
-  else
-    v := new VAR(t_ident^txt, TYPE^type);
-    t.ajouter_locale(v);
-
-    -- inférence de type
-    r.contDecl(v);
-  end
-end
-}
-
-#gen {
-local
-  t : TDS_ACTION;
-  e : ENTREE;
-do
-  t := LOCALES^tds_act;
-  e := t.chercher(t_ident^txt);
-  LOCALES^code := LOCALES^avis.indent() @ LOCALES^avis.decl(e) @ "%N" @ LOCALES1^code;
-end
-}
-
-LOCALES -> #gen ;
-#gen {
-do
-  LOCALES^code := "";
 end
 }
 
@@ -305,6 +255,77 @@ end
 #gen {
 do
   EXCEPTION^code := EXCEPTION^avis.exc(t_ident^txt, INSTS^code);
+end
+}
+
+INST -> #trans TYPE t_ident #hgen AFF t_pointvirgule #gen ;
+global
+  r : Resolveur;
+
+#trans {
+do
+  r := INST^act.getResolveur();
+  TYPE^res := r;
+end
+}
+
+#hgen {
+local
+  v : VAR;
+  t : TDS_ACTION;
+  e : ENTREE;
+do
+  t := INST^tds_act;
+  e := t.chercher(t_ident^txt);
+  if e /= null then
+    error(LACTION_local_yet_declared, t_ident^txt);
+  else
+    v := new VAR(t_ident^txt, TYPE^type);
+    AFF^hentree := v;
+    t.ajouter_locale(v);
+
+    -- inférence de type
+    r.contDecl(v);
+  end
+end
+}
+
+#gen {
+local
+  t : TDS_ACTION;
+  e : ENTREE;
+do
+  t := INST^tds_act;
+  e := t.chercher(t_ident^txt);
+  INST^code := INST^avis.decl(e) @ AFF^code;
+end
+}
+
+
+AFF -> #gen ;
+#gen {
+do
+  AFF^code := "";
+end
+}
+
+AFF -> t_affectation EXPR #gen ;
+#gen {
+local
+  r : Resolveur;
+do
+  if ~AFF^hentree.affectable(AFF^act.getPos()) then
+     error(LACTION_var_illegal_access, AFF^hentree.getNom());
+  else
+    AFF^hentree.setEtat(true);
+
+    -- expr est un triplet (nom, type, val)
+    AFF^code := "%N" @ AFF^avis.indent() @ AFF^avis.aff(AFF^hentree, EXPR^code);
+
+    -- inférence
+    r := AFF^act.getResolveur();
+    r.contAff(AFF^hentree, EXPR^type);
+  end
 end
 }
 
@@ -491,6 +512,7 @@ INST -> t_if t_paro EXPR t_parf t_aco #inc INSTS t_acf #dec ELSIF #gen ;
 #inc {
 do
   INST^avis.incIndent();
+  INSTS^tds_act := new TDS_ACTION(INST^tds_act);
 end
 }
 
@@ -515,6 +537,7 @@ ELSIF -> t_elseif t_paro EXPR t_parf t_aco #inc INSTS t_acf #dec ELSIF #gen ;
 #inc {
 do
   ELSIF^avis.incIndent();
+  INSTS^tds_act := new TDS_ACTION(ELSIF^tds_act);
 end
 }
 
@@ -539,6 +562,7 @@ ELSIF -> t_else t_aco #inc INSTS t_acf #gen ;
 #inc {
 do
   ELSIF^avis.incIndent();
+  INSTS^tds_act := new TDS_ACTION(ELSIF^tds_act);
 end
 }
 
@@ -640,6 +664,8 @@ do
   -- pendant le temps de INSTS
   --CASE^hentree.setTypeReel(TYPE^type);
   CASE^avis.transtyper(CASE^hentree, TYPE^type);
+
+  INSTS^tds_act := new TDS_ACTION(CASE^tds_act);
 end
 }
 
@@ -668,6 +694,7 @@ CASES -> t_default #inc t_aco INSTS t_acf #gen ;
 #inc {
 do
   CASES^avis.incIndent();
+  INSTS^tds_act := new TDS_ACTION(CASES^tds_act);
 end
 }
 

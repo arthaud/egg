@@ -14,6 +14,7 @@ sugar  fois        is    "\*" ;
 sugar  divise      is    "\/" ;
 term   entier      is    "[0-9]+" ;
 
+
 S -> V #a ;
 #a {
     write("resultat : " + V^val + "\n");
@@ -28,25 +29,19 @@ V -> entier #a ;
 
 V -> paro U #a ;
 #a {
+    if(true)
+    {
+        Integer j;
+    }
+    else
+    {
+        j := 42; -- variable non déclarée
+    }
+
     V^val := U^val;
 }
 
 U -> plus V V parf #a ;
 #a {
     U^val := V^val + V1^val;
-}
-
-U -> moins V V parf #a ;
-#a {
-    U^val := V^val - V1^val;
-}
-
-U -> fois V V parf #a ;
-#a {
-    U^val := V^val * V1^val;
-}
-
-U -> divise V V parf #a ;
-#a {
-    U^val := V^val / V1^val;
 }

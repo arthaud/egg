@@ -28,9 +28,8 @@ global Integer x;
 V -> entier #a ;
 
 #a {
-    Integer i;
+    Integer i := new Integer(0);
     -- hack, on ne peut pas utiliser de méthodes statiques..
-    i := new Integer(0);
     V^val := i.parseInt(entier^txt);
 }
 

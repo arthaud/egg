@@ -6,7 +6,6 @@ import java.util.List;
 import mg.egg.eggc.compiler.egg.java.S_ACTS_EGG;
 import mg.egg.eggc.compiler.egg.java.S_GLOBALES_EGG;
 import mg.egg.eggc.compiler.egg.java.S_LACTION_LACTION;
-import mg.egg.eggc.compiler.egg.java.S_LOCALES_LACTION;
 import mg.egg.eggc.compiler.egg.java.S_S_EGG;
 import mg.egg.eggc.compiler.egg.java.T_LACTION;
 import mg.egg.eggc.runtime.libjava.IDstNode;
@@ -59,30 +58,7 @@ public class DstUtils {
 
 	// Return list of local declarations of action containing node 'node'
 	public static List<String> getLocalVarsList(IDstNode node) {
-		IDstNode action = getAction(node);
-		if (action == null)
-			return null;
-
-		List<String> names = new ArrayList<String>();
-		List<IDstNode> ls = action.getChildren();
-		if (ls == null)
-			return names;
-
-		IDstNode l = ls.get(0); // locales ?
-		if (!(l instanceof S_LOCALES_LACTION))
-			return names;
-
-		try {
-			while (l instanceof S_LOCALES_LACTION
-					&& ((ls = l.getChildren()) != null)) {
-				names.add(((T_LACTION) ls.get(1)).getTxt()); // ident var
-				l = ls.get(3);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return names;
+        return null; /* TODO */
 	}
 
 	// Return list of global declarations of action containing node 'node'

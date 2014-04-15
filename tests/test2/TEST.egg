@@ -78,16 +78,14 @@ TYPE -> int  #type ;
 -------------------------------------------------------
 TYPE -> ident  #a ;
 #a {
-    INFO i;
-    INFOTYPE it;
+    INFO i := TYPE^tds.chercherGlobalement(ident^txt);
 
-    i := TYPE^tds.chercherGlobalement(ident^txt);
     if (i = null) {
         error(B_undefined_type, ident^txt);
     } else {
         match (i) {
             case INFOTYPE {
-                it := i;
+                INFOTYPE it := i;
                 TYPE^type := it.getType();
             }
             default {
@@ -109,9 +107,8 @@ INSTS -> INST INSTS ;
 -----------------------------------------------------------
 INST -> type ident aff TYPE  #tds pv  ;
 #tds {
-    INFO i;
+    INFO i := INST^tds.chercherGlobalement(ident^txt);
 
-    i := INST^tds.chercherGlobalement(ident^txt);
     if (i /= null) {
         error(B_var_already_defined, ident^txt);
     } else {
@@ -125,8 +122,8 @@ INST -> type ident aff TYPE  #tds pv  ;
 -------------------------------------------------------
 INST -> TYPE ident aff TERME #tdstype pv ;
 #tdstype {
-    INFO i;
-    i := INST^tds.chercherLocalement(ident^txt);
+    INFO i := INST^tds.chercherLocalement(ident^txt);
+
     if (i /= null) {
         error(B_var_already_defined, ident^txt);
     } elseif (~TYPE^type.compareTo(TERME^type)) {
@@ -142,8 +139,8 @@ INST -> TYPE ident aff TERME #tdstype pv ;
 -------------------------------------------------------
 INST -> ident #a1 FX aff TERME pv #a2 ;
 #a1 {
-    INFO var;
-    var := INST^tds.chercherGlobalement(ident^txt);
+    INFO var := INST^tds.chercherGlobalement(ident^txt);
+
     if (var = null) {
         error(B_undefined_var, ident^txt);
     } else {
@@ -152,8 +149,8 @@ INST -> ident #a1 FX aff TERME pv #a2 ;
 }
 
 #a2 {
-    DTYPE t;
-    t := TERME^type;
+    DTYPE t := TERME^type;
+
     if (! t.compareTo(FX^syn_type)) {
         error(B_not_compatible, t, FX^syn_type);
     }
@@ -186,8 +183,8 @@ TERME -> FACTEUR #type ;
 -------------------------------------------------------
 FACTEUR -> ident #a1 FX #a2 ;
 #a1 {
-    INFO i;
-    i := FACTEUR^tds.chercherGlobalement(ident^txt);
+    INFO i := FACTEUR^tds.chercherGlobalement(ident^txt);
+
     if (i = null) {
         error(B_undefined_var, ident^txt);
     } else {
@@ -210,10 +207,9 @@ FX -> #a ;
 ---------------------------------------------------------------
 FX -> etoile #a1 FX #a2 ;
 #a1 {
-    POINTEUR p;
     match (FX^her_type) {
         case POINTEUR {
-            p := FX^her_type;
+            POINTEUR p := FX^her_type;
             FX1^her_type := p.getType();
         }
         default {
@@ -303,15 +299,11 @@ CHAMPS -> TYPE ident pv #a CHAMPS #b ;
 
 FX -> pt ident #a1 FX #a2 ;
 #a1 {
-    STRUCT p;
-    LCHAMPS liste_champs;
-    CHAMP champ;
-
     match (FX^her_type) {
         case STRUCT {
-            p := FX^her_type;
-            liste_champs := p.getChamps();
-            champ := liste_champs.chercher(ident^txt);
+            STRUCT p := FX^her_type;
+            LCHAMPS liste_champs := p.getChamps();
+            CHAMP champ := liste_champs.chercher(ident^txt);
 
             if (champ = null) {
                 error(B_undefined_field, ident^txt, p);
@@ -331,8 +323,7 @@ FX -> pt ident #a1 FX #a2 ;
 
 FACTEUR -> aco TERME #a1 TERMES #a2 acf ;
 #a1 {
-    LTYPES l;
-    l := new LTYPES();
+    LTYPES l := new LTYPES();
     l.inserer(TERME^type);
     TERMES^her_types := l;
 }
