@@ -147,6 +147,10 @@ out=$(compile_egg bad-egg-var-undefined 2>&1)
 [[ $? > 0 ]] && [[ "$out" = *"Error(Semantics)"*"j n'est pas une variable"* ]]
 check "vérification des variables non déclarées"
 
+out=$(compile_egg bad-egg-var-undefined-2 2>&1)
+[[ $? > 0 ]] && [[ "$out" = *"Error(Semantics)"*"j n'est pas une variable"* ]]
+check "vérification des variables non déclarées, avec gestion des blocs"
+
 # test2
 compile_and_check test2
 

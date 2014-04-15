@@ -9,13 +9,9 @@ term   entier      is    "[0-9]+" ;
 
 S -> entier #a ;
 #a {
-    BOOLEAN test1;
-    BOOLEAN test2;
-    BOOLEAN test3;
-
-    test1 := instanceof("test", STRING);
-    test2 := instanceof("la réponse est " + 42, STRING);
-    test3 := instanceof(new Vector<STRING>(), Vector);
+    BOOLEAN test1 := instanceof("test", STRING);
+    BOOLEAN test2 := instanceof("la réponse est " + 42, STRING);
+    BOOLEAN test3 := instanceof(new Vector<STRING>(), Vector);
 
     write("test1 = " + test1 + "\n");
     write("test2 = " + test2 + "\n");
