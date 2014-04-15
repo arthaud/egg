@@ -22,18 +22,18 @@ S -> V #a ;
 
 V -> entier #a ;
 #a {
-    Integer i := new Integer(0);
+    Integer i = new Integer(0);
     -- hack, on ne peut pas utiliser de méthodes statiques..
-    V^val := i.parseInt(entier^txt);
+    V^val = i.parseInt(entier^txt);
 }
 
 V -> paro U #a ;
 #a {
-    j := 42; -- variable non déclarée
-    V^val := U^val;
+    j = 42; -- variable non déclarée
+    V^val = U^val;
 }
 
 U -> plus V V parf #a ;
 #a {
-    U^val := V^val + V1^val;
+    U^val = V^val + V1^val;
 }

@@ -28,7 +28,7 @@ public class VisiteurActionEgg implements IVisiteurAction {
 
 	public String aff(ENTREE entree, String code) {
 	    StringBuffer sb = new StringBuffer();
-	    sb.append(var(entree) + ":=" + code + ";");
+	    sb.append(var(entree) + " = " + code + ";");
 	    return sb.toString();
 	}
 

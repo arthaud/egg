@@ -9,10 +9,10 @@ term   entier      is    "[0-9]+" ;
 
 S -> entier #a ;
 #a {
-    BOOLEAN test1 := 1 + 2 = 3 && 1 < 2;
-    BOOLEAN test2 := 1 >= 1 && true && !(1=2);
-    BOOLEAN test3 := 1 >= 0 || 2 <= 3;
-    BOOLEAN test4 := 1+2*3 = 7 && (false || 42=42);
+    BOOLEAN test1 = 1 + 2 == 3 && 1 < 2;
+    BOOLEAN test2 = 1 >= 1 && true && !(1==2);
+    BOOLEAN test3 = 1 >= 0 || 2 <= 3;
+    BOOLEAN test4 = 1+2*3 == 7 && (false || 42==42);
 
     write("test1 = " + test1 + "\n");
     write("test2 = " + test2 + "\n");

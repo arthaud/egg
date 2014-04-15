@@ -62,7 +62,7 @@ sugar      t_chapeau        is    "\^"              aka $^$ ;
 sugar      t_virgule        is    "\,"              aka $,$ ;
 sugar      t_pointvirgule   is    ";"               aka $;$ ;
 sugar      t_deuxpoints     is    ":"               aka $:$ ;
-sugar      t_affectation    is    "(:=)"            aka $:=$ ;
+sugar      t_affectation    is    "(=)"             aka $:=$ ;
 sugar      t_inf_egal       is    "\<="             aka $<=$ ;
 sugar      t_inf            is    "\<"              aka $<$ ;
 sugar      t_sup_egal       is    "\>="             aka $>=$ ;
@@ -97,7 +97,7 @@ sugar      t_else           is    "else"            aka $else$ ;
 sugar      t_match          is    "match"           aka $match$ ;
 sugar      t_case           is    "case"            aka $case$ ;
 sugar      t_default        is    "default"         aka $default$ ;
-sugar      t_egal           is    "(=)"             aka $=$ ;
+sugar      t_egal           is    "(==)"            aka $==$ ;
 sugar      t_different      is    "((\/=)|(\!=))"   aka $/=$,$!=$ ;
 sugar      t_nil            is    "((nil)|(null))"  aka $nil$,$null$ ;
 sugar      t_true           is    "true"            aka $true$ ;
@@ -818,7 +818,7 @@ OPCOMP -> t_sup_egal #gen ;
 #gen { do OPCOMP^nom := ">="; end }
 
 OPCOMP -> t_egal #gen ;
-#gen { do OPCOMP^nom := "="; end }
+#gen { do OPCOMP^nom := "=="; end }
 
 OPCOMP -> t_different #gen ;
 #gen { do OPCOMP^nom := "/="; end }

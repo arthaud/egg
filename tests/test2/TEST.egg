@@ -44,7 +44,7 @@ term   ident       is    "[a-zA-Z_éèàçÉÈÀÇ]+" ;
 
 PROG -> ident #tds BLOC ;
 #tds {
-    BLOC^tds := null;
+    BLOC^tds = null;
 }
 
 BLOC -> aco #tds INSTS acf #tds2 ;
@@ -52,8 +52,8 @@ global        -- globale aux actions de cette règle
     TDS t;    -- pour voir la TDS du bloc
 
 #tds {
-    t := new TDS(BLOC^tds);
-    INSTS^tds := t;
+    t = new TDS(BLOC^tds);
+    INSTS^tds = t;
 }
 
 #tds2 {
@@ -65,12 +65,12 @@ global        -- globale aux actions de cette règle
 -------------------------------------------------------
 TYPE -> bool #type ;
 #type {
-    TYPE^type := new DTYPE("booleen", 1);
+    TYPE^type = new DTYPE("booleen", 1);
 }
 
 TYPE -> int  #type ;
 #type {
-    TYPE^type := new DTYPE("entier", 4);
+    TYPE^type = new DTYPE("entier", 4);
 }
 
 -------------------------------------------------------
@@ -78,15 +78,15 @@ TYPE -> int  #type ;
 -------------------------------------------------------
 TYPE -> ident  #a ;
 #a {
-    INFO i := TYPE^tds.chercherGlobalement(ident^txt);
+    INFO i = TYPE^tds.chercherGlobalement(ident^txt);
 
-    if (i = null) {
+    if (i == null) {
         error(B_undefined_type, ident^txt);
     } else {
         match (i) {
             case INFOTYPE {
-                INFOTYPE it := i;
-                TYPE^type := it.getType();
+                INFOTYPE it = i;
+                TYPE^type = it.getType();
             }
             default {
                 error(B_not_type, ident^txt);
@@ -107,12 +107,12 @@ INSTS -> INST INSTS ;
 -----------------------------------------------------------
 INST -> type ident aff TYPE  #tds pv  ;
 #tds {
-    INFO i := INST^tds.chercherGlobalement(ident^txt);
+    INFO i = INST^tds.chercherGlobalement(ident^txt);
 
     if (i /= null) {
         error(B_var_already_defined, ident^txt);
     } else {
-        i := new INFOTYPE(TYPE^type);
+        i = new INFOTYPE(TYPE^type);
         INST^tds.inserer(ident^txt, i);
     }
 }
@@ -122,14 +122,14 @@ INST -> type ident aff TYPE  #tds pv  ;
 -------------------------------------------------------
 INST -> TYPE ident aff TERME #tdstype pv ;
 #tdstype {
-    INFO i := INST^tds.chercherLocalement(ident^txt);
+    INFO i = INST^tds.chercherLocalement(ident^txt);
 
     if (i /= null) {
         error(B_var_already_defined, ident^txt);
     } elseif (~TYPE^type.compareTo(TERME^type)) {
         error(B_not_compatible, TYPE^type, TERME^type);
     } else {
-        i := new INFOVAR(TYPE^type);
+        i = new INFOVAR(TYPE^type);
         INST^tds.inserer(ident^txt,  i);
     }
 }
@@ -139,17 +139,17 @@ INST -> TYPE ident aff TERME #tdstype pv ;
 -------------------------------------------------------
 INST -> ident #a1 FX aff TERME pv #a2 ;
 #a1 {
-    INFO var := INST^tds.chercherGlobalement(ident^txt);
+    INFO var = INST^tds.chercherGlobalement(ident^txt);
 
-    if (var = null) {
+    if (var == null) {
         error(B_undefined_var, ident^txt);
     } else {
-        FX^her_type := var.getType();
+        FX^her_type = var.getType();
     }
 }
 
 #a2 {
-    DTYPE t := TERME^type;
+    DTYPE t = TERME^type;
 
     if (! t.compareTo(FX^syn_type)) {
         error(B_not_compatible, t, FX^syn_type);
@@ -175,7 +175,7 @@ INST -> tantque paro TERME #type parf BLOC ;
 
 TERME -> FACTEUR #type ;
 #type {
-    TERME^type := FACTEUR^type;
+    TERME^type = FACTEUR^type;
 }
 
 -------------------------------------------------------
@@ -183,17 +183,17 @@ TERME -> FACTEUR #type ;
 -------------------------------------------------------
 FACTEUR -> ident #a1 FX #a2 ;
 #a1 {
-    INFO i := FACTEUR^tds.chercherGlobalement(ident^txt);
+    INFO i = FACTEUR^tds.chercherGlobalement(ident^txt);
 
-    if (i = null) {
+    if (i == null) {
         error(B_undefined_var, ident^txt);
     } else {
-        FX^her_type := i.getType();
+        FX^her_type = i.getType();
     }
 }
 
 #a2 {
-    FACTEUR^type := FX^syn_type;
+    FACTEUR^type = FX^syn_type;
 }
 
 -------------------------------------------------------
@@ -201,7 +201,7 @@ FACTEUR -> ident #a1 FX #a2 ;
 -------------------------------------------------------
 FX -> #a ;
 #a {
-    FX^syn_type := FX^her_type;
+    FX^syn_type = FX^her_type;
 }
 
 ---------------------------------------------------------------
@@ -209,8 +209,8 @@ FX -> etoile #a1 FX #a2 ;
 #a1 {
     match (FX^her_type) {
         case POINTEUR {
-            POINTEUR p := FX^her_type;
-            FX1^her_type := p.getType();
+            POINTEUR p = FX^her_type;
+            FX1^her_type = p.getType();
         }
         default {
             error(B_not_pointeur, FX^her_type);
@@ -219,7 +219,7 @@ FX -> etoile #a1 FX #a2 ;
 }
 
 #a2 {
-    FX^syn_type := FX1^syn_type;
+    FX^syn_type = FX1^syn_type;
 }
 
 -------------------------------------------------------
@@ -227,7 +227,7 @@ FX -> etoile #a1 FX #a2 ;
 -------------------------------------------------------
 FACTEUR -> entier #type ;
 #type {
-    FACTEUR^type := new DTYPE("entier", 4);
+    FACTEUR^type = new DTYPE("entier", 4);
 }
 
 -------------------------------------------------------
@@ -235,18 +235,18 @@ FACTEUR -> entier #type ;
 -------------------------------------------------------
 FACTEUR -> vrai #type ;
 #type {
-    FACTEUR^type := new DTYPE("booleen", 1);
+    FACTEUR^type = new DTYPE("booleen", 1);
 }
 
 FACTEUR -> faux #type ;
 #type {
-    FACTEUR^type := new DTYPE("booleen", 1);
+    FACTEUR^type = new DTYPE("booleen", 1);
 }
 
 -------------------------------------------------------
 FACTEUR -> paro TERME parf #type ;
 #type {
-    FACTEUR^type := TERME^type;
+    FACTEUR^type = TERME^type;
 }
 
 -------------------------------------------------------
@@ -254,7 +254,7 @@ FACTEUR -> paro TERME parf #type ;
 -------------------------------------------------------
 TYPE -> etoile TYPE  #a ;
 #a {
-    TYPE^type := new POINTEUR(TYPE1^type);
+    TYPE^type = new POINTEUR(TYPE1^type);
 }
 
 -------------------------------------------------------
@@ -262,7 +262,7 @@ TYPE -> etoile TYPE  #a ;
 -------------------------------------------------------
 FACTEUR -> new TYPE paro parf #a ;
 #a {
-    FACTEUR^type := new POINTEUR(TYPE^type);
+    FACTEUR^type = new POINTEUR(TYPE^type);
 }
 
 -------------------------------------------------------
@@ -270,16 +270,16 @@ FACTEUR -> new TYPE paro parf #a ;
 -------------------------------------------------------
 TYPE -> struct aco #a CHAMPS acf #b ;
 #a {
-    CHAMPS^her_champs := new LCHAMPS();
+    CHAMPS^her_champs = new LCHAMPS();
 }
 
 #b {
-    TYPE^type := new STRUCT(CHAMPS^syn_champs);
+    TYPE^type = new STRUCT(CHAMPS^syn_champs);
 }
 
 CHAMPS -> #a ;
 #a {
-    CHAMPS^syn_champs := CHAMPS^her_champs;
+    CHAMPS^syn_champs = CHAMPS^her_champs;
 }
 
 CHAMPS -> TYPE ident pv #a CHAMPS #b ;
@@ -290,26 +290,26 @@ CHAMPS -> TYPE ident pv #a CHAMPS #b ;
         CHAMPS^her_champs.inserer(new CHAMP(ident^txt, TYPE^type));
     }
 
-    CHAMPS1^her_champs := CHAMPS^her_champs;
+    CHAMPS1^her_champs = CHAMPS^her_champs;
 }
 
 #b {
-    CHAMPS^syn_champs := CHAMPS1^syn_champs;
+    CHAMPS^syn_champs = CHAMPS1^syn_champs;
 }
 
 FX -> pt ident #a1 FX #a2 ;
 #a1 {
     match (FX^her_type) {
         case STRUCT {
-            STRUCT p := FX^her_type;
-            LCHAMPS liste_champs := p.getChamps();
-            CHAMP champ := liste_champs.chercher(ident^txt);
+            STRUCT p = FX^her_type;
+            LCHAMPS liste_champs = p.getChamps();
+            CHAMP champ = liste_champs.chercher(ident^txt);
 
-            if (champ = null) {
+            if (champ == null) {
                 error(B_undefined_field, ident^txt, p);
             }
 
-            FX1^her_type := champ.getType();
+            FX1^her_type = champ.getType();
         }
         default {
             error(B_not_struct, FX^her_type);
@@ -318,31 +318,31 @@ FX -> pt ident #a1 FX #a2 ;
 }
 
 #a2 {
-    FX^syn_type := FX1^syn_type;
+    FX^syn_type = FX1^syn_type;
 }
 
 FACTEUR -> aco TERME #a1 TERMES #a2 acf ;
 #a1 {
-    LTYPES l := new LTYPES();
+    LTYPES l = new LTYPES();
     l.inserer(TERME^type);
-    TERMES^her_types := l;
+    TERMES^her_types = l;
 }
 
 #a2 {
-    FACTEUR^type := new TUPLE(TERMES^syn_types);
+    FACTEUR^type = new TUPLE(TERMES^syn_types);
 }
 
 TERMES -> #a ;
 #a {
-    TERMES^syn_types := TERMES^her_types;
+    TERMES^syn_types = TERMES^her_types;
 }
 
 TERMES -> v TERME #a1 TERMES #a2 ;
 #a1 {
     TERMES^her_types.inserer(TERME^type);
-    TERMES1^her_types := TERMES^her_types;
+    TERMES1^her_types = TERMES^her_types;
 }
 
 #a2 {
-    TERMES^syn_types := TERMES1^syn_types;
+    TERMES^syn_types = TERMES1^syn_types;
 }

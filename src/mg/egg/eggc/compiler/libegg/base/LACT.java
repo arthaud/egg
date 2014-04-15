@@ -71,7 +71,7 @@ public class LACT implements IAction {
 
 	// affectation
 	public String mkCopy(ENTREE e1, ENTREE e2) {
-		return e1.getNom() + " := " + e2.getNom() + ";\n";
+		return e1.getNom() + " = " + e2.getNom() + ";\n";
 	}
 
 	// debut des instructions
