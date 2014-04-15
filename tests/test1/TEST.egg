@@ -21,32 +21,32 @@ S -> V #a ;
 
 V -> entier #a ;
 #a {
-    Integer i := new Integer(0);
+    Integer i = new Integer(0);
     -- hack, on ne peut pas utiliser de méthodes statiques..
-    V^val := i.parseInt(entier^txt);
+    V^val = i.parseInt(entier^txt);
 }
 
 V -> paro U #a ;
 #a {
-    V^val := U^val;
+    V^val = U^val;
 }
 
 U -> plus V V parf #a ;
 #a {
-    U^val := V^val + V1^val;
+    U^val = V^val + V1^val;
 }
 
 U -> moins V V parf #a ;
 #a {
-    U^val := V^val - V1^val;
+    U^val = V^val - V1^val;
 }
 
 U -> fois V V parf #a ;
 #a {
-    U^val := V^val * V1^val;
+    U^val = V^val * V1^val;
 }
 
 U -> divise V V parf #a ;
 #a {
-    U^val := V^val / V1^val;
+    U^val = V^val / V1^val;
 }

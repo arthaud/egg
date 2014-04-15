@@ -22,8 +22,6 @@ public class UtilsJava {
 		        return "!";
 		    else if (op.equals("@"))
 		        return "+";
-		    else if (op.equals("="))
-		        return "==";
 		    else if (op.equals("/="))
 		        return "!=";
 		    else
