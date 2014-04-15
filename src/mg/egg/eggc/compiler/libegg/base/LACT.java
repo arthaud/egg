@@ -12,10 +12,10 @@ public class LACT implements IAction {
 		return pos;
 	}
 
-	private BLOC bloc;
+	private TDS_ACTION tds;
 
-	public BLOC getBloc() {
-		return bloc;
+	public TDS_ACTION getTds() {
+		return tds;
 	}
 
 	private String code;
@@ -25,7 +25,7 @@ public class LACT implements IAction {
 	}
 
 	public Resolveur getResolveur() {
-		return bloc.getLocs().getResolveur();
+		return tds.getResolveur();
 	}
 
 	public void setCode(String c) {
@@ -38,7 +38,7 @@ public class LACT implements IAction {
 
 	public LACT(TDS_ACTION m, int p) {
 		pos = p;
-		bloc = new BLOC(m);
+		tds = new TDS_ACTION(m);
 		code = null;
 	}
 

@@ -6,7 +6,7 @@ public interface IAction {
 	// la position dans la règle
 	public int getPos();
 
-	public BLOC getBloc();
+	public TDS_ACTION getTds();
 
 	public String getCode();
 
