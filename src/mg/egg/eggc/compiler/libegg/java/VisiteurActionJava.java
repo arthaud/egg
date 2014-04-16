@@ -339,9 +339,4 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 
 	public void resetIndent() {
 	}
-
-	public String exc(String code, String cinsts) {
-		return "\t\t}catch(" + table.getNom() + "Exception loc_e){" + cinsts
-				+ "\n";
-	}
 }
