@@ -179,9 +179,4 @@ public class VisiteurActionNull implements IVisiteurAction {
 
 	public void resetIndent() {
 	}
-
-	public String exc(String code, String cinsts) {
-		return "";
-	}
-
 }

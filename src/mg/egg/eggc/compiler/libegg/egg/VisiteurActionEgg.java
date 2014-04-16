@@ -322,9 +322,4 @@ public class VisiteurActionEgg implements IVisiteurAction {
 
 	public void m_entete(String m) {
 	}
-
-	public String exc(String code, String cinsts) {
-	    return null;
-	}
-
 }

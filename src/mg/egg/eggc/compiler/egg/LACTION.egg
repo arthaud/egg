@@ -5,21 +5,21 @@ option version = 5.2.8;
 inh table : TDS for
     LACTION, INSTS, INST, INST2, AFF, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    APP, ARGS, ARGSX, EARGS, EXCEPTION;
+    APP, ARGS, ARGSX, EARGS;
 inh reg : REGLE for
     LACTION;
 inh avis : IVisiteurAction for
     LACTION, INSTS, INST, AFF, ELSIF, CASE, CASES,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP;
+    ARGS, ARGSX, EARGS, INST2, APP;
 inh act : LACT for
     LACTION, INSTS, INST, AFF, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP;
+    ARGS, ARGSX, EARGS, INST2, APP;
 inh tds_act : TDS_ACTION for
     INSTS, INST, AFF, ELSIF, CASE, CASES, VAR,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    ARGS, ARGSX, EARGS , EXCEPTION, INST2, APP;
+    ARGS, ARGSX, EARGS , INST2, APP;
 syn nom : STRING for
     CASE, OPBOOL, OPCOMP, OPADD, OPMUL;
 syn entree : ENTREE for
@@ -29,7 +29,7 @@ inh hentree : ENTREE for
 syn code : STRING for
     LACTION, INSTS, INST, INST2, AFF, ELSIF, CASE, CASES,
     EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
-    APP, EXCEPTION;
+    APP;
 inh hcode : STRING for
     EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR, APP;
 syn args : Vector<STRING> for
@@ -106,7 +106,6 @@ sugar      t_string         is    "STRING"          aka $STRING$ ;
 sugar      t_integer        is    "INTEGER"         aka $INTEGER$ ;
 sugar      t_double         is    "DOUBLE"          aka $DOUBLE$ ;
 sugar      t_char           is    "CHARACTER"       aka $CHARACTER$ ;
-sugar      t_exception      is    "exception"       aka $exception$ ;
 term       t_entier         is    "[0-9]+" ;
 term       t_flottant       is    "[0-9]*\.[0-9]+(e[\+\-]?[0-9]+)?" ;
 
@@ -125,7 +124,7 @@ term     t_car      is    "\'({esc}|\\[\\\']|{ccar})\'" ;
 term     t_ident    is    "[a-zA-Z_][a-zA-Z_0-9]*" ;
 
 
-LACTION -> #res t_aco INSTS EXCEPTION t_acf #gen ;
+LACTION -> #res t_aco INSTS t_acf #gen ;
 global
   offset : INTEGER;
   length : INTEGER;
@@ -140,7 +139,6 @@ do
 
   t := LACTION^act.getTds();
   INSTS^tds_act := new TDS_ACTION(t);
-  EXCEPTION^tds_act := new TDS_ACTION(t);
 end
 }
 
@@ -149,7 +147,7 @@ local
   c : STRING;
 do
   -- met à jour le code de l'action
-  LACTION^code := LACTION^avis.insts() @ INSTS^code @ EXCEPTION^code;
+  LACTION^code := LACTION^avis.insts() @ INSTS^code;
   LACTION^avis.decIndent();
   length := LACTION^scanner.getOffset() + LACTION^scanner.getLength() - offset;
   LACTION^offset := offset;
@@ -217,42 +215,6 @@ INSTS -> INST INSTS #gen ;
 #gen {
 do
   INSTS^code := INSTS^avis.indent() @ INST^code @ "%N" @ INSTS1^code;
-end
-}
-
-EXCEPTION -> #gen ;
-#gen {
-do
-  EXCEPTION^code := "";
-end
-}
-
-
-EXCEPTION -> t_exception t_ident #add INSTS #gen ;
-global
-  v : VAR;
-
-#add {
-local
-  t : TDS_ACTION;
-  e : ENTREE;
-do
-  t := EXCEPTION^tds_act;
-  e := t.chercher(t_ident^txt);
-
-  if e /= null then
-    error(LACTION_local_yet_declared, t_ident^txt);
-  else
-    v := new VAR(t_ident^txt, null);
-    t.ajouter_locale(v);
-    v.setEtat(true);
-  end
-end
-}
-
-#gen {
-do
-  EXCEPTION^code := EXCEPTION^avis.exc(t_ident^txt, INSTS^code);
 end
 }
 

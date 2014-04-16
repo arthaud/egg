@@ -31,8 +31,6 @@ public interface IVisiteurAction {
 
 	public String ifFin();
 
-	public String exc(String code, String cinsts);
-
 	public String matchVarAvec(ENTREE entree, String nom, String w, String ws);
 
 	public String matchSi(ENTREE entree, String nom, String w, String ws);
