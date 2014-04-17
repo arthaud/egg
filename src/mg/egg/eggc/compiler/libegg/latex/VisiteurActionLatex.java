@@ -273,6 +273,16 @@ public class VisiteurActionLatex implements IVisiteurAction {
 		//				+ ";";
 	}
 
+	public String instanceOf(String code, IType t) {
+		// remplacement des caractères spéciaux
+		String type = t.getNom();
+		type = type.replace("_", "\\_");
+		type = type.replace("<", "$<$");
+		type = type.replace(">", "$>$");
+
+        return "\\actinstanceof{" + code + "}{" + type + "}";
+    }
+
 	public void transtyper(ENTREE entree, IType t) {
 		// entree.setTypeReel(t);
 	}

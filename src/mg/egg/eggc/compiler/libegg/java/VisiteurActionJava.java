@@ -249,6 +249,10 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 				+ ";";
 	}
 
+	public String instanceOf(String code, IType t) {
+		return "(" + code + ") instanceof " + UtilsJava.getTypeJava(t);
+	}
+
 	public void transtyper(ENTREE entree, IType t) {
 		entree.setTypeReel(t);
 	}

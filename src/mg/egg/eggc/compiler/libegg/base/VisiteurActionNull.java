@@ -125,6 +125,10 @@ public class VisiteurActionNull implements IVisiteurAction {
 		return "";
 	}
 
+	public String instanceOf(String code, IType t) {
+		return "";
+	}
+
 	public void transtyper(ENTREE entree, IType t) {
 	}
 

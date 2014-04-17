@@ -65,6 +65,8 @@ public interface IVisiteurAction {
 
 	public String decl(ENTREE entree);
 
+	public String instanceOf(String code, IType t);
+
 	public void transtyper(ENTREE entree, IType t);
 
 	public void detranstyper(ENTREE entree);

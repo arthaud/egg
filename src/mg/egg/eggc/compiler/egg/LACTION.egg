@@ -75,6 +75,7 @@ sugar      t_error          is    "error"           aka $error$ ;
 sugar      t_attention      is    "warning"         aka $warning$ ;
 sugar      t_write          is    "write"           aka $write$ ;
 sugar      t_new            is    "new"             aka $new$ ;
+sugar      t_instanceof     is    "instanceof"      aka $instanceof$ ;
 sugar      t_plus           is    "\+"              aka $+$ ;
 sugar      t_moins          is    "\-"              aka $-$ ;
 sugar      t_mult           is    "\*"              aka $*$ ;
@@ -1108,7 +1109,6 @@ end
 
 FACTEUR -> t_paro EXPR t_parf #gen ;
 #gen {
-local
 do
   FACTEUR^type := EXPR^type;
   FACTEUR^code := "(" + EXPR^code + ")";
@@ -1137,6 +1137,24 @@ end
 do
   FACTEUR^code := FACTEUR^avis.nouveau(TYPE^type, ARGS^args);
   FACTEUR^type := r.contConst(TYPE^type, ARGS^types);
+end
+}
+
+FACTEUR -> t_instanceof t_paro EXPR t_virgule #trans TYPE t_parf #gen ;
+global
+  r: Resolveur;
+
+#trans {
+do
+  r := FACTEUR^act.getResolveur();
+  TYPE^res := r;
+end
+}
+
+#gen {
+do
+  FACTEUR^type := r.getType("BOOLEAN");
+  FACTEUR^code := FACTEUR^avis.instanceOf(EXPR^code, TYPE^type);
 end
 }
 

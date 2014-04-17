@@ -169,6 +169,13 @@ out=$(execute test3 simple.test 2>&1)
 [[ $? = 0 ]] && [[ "$out" = *"test1 = true"*"test2 = true"*"test3 = true"*"test4 = true"*"lu = 42"* ]]
 check "priorité des opérateurs"
 
+# test4
+compile_and_check test4
+
+out=$(execute test4 simple.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"test1 = true"*"test2 = true"*"test3 = true"*"lu = 42"* ]]
+check "opérateur instanceof"
+
 # Resultats
 title "Resultats :"
 msg "tests : $tests"

@@ -1,0 +1,28 @@
+option auto = false;
+option version = 0.0.1;
+option k = 1;
+
+inh source : SourceUnit for S;
+
+space  separateur  is    "[\n\r\t ]+" ;
+term   entier      is    "[0-9]+" ;
+
+S -> entier #a ;
+#a {
+local
+    test1 : BOOLEAN;
+    test2 : BOOLEAN;
+    test3 : BOOLEAN;
+do
+    test1 := instanceof("test", STRING);
+    test2 := instanceof("la réponse est " + 42, STRING);
+    test3 := instanceof(new Vector<STRING>(), Vector);
+
+    write "test1 = " + test1 + "\n";
+    write "test2 = " + test2 + "\n";
+    write "test3 = " + test3 + "\n";
+    write "lu = " + entier^txt + "\n";
+end
+}
+
+end

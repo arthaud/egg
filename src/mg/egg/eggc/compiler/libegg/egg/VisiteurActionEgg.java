@@ -239,6 +239,10 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	            + ";";
 	}
 
+	public String instanceOf(String code, IType t) {
+		return "instanceof(" + code + ", " + getTypeEgg(t.getNom()) + ")";
+	}
+
 	public void transtyper(ENTREE entree, IType t) {
 	}
 
