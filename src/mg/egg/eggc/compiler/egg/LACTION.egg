@@ -62,7 +62,7 @@ sugar      t_chapeau        is    "\^"              aka $^$ ;
 sugar      t_virgule        is    "\,"              aka $,$ ;
 sugar      t_pointvirgule   is    ";"               aka $;$ ;
 sugar      t_deuxpoints     is    ":"               aka $:$ ;
-sugar      t_affectation    is    "(=)"             aka $:=$ ;
+sugar      t_affectation    is    "(=)"             aka $=$ ;
 sugar      t_inf_egal       is    "\<="             aka $<=$ ;
 sugar      t_inf            is    "\<"              aka $<$ ;
 sugar      t_sup_egal       is    "\>="             aka $>=$ ;
