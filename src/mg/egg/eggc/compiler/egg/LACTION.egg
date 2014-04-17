@@ -1,6 +1,6 @@
 option auto = true;
 option k = 2;
-option version = 5.2.8;
+option version = 6.0.0;
 
 inh table : TDS for
     LACTION, INSTS, INST, INST2, AFF, ELSIF, CASE, CASES, VAR,

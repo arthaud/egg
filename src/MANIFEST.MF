@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Main-Class: mg.egg.eggc.compiler.EGGC
-Bundle-Version: 5.3.1
+Bundle-Version: 6.0.0
 Bundle-SymbolicName: mg.egg.eggc-cmd
 Bundle-Name: EGG runtime
 Bundle-Vendor: MG

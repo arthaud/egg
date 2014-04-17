@@ -1,7 +1,7 @@
 -----------  Extended Generator Generator -------------
 option auto = true;
 option k = 1;
-option version = 5.3.1;
+option version = 6.0.0;
 
 inh source : IEGGCompilationUnit for S;
 syn type : IType for TYPE;
