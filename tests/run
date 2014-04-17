@@ -162,6 +162,13 @@ out=$(execute test2 utf8.test 2>&1)
 [[ $? = 0 ]] && [[ "$out" = *"champs=[é: entier(4), è: entier(4), ]"* ]]
 check "gestion de l'UTF-8"
 
+# test3
+compile_and_check test3
+
+out=$(execute test3 simple.test 2>&1)
+[[ $? = 0 ]] && [[ "$out" = *"test1 = true"*"test2 = true"*"test3 = true"*"test4 = true"*"lu = 42"* ]]
+check "priorité des opérateurs"
+
 # Resultats
 title "Resultats :"
 msg "tests : $tests"

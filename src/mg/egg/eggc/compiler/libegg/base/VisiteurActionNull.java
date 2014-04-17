@@ -93,10 +93,6 @@ public class VisiteurActionNull implements IVisiteurAction {
 		return "";
 	}
 
-	public String opAdd(String avant, String nom, String code) {
-		return "";
-	}
-
 	public String vide() {
 		return "";
 	}
@@ -144,6 +140,18 @@ public class VisiteurActionNull implements IVisiteurAction {
 	}
 
 	public String non(String code) {
+		return "";
+	}
+
+	public String opBool(String avant, String nom, String code) {
+		return "";
+	}
+
+	public String opComp(String avant, String nom, String code) {
+		return "";
+	}
+
+	public String opAdd(String avant, String nom, String code) {
 		return "";
 	}
 

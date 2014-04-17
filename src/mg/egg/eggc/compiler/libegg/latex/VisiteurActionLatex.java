@@ -231,10 +231,6 @@ public class VisiteurActionLatex implements IVisiteurAction {
 		return sb.toString();
 	}
 
-	public String opAdd(String avant, String nom, String code) {
-		return avant + getOpLatex(nom) + code;
-	}
-
 	public String vide() {
 		return "\\nil";
 	}
@@ -311,6 +307,18 @@ public class VisiteurActionLatex implements IVisiteurAction {
 
 	public String non(String code) {
 		return "~" + code;
+	}
+
+	public String opBool(String avant, String nom, String code) {
+		return avant + getOpLatex(nom) + code;
+	}
+
+	public String opComp(String avant, String nom, String code) {
+		return avant + getOpLatex(nom) + code;
+	}
+
+	public String opAdd(String avant, String nom, String code) {
+		return avant + getOpLatex(nom) + code;
 	}
 
 	public String opMul(String avant, String nom, String code) {

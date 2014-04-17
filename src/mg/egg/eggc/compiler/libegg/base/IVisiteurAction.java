@@ -49,8 +49,6 @@ public interface IVisiteurAction {
 
 	public String matchFin();
 
-	public String opAdd(String avant, String nom, String code);
-
 	public String vide();
 
 	public String vrai();
@@ -76,6 +74,12 @@ public interface IVisiteurAction {
 	public String fct(ENTREE hentree, String txt, Vector<String> args);
 
 	public String non(String code);
+
+	public String opBool(String avant, String nom, String code);
+
+	public String opComp(String avant, String nom, String code);
+
+	public String opAdd(String avant, String nom, String code);
 
 	public String opMul(String avant, String nom, String code);
 
