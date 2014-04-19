@@ -200,10 +200,6 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 		return "";
 	}
 
-	public String opAdd(String avant, String nom, String code) {
-		return avant + UtilsJava.getOpJava(nom) + code;
-	}
-
 	public String vide() {
 		return "null";
 	}
@@ -251,6 +247,10 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 	public String decl(ENTREE entree) {
 		return UtilsJava.getTypeJava(entree.getType()) + " " + var(entree)
 				+ ";";
+	}
+
+	public String instanceOf(String code, IType t) {
+		return "(" + code + ") instanceof " + UtilsJava.getTypeJava(t);
 	}
 
 	public void transtyper(ENTREE entree, IType t) {
@@ -304,8 +304,20 @@ public class VisiteurActionJava implements IVisiteurAction, Serializable {
 		return "!(" + code + ")";
 	}
 
+	public String opBool(String avant, String nom, String code) {
+		return "(" + avant + UtilsJava.getOpJava(nom) + code + ")";
+	}
+
+	public String opComp(String avant, String nom, String code) {
+		return "(" + avant + UtilsJava.getOpJava(nom) + code + ")";
+	}
+
+	public String opAdd(String avant, String nom, String code) {
+		return "(" + avant + UtilsJava.getOpJava(nom) + code + ")";
+	}
+
 	public String opMul(String avant, String nom, String code) {
-		return avant + UtilsJava.getOpJava(nom) + code;
+		return "(" + avant + UtilsJava.getOpJava(nom) + code + ")";
 	}
 
 	public String car(String s) {

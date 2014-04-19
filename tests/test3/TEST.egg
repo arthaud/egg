@@ -1,0 +1,31 @@
+option auto = false;
+option version = 0.0.1;
+option k = 1;
+
+inh source : SourceUnit for S;
+
+space  separateur  is    "[\n\r\t ]+" ;
+term   entier      is    "[0-9]+" ;
+
+S -> entier #a ;
+#a {
+local
+    test1 : BOOLEAN;
+    test2 : BOOLEAN;
+    test3 : BOOLEAN;
+    test4 : BOOLEAN;
+do
+    test1 := 1 + 2 = 3 && 1 < 2;
+    test2 := 1 >= 1 && true && !(1=2); 
+    test3 := 1 >= 0 || 2 <= 3;
+    test4 := 1+2*3 = 7 && (false || 42=42);
+
+    write "test1 = " + test1 + "\n";
+    write "test2 = " + test2 + "\n";
+    write "test3 = " + test3 + "\n";
+    write "test4 = " + test4 + "\n";
+    write "lu = " + entier^txt + "\n";
+end
+}
+
+end

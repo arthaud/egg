@@ -1,3 +1,12 @@
+;; To use this file:
+;; * put it somewhere in your load path
+;; * require the mode (the mode and filename must correspond
+;;
+;; For example, in my case:
+;; (add-to-list 'load-path "~/.emacs.d/")
+;; (require 'egg-mode)
+
+
 (defvar egg-constants
   '("true" "false" "nil" "null"))
 
@@ -65,4 +74,5 @@
   (modify-syntax-entry ?\n "> b" egg-mode-syntax-table)
   )
 
+(add-to-list 'auto-mode-alist '("\\.egg\\'" . egg-mode))
 (provide 'egg-mode)

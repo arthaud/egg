@@ -3,42 +3,40 @@ option k = 2;
 option version = 5.2.8;
 
 inh table : TDS for
-    LACTION,
-    INSTS, INST, INST2, ELSIF, WITH, WITHS, VAR,
-    EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, APP2,
-    ARGS, ARGSX, EARGS, EXCEPTION;
+    LACTION, INSTS, INST, INST2, ELSIF, WITH, WITHS, VAR,
+    EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
+    APP, APP2, ARGS, ARGSX, EARGS, EXCEPTION;
 inh reg : REGLE for
     LACTION;
 inh avis : IVisiteurAction for
-    LACTION,
-    LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS,
-    EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP,
-    ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP2;
+    LACTION, LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS,
+    EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
+    ARGS, ARGSX, EARGS, EXCEPTION, INST2, APP, APP2;
 inh act : LACT for
-    LACTION,
-    LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS, VAR,
-    EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, ARGS, ARGSX,
-    APP, EARGS , EXCEPTION, INST2, APP2;
+    LACTION, LOCALES, LOCS, INSTS, INST, ELSIF, WITH, WITHS, VAR,
+    EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
+    ARGS, ARGSX, EARGS , EXCEPTION, INST2, APP, APP2;
 syn nom : STRING for
-    WITH, OPADD, OPMUL;
+    WITH, OPBOOL, OPCOMP, OPADD, OPMUL;
 syn entree : ENTREE for
     VAR;
 inh hentree : ENTREE for
     INST2, APP, APP2, WITH, WITHS;
 syn code : STRING for
-    LACTION,
-    LOCALES, LOCS, INSTS, INST,INST2, ELSIF, WITH, WITHS,
-    EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, APP2,EXCEPTION;
+    LACTION, LOCALES, LOCS, INSTS, INST,INST2, ELSIF, WITH, WITHS,
+    EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR,
+    APP, APP2, EXCEPTION;
 inh hcode : STRING for
-    EXPRTERME, EXPRFACTEUR;
+    EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR;
 syn args : Vector<STRING> for
     ARGS, EARGS, ARGSX;
 inh hargs : Vector<STRING> for
     ARGS, EARGS, ARGSX;
 syn type : IType for
-    VTYPE, TYPE, WITH, EXPR, EXPRTERME, TERME, EXPRFACTEUR, FACTEUR, APP, APP2;
+    VTYPE, TYPE, WITH, APP, APP2,
+    EXPR, EXPRREL, REL, RELMEXPR, MEXPR, MEXPRTERME, TERME, TERMEFACTEUR, FACTEUR;
 inh htype : IType for
-    EXPRTERME, EXPRFACTEUR;
+    EXPRREL, RELMEXPR, MEXPRTERME, TERMEFACTEUR;
 syn types : Vector<IType> for
     ARGS, EARGS, ARGSX;
 inh htypes : Vector<IType> for
@@ -61,7 +59,9 @@ sugar      t_virgule        is    "\,"              aka $,$ ;
 sugar      t_pointvirgule   is    ";"               aka $;$ ;
 sugar      t_deuxpoints     is    ":"               aka $:$ ;
 sugar      t_affectation    is    "(:=)"            aka $:=$ ;
+sugar      t_inf_egal       is    "\<="             aka $<=$ ;
 sugar      t_inf            is    "\<"              aka $<$ ;
+sugar      t_sup_egal       is    "\>="             aka $>=$ ;
 sugar      t_sup            is    "\>"              aka $>$ ;
 sugar      t_paro           is    "\("              aka $($ ;
 sugar      t_parf           is    "\)"              aka $)$ ;
@@ -75,6 +75,7 @@ sugar      t_error          is    "error"           aka $error$ ;
 sugar      t_attention      is    "warning"         aka $warning$ ;
 sugar      t_write          is    "write"           aka $write$ ;
 sugar      t_new            is    "new"             aka $new$ ;
+sugar      t_instanceof     is    "instanceof"      aka $instanceof$ ;
 sugar      t_plus           is    "\+"              aka $+$ ;
 sugar      t_moins          is    "\-"              aka $-$ ;
 sugar      t_mult           is    "\*"              aka $*$ ;
@@ -210,7 +211,7 @@ local
   e : ENTREE;
   b : BLOC;
 do
-  b:= LOCS^act.getBloc();
+  b := LOCS^act.getBloc();
   l := b.getLocs();
   e := l.chercher(t_ident^txt);
   if e /= null then
@@ -231,7 +232,7 @@ local
   e : ENTREE;
   b : BLOC;
 do
-  b:= LOCS^act.getBloc();
+  b := LOCS^act.getBloc();
   l := b.getLocs();
   e := l.chercher(t_ident^txt);
   LOCS^code := LOCS^avis.indent() @ LOCS^avis.decl(e) @ "%N" @ LOCS1^code;
@@ -621,7 +622,7 @@ local
   b : BLOC;
   r : Resolveur;
 do
-  b:= VAR^act.getBloc();
+  b := VAR^act.getBloc();
   l := b.getLocs();
   e := l.chercher(t_ident^txt);
 
@@ -643,7 +644,7 @@ local
   symb : SYMBOLE;
   r : Resolveur;
 do
-  b:= VAR^act.getBloc();
+  b := VAR^act.getBloc();
   l := b.getLocs();
   s := t_ident^txt @ "^" @ t_ident1^txt;
   e := l.chercher(s);
@@ -746,44 +747,156 @@ do
 end
 }
 
-EXPR -> TERME #code EXPRTERME #gen ;
+----------------------------------
+-- EXPR -> REL {and,or} REL
+----------------------------------
+
+EXPR -> REL #code EXPRREL #gen ;
 #code {
 do
-  EXPRTERME^hcode := TERME^code;
-  EXPRTERME^htype := TERME^type;
+  EXPRREL^hcode := REL^code;
+  EXPRREL^htype := REL^type;
 end
 }
 
 #gen {
 do
-  EXPR^type := EXPRTERME^type;
-  EXPR^code := EXPRTERME^code;
+  EXPR^type := EXPRREL^type;
+  EXPR^code := EXPRREL^code;
 end
 }
 
-EXPRTERME -> OPADD TERME #code EXPRTERME #gen ;
+EXPRREL -> OPBOOL REL #code EXPRREL #gen ;
 #code {
 local
-  r: Resolveur;
+  r : Resolveur;
 do
-  r:= EXPRTERME^act.getResolveur();
-  EXPRTERME1^htype := r.contOp(EXPRTERME^htype, OPADD^nom, TERME^type);
-  EXPRTERME1^hcode := EXPRTERME^avis.opAdd(EXPRTERME^hcode, OPADD^nom, TERME^code);
+  r := EXPRREL^act.getResolveur();
+  EXPRREL1^htype := r.contOp(EXPRREL^htype, OPBOOL^nom, REL^type);
+  EXPRREL1^hcode := EXPRREL^avis.opBool(EXPRREL^hcode, OPBOOL^nom, REL^code);
 end
 }
 
 #gen {
 do
-  EXPRTERME^type := EXPRTERME1^type;
-  EXPRTERME^code := EXPRTERME1^code;
+  EXPRREL^type := EXPRREL1^type;
+  EXPRREL^code := EXPRREL1^code;
 end
 }
 
-OPADD -> t_egal #gen ;
-#gen { do OPADD^nom := "="; end }
+OPBOOL -> t_et #gen ;
+#gen { do OPBOOL^nom := "and"; end }
 
-OPADD -> t_different #gen ;
-#gen { do OPADD^nom := "/="; end }
+OPBOOL -> t_ou #gen ;
+#gen { do OPBOOL^nom := "or"; end }
+
+EXPRREL -> #gen ;
+#gen {
+do
+  EXPRREL^type := EXPRREL^htype;
+  EXPRREL^code := EXPRREL^hcode;
+end
+}
+
+----------------------------------
+-- REL -> MEXPR {>,<,=,/=} MEXPR
+----------------------------------
+
+REL -> MEXPR #code RELMEXPR #gen ;
+#code {
+do
+  RELMEXPR^hcode := MEXPR^code;
+  RELMEXPR^htype := MEXPR^type;
+end
+}
+
+#gen {
+do
+  REL^type := RELMEXPR^type;
+  REL^code := RELMEXPR^code;
+end
+}
+
+RELMEXPR -> OPCOMP MEXPR #code RELMEXPR #gen ;
+#code {
+local
+  r : Resolveur;
+do
+  r := RELMEXPR^act.getResolveur();
+  RELMEXPR1^htype := r.contOp(RELMEXPR^htype, OPCOMP^nom, MEXPR^type);
+  RELMEXPR1^hcode := RELMEXPR^avis.opComp(RELMEXPR^hcode, OPCOMP^nom, MEXPR^code);
+end
+}
+
+#gen {
+do
+  RELMEXPR^type := RELMEXPR1^type;
+  RELMEXPR^code := RELMEXPR1^code;
+end
+}
+
+OPCOMP -> t_inf #gen ;
+#gen { do OPCOMP^nom := "<"; end }
+
+OPCOMP -> t_inf_egal #gen ;
+#gen { do OPCOMP^nom := "<="; end }
+
+OPCOMP -> t_sup #gen ;
+#gen { do OPCOMP^nom := ">"; end }
+
+OPCOMP -> t_sup_egal #gen ;
+#gen { do OPCOMP^nom := ">="; end }
+
+OPCOMP -> t_egal #gen ;
+#gen { do OPCOMP^nom := "="; end }
+
+OPCOMP -> t_different #gen ;
+#gen { do OPCOMP^nom := "/="; end }
+
+RELMEXPR -> #gen ;
+#gen {
+do
+  RELMEXPR^type := RELMEXPR^htype;
+  RELMEXPR^code := RELMEXPR^hcode;
+end
+}
+
+----------------------------------
+-- MEXPR -> TERME {+,-} TERME
+----------------------------------
+
+MEXPR -> TERME #code MEXPRTERME #gen ;
+#code {
+do
+  MEXPRTERME^hcode := TERME^code;
+  MEXPRTERME^htype := TERME^type;
+end
+}
+
+#gen {
+do
+  MEXPR^type := MEXPRTERME^type;
+  MEXPR^code := MEXPRTERME^code;
+end
+}
+
+MEXPRTERME -> OPADD TERME #code MEXPRTERME #gen ;
+#code {
+local
+  r : Resolveur;
+do
+  r := MEXPRTERME^act.getResolveur();
+  MEXPRTERME1^htype := r.contOp(MEXPRTERME^htype, OPADD^nom, TERME^type);
+  MEXPRTERME1^hcode := MEXPRTERME^avis.opAdd(MEXPRTERME^hcode, OPADD^nom, TERME^code);
+end
+}
+
+#gen {
+do
+  MEXPRTERME^type := MEXPRTERME1^type;
+  MEXPRTERME^code := MEXPRTERME1^code;
+end
+}
 
 OPADD -> t_append #gen ;
 #gen { do OPADD^nom := "@"; end }
@@ -800,29 +913,30 @@ OPADD -> t_d_plus #gen ;
 OPADD -> t_d_moins #gen ;
 #gen { do OPADD^nom := "-."; end }
 
-OPADD -> t_ou #gen ;
-#gen { do OPADD^nom := "or"; end }
-
-EXPRTERME -> #gen ;
+MEXPRTERME -> #gen ;
 #gen {
 do
-  EXPRTERME^type := EXPRTERME^htype;
-  EXPRTERME^code := EXPRTERME^hcode;
+  MEXPRTERME^type := MEXPRTERME^htype;
+  MEXPRTERME^code := MEXPRTERME^hcode;
 end
 }
 
-TERME -> FACTEUR #code EXPRFACTEUR #gen ;
+----------------------------------
+-- TERME -> FACTEUR {*,/} FACTEUR
+----------------------------------
+
+TERME -> FACTEUR #code TERMEFACTEUR #gen ;
 #code {
 do
-  EXPRFACTEUR^htype := FACTEUR^type;
-  EXPRFACTEUR^hcode := FACTEUR^code;
+  TERMEFACTEUR^htype := FACTEUR^type;
+  TERMEFACTEUR^hcode := FACTEUR^code;
 end
 }
 
 #gen {
 do
-  TERME^type := EXPRFACTEUR^type;
-  TERME^code := EXPRFACTEUR^code;
+  TERME^type := TERMEFACTEUR^type;
+  TERME^code := TERMEFACTEUR^code;
 end
 }
 
@@ -922,7 +1036,7 @@ end
 }
 
 
-FACTEUR ->  VAR #check APP #gen ;
+FACTEUR -> VAR #check APP #gen ;
 #check {
 do
   if ~VAR^entree.getEtat() then
@@ -995,7 +1109,6 @@ end
 
 FACTEUR -> t_paro EXPR t_parf #gen ;
 #gen {
-local
 do
   FACTEUR^type := EXPR^type;
   FACTEUR^code := "(" + EXPR^code + ")";
@@ -1027,26 +1140,41 @@ do
 end
 }
 
-EXPRFACTEUR -> OPMUL FACTEUR #code EXPRFACTEUR #gen ;
-#code {
-local
-  r : Resolveur;
+FACTEUR -> t_instanceof t_paro EXPR t_virgule #trans TYPE t_parf #gen ;
+global
+  r: Resolveur;
+
+#trans {
 do
-  r := EXPRFACTEUR^act.getResolveur();
-  EXPRFACTEUR1^htype := r.contOp(EXPRFACTEUR^htype, OPMUL^nom, FACTEUR^type);
-  EXPRFACTEUR1^hcode := EXPRFACTEUR^avis.opMul(EXPRFACTEUR^hcode, OPMUL^nom, FACTEUR^code);
+  r := FACTEUR^act.getResolveur();
+  TYPE^res := r;
 end
 }
 
 #gen {
 do
-  EXPRFACTEUR^type := EXPRFACTEUR1^type;
-  EXPRFACTEUR^code := EXPRFACTEUR1^code;
+  FACTEUR^type := r.getType("BOOLEAN");
+  FACTEUR^code := FACTEUR^avis.instanceOf(EXPR^code, TYPE^type);
 end
 }
 
-OPMUL -> t_et #gen ;
-#gen { do OPMUL^nom := "and"; end }
+TERMEFACTEUR -> OPMUL FACTEUR #code TERMEFACTEUR #gen ;
+#code {
+local
+  r : Resolveur;
+do
+  r := TERMEFACTEUR^act.getResolveur();
+  TERMEFACTEUR1^htype := r.contOp(TERMEFACTEUR^htype, OPMUL^nom, FACTEUR^type);
+  TERMEFACTEUR1^hcode := TERMEFACTEUR^avis.opMul(TERMEFACTEUR^hcode, OPMUL^nom, FACTEUR^code);
+end
+}
+
+#gen {
+do
+  TERMEFACTEUR^type := TERMEFACTEUR1^type;
+  TERMEFACTEUR^code := TERMEFACTEUR1^code;
+end
+}
 
 OPMUL -> t_mult #gen ;
 #gen { do OPMUL^nom := "*"; end }
@@ -1060,11 +1188,11 @@ OPMUL -> t_d_mult #gen ;
 OPMUL -> t_d_div #gen ;
 #gen { do OPMUL^nom := "/."; end }
 
-EXPRFACTEUR -> #gen ;
+TERMEFACTEUR -> #gen ;
 #gen {
 do
-  EXPRFACTEUR^type := EXPRFACTEUR^htype;
-  EXPRFACTEUR^code := EXPRFACTEUR^hcode;
+  TERMEFACTEUR^type := TERMEFACTEUR^htype;
+  TERMEFACTEUR^code := TERMEFACTEUR^hcode;
 end
 }
 

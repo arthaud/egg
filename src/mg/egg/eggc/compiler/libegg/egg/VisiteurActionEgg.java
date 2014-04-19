@@ -205,10 +205,6 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	    return sb.toString();
 	}
 
-	public String opAdd(String avant, String nom, String code) {
-	    return avant + getOpEgg(nom) + code;
-	}
-
 	public String vide() {
 	    return "nil";
 	}
@@ -243,6 +239,10 @@ public class VisiteurActionEgg implements IVisiteurAction {
 	            + ";";
 	}
 
+	public String instanceOf(String code, IType t) {
+		return "instanceof(" + code + ", " + getTypeEgg(t.getNom()) + ")";
+	}
+
 	public void transtyper(ENTREE entree, IType t) {
 	}
 
@@ -271,6 +271,18 @@ public class VisiteurActionEgg implements IVisiteurAction {
 
 	public String non(String code) {
 	    return "~" + code;
+	}
+
+	public String opBool(String avant, String nom, String code) {
+	    return avant + getOpEgg(nom) + code;
+	}
+
+	public String opComp(String avant, String nom, String code) {
+	    return avant + getOpEgg(nom) + code;
+	}
+
+	public String opAdd(String avant, String nom, String code) {
+	    return avant + getOpEgg(nom) + code;
 	}
 
 	public String opMul(String avant, String nom, String code) {
