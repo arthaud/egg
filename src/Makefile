@@ -1,7 +1,7 @@
 EGGJAR=./eggc-5.3.1.jar
 OUTJAR=./eggc.jar
 JDIR=/usr/bin
-JAVAC=$(JDIR)/javac -O -Xlint:unchecked -encoding UTF-8
+JAVAC=$(JDIR)/javac -O -source 1.6 -target 1.6 -Xlint:unchecked -encoding UTF-8
 JAVA=$(JDIR)/java
 JAR=$(JDIR)/jar
 JAVADOC=$(JDIR)/javadoc
